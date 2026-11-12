@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Очередь — преподаватель</title>
+<style>
+  :root { --bg:#f5f6f8; --card:#fff; --text:#1c1f26; --muted:#6b7280; --accent:#2563eb; --ok:#16a34a; --warn:#d97706; --bad:#dc2626; --border:#e2e5ea; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#12141a; --card:#1b1e26; --text:#e8eaf0; --muted:#98a0b0; --accent:#5b8def; --ok:#34c26a; --warn:#f0a43a; --bad:#f0625d; --border:#2b2f3a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--text); }
+  main { max-width:760px; margin:0 auto; padding:20px 16px 60px; }
+  h1 { font-size:22px; margin:0; }
+  h2 { font-size:17px; margin:0 0 12px; }
+  .top { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; margin-bottom:16px; }
+  label { display:block; font-size:14px; color:var(--muted); margin:12px 0 6px; }
+  input { width:100%; font:inherit; padding:11px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); }
+  button { font:inherit; font-weight:600; padding:10px 14px; border:0; border-radius:10px; cursor:pointer; background:var(--accent); color:#fff; }
+  button.full { width:100%; margin-top:16px; }
+  button.ghost { background:transparent; color:var(--muted); border:1px solid var(--border); }
+  button.ok { background:var(--ok); }
+  button.warn { background:var(--warn); }
+  button.bad { background:var(--bad); }
+  button:disabled { opacity:.6; cursor:default; }
+  .muted { color:var(--muted); }
+  .hidden { display:none; }
+  .err { color:var(--bad); min-height:1.4em; margin-top:10px; font-size:14px; }
+  .code { font-size:44px; font-weight:800; letter-spacing:.15em; }
+  .head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
+  .actions { display:flex; gap:8px; flex-wrap:wrap; }
+  table { width:100%; border-collapse:collapse; margin-top:8px; }
+  td, th { text-align:left; padding:10px 6px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  th { font-size:13px; color:var(--muted); font-weight:600; }
+  tr.called td { background:color-mix(in srgb, var(--ok) 14%, transparent); }
+  tr.skipped td { color:var(--muted); }
+  td.btns { text-align:right; white-space:nowrap; }
+  td.btns button { padding:6px 10px; font-size:14px; margin-left:4px; }
+  .sessions button { display:block; width:100%; text-align:left; margin-top:8px; background:var(--bg); color:var(--text); border:1px solid var(--border); font-weight:500; }
+  .tabs { display:flex; gap:8px; margin-bottom:6px; }
+  .tabs button { background:transparent; color:var(--muted); border:1px solid var(--border); }
+  .tabs button.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <h1>Очередь на сдачу</h1>
+    <div class="actions"><a href="/protocol" id="protocol-link" style="align-self:center">Протокол сдачи</a><button class="ghost hidden" id="logout-btn">Выйти</button></div>
+  </div>
+
+  <section class="card" id="auth-view">
+    <div class="tabs">
+      <button id="tab-login" class="active">Вход</button>
+      <button id="tab-register">Регистрация</button>
+    </div>
+    <label for="username">Логин</label>
+    <input id="username" autocomplete="username">
+    <label for="password">Пароль</label>
+    <input id="password" type="password" autocomplete="current-password">
+    <div id="invite-box" class="hidden">
+      <label for="invite">Код приглашения</label>
+      <input id="invite" autocomplete="off">
+    </div>
+    <button class="full" id="auth-btn">Войти</button>
+    <div class="err" id="auth-err"></div>
+  </section>
+
+  <div id="app-view" class="hidden">
+    <section class="card">
+      <h2>Новая сессия сдачи</h2>
+      <input id="title" maxlength="120" placeholder="Например: Лабораторная №3">
+      <label for="group">Группа (необязательно)</label>
+      <input id="group" maxlength="60" placeholder="Например: ИС-22">
+      <button class="full" id="create-btn">Открыть сессию</button>
+      <div class="err" id="create-err"></div>
+    </section>
+
+    <section class="card sessions" id="sessions-card">
+      <h2>Мои сессии</h2>
+      <div id="sessions"></div>
+    </section>
+
+    <section class="card hidden" id="queue-card">
+      <div class="head">
+        <div>
+          <div class="muted" id="queue-title"></div>
+          <div class="code" id="queue-code"></div>
+          <div class="muted" id="queue-link"></div>
+          <div><a id="protocol-session-link" href="/protocol">Оценки и вопросы этой сдачи</a></div>
+        </div>
+        <div class="actions">
+          <button id="next-btn">Вызвать следующего</button>
+          <button class="ghost" id="close-btn">Закрыть сессию</button>
+        </div>
+      </div>
+      <div class="muted" id="queue-meta" style="margin-top:10px"></div>
+      <table>
+        <thead><tr><th>№</th><th>Студент</th><th>Статус</th><th></th></tr></thead>
+        <tbody id="entries"></tbody>
+      </table>
+      <div class="err" id="queue-err"></div>
+      <div class="err" id="action-err"></div>
+    </section>
+  </div>
+</main>
+
+<script>
+const API = "/api/v1";
+const TOKEN_KEY = "queue-teacher-token";
+const POLL_MS = 3000;
+const MESSAGES = {
+  invalid_credentials: "Неверный логин или пароль",
+  invalid_invite_code: "Неверный код приглашения",
+  username_taken: "Этот логин уже занят",
+  submission_open: "Завершите сдачу с оценками на странице «Протокол сдачи»",
+  already_serving: "Сначала завершите работу с текущим студентом",
+  queue_empty: "В очереди никого нет",
+  not_called: "Отметить «сдал» можно только вызванного студента",
+  cannot_skip: "Этого студента уже нельзя пропустить",
+  not_skipped: "Вернуть в очередь можно только пропущенного",
+  not_waiting: "Двигать вперёд можно только ждущего",
+  session_closed: "Сессия закрыта",
+  session_not_found: "Сессия не найдена",
+  entry_not_found: "Запись не найдена",
+  not_authenticated: "Войдите заново",
+  invalid_token: "Войдите заново",
+  rate_limited: "Слишком много запросов, подождите минуту",
+  overloaded: "Сервис перегружен, попробуйте через пару секунд",
+  database_unavailable: "Сервис временно недоступен, попробуйте позже",
+  validation_error: "Проверьте введённые данные",
+};
+const SAFETY_POLL_MS = 30000;
+const LIVE_SILENCE_MS = 45000;
+const LIVE_RETRY_MS = 5000;
+const LIVE_RETRY_MAX_MS = 60000;
+
+const FIELD_LABELS = {
+  username: "Логин", password: "Пароль", invite_code: "Код приглашения",
+  title: "Название", group: "Группа", name: "Имя", token: "Токен",
+};
+const PATTERN_HINTS = {
+  username: "только латинские буквы, цифры и символы . _ - (e-mail с @ не подходит)",
+};
+
+function describeValidation(errors) {
+  const parts = errors.slice(0, 3).map((e) => {
+    const field = String(e.loc || "").split(".").pop();
+    const label = FIELD_LABELS[field] || field || "Поле";
+    const ctx = e.ctx || {};
+    if (e.type === "missing") return label + ": обязательное поле";
+    if (e.type === "string_too_short") return label + ": минимум " + ctx.min_length + " симв.";
+    if (e.type === "string_too_long") return label + ": максимум " + ctx.max_length + " симв.";
+    if (e.type === "string_pattern_mismatch") return label + ": " + (PATTERN_HINTS[field] || "недопустимые символы");
+    return label + ": недопустимое значение";
+  });
+  return parts.join("; ");
+}
+
+const $ = (id) => document.getElementById(id);
+let token = readToken();
+let current = null;
+let timer = null;
+let registerMode = false;
+let live = null;
+let liveConnected = false;
+let liveFailures = 0;
+let liveRetryTimer = null;
+
+function readToken() {
+  try { return sessionStorage.getItem(TOKEN_KEY); } catch { return null; }
+}
+function writeToken(value) {
+  token = value;
+  try {
+    if (value) sessionStorage.setItem(TOKEN_KEY, value);
+    else sessionStorage.removeItem(TOKEN_KEY);
+  } catch {}
+}
+
+async function readEvents(url, headers, signal, onEvent, onActivity) {
+  const response = await fetch(url, { headers: { ...headers, Accept: "text/event-stream" }, signal });
+  if (!response.ok || !response.body) {
+    const error = new Error("stream " + response.status);
+    error.status = response.status;
+    throw error;
+  }
+  onActivity();
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) return;
+    buffer += decoder.decode(value, { stream: true });
+    let end;
+    while ((end = buffer.indexOf("\n\n")) >= 0) {
+      const block = buffer.slice(0, end);
+      buffer = buffer.slice(end + 2);
+      let name = "message";
+      let data = "";
+      for (const line of block.split("\n")) {
+        if (line.startsWith("event:")) name = line.slice(6).trim();
+        else if (line.startsWith("data:")) data += line.slice(5).trim();
+      }
+      onActivity();
+      if (name === "end") onEvent(name, null);
+      else if (data) onEvent(name, JSON.parse(data));
+    }
+  }
+}
+
+async function request(path, options = {}) {
+  const headers = { ...(options.headers || {}) };
+  if (options.body) headers["Content-Type"] = "application/json";
+  if (token) headers["Authorization"] = "Bearer " + token;
+  let response;
+  try {
+    response = await fetch(API + path, { ...options, headers });
+  } catch {
+    const error = new Error("Нет связи с сервером. Проверьте подключение и повторите");
+    error.status = 0;
+    throw error;
+  }
+  let body = null;
+  try { body = await response.json(); } catch {}
+  if (!response.ok) {
+    const detailed = body?.code === "validation_error" && Array.isArray(body.errors) && body.errors.length
+      ? describeValidation(body.errors) : "";
+    const error = new Error(detailed || MESSAGES[body?.code] || "Ошибка " + response.status);
+    error.code = body?.code;
+    error.status = response.status;
+    throw error;
+  }
+  return body;
+}
+
+let actionErrorTimer = null;
+function showActionError(message) {
+  $("action-err").textContent = message;
+  clearTimeout(actionErrorTimer);
+  actionErrorTimer = setTimeout(() => { $("action-err").textContent = ""; }, 6000);
+}
+
+function el(tag, props = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [key, value] of Object.entries(props)) {
+    if (key === "onclick") node.addEventListener("click", value);
+    else if (key === "class") node.className = value;
+    else node.setAttribute(key, value);
+  }
+  for (const child of children) node.append(child);
+  return node;
+}
+
+function setAuthMode(register) {
+  registerMode = register;
+  $("tab-login").classList.toggle("active", !register);
+  $("tab-register").classList.toggle("active", register);
+  $("invite-box").classList.toggle("hidden", !register);
+  $("auth-btn").textContent = register ? "Зарегистрироваться" : "Войти";
+  $("password").autocomplete = register ? "new-password" : "current-password";
+  $("auth-err").textContent = "";
+}
+
+async function authenticate() {
+  $("auth-err").textContent = "";
+  $("auth-btn").disabled = true;
+  const username = $("username").value.trim();
+  const password = $("password").value;
+  try {
+    if (registerMode) {
+      await request("/auth/register", {
+        method: "POST",
+        body: JSON.stringify({ username, password, invite_code: $("invite").value.trim() }),
+      });
+    }
+    const data = await request("/auth/login", { method: "POST", body: JSON.stringify({ username, password }) });
+    writeToken(data.access_token);
+    $("password").value = "";
+    await showApp();
+  } catch (error) {
+    $("auth-err").textContent = error.message;
+  } finally {
+    $("auth-btn").disabled = false;
+  }
+}
+
+function stopLive() {
+  clearTimeout(liveRetryTimer);
+  liveRetryTimer = null;
+  if (live) live.abort();
+  live = null;
+  liveConnected = false;
+}
+
+async function startLive() {
+  if (liveRetryTimer || !current || live || !token || !window.ReadableStream || !window.AbortController) return;
+  const controller = new AbortController();
+  live = controller;
+  const code = current;
+  let lastActivity = Date.now();
+  let finished = false;
+  const watchdog = setInterval(() => {
+    if (Date.now() - lastActivity > LIVE_SILENCE_MS) controller.abort();
+  }, 10000);
+  try {
+    await readEvents(
+      API + "/sessions/" + code + "/queue/events",
+      { Authorization: "Bearer " + token },
+      controller.signal,
+      (name, data) => {
+        if (name === "end") { finished = true; return; }
+        liveConnected = true;
+        liveFailures = 0;
+        $("queue-err").textContent = "";
+        appliedSeq = ++requestSeq;
+        renderQueue(data);
+      },
+      () => { lastActivity = Date.now(); },
+    );
+  } catch {
+
+  } finally {
+    clearInterval(watchdog);
+    const mine = live === controller;
+    if (mine) live = null;
+    liveConnected = false;
+    if (mine && current === code && token && !finished) {
+      liveFailures += 1;
+      liveRetryTimer = setTimeout(() => { liveRetryTimer = null; startLive(); }, Math.min(LIVE_RETRY_MS * 2 ** (liveFailures - 1), LIVE_RETRY_MAX_MS));
+      refresh();
+    }
+  }
+}
+
+function showAuth() {
+  stopLive();
+  clearTimeout(timer);
+  current = null;
+  $("auth-view").classList.remove("hidden");
+  $("app-view").classList.add("hidden");
+  $("logout-btn").classList.add("hidden");
+}
+
+async function showApp() {
+  $("auth-view").classList.add("hidden");
+  $("app-view").classList.remove("hidden");
+  $("logout-btn").classList.remove("hidden");
+  await loadSessions();
+}
+
+async function loadSessions() {
+  try {
+    const sessions = await request("/sessions");
+    const box = $("sessions");
+    box.replaceChildren();
+    if (!sessions.length) box.append(el("div", { class: "muted" }, "Пока нет сессий"));
+    for (const s of sessions) {
+      const label = s.title + (s.group ? " · " + s.group : "") + " · " + s.code + (s.status === "closed" ? " · закрыта" : "");
+      box.append(el("button", { onclick: () => openSession(s.code) }, label));
+    }
+  } catch (error) {
+    if (error.status === 401) { writeToken(null); showAuth(); }
+  }
+}
+
+async function createSession() {
+  $("create-err").textContent = "";
+  const title = $("title").value.trim();
+  if (!title) { $("create-err").textContent = "Введите название"; return; }
+  try {
+    const group = $("group").value.trim();
+    const session = await request("/sessions", { method: "POST", body: JSON.stringify({ title, group: group || null }) });
+    $("title").value = "";
+    $("group").value = "";
+    await loadSessions();
+    openSession(session.code);
+  } catch (error) {
+    $("create-err").textContent = error.message;
+  }
+}
+
+function openSession(code) {
+  if (current !== code) stopLive();
+  current = code;
+  $("queue-card").classList.remove("hidden");
+  $("queue-code").textContent = code;
+  $("queue-link").textContent = location.origin + "/?code=" + code;
+  $("protocol-session-link").href = "/protocol?code=" + encodeURIComponent(code);
+  refresh();
+}
+
+let requestSeq = 0;
+let appliedSeq = 0;
+
+async function refresh() {
+  clearTimeout(timer);
+  if (!current) return;
+  const id = ++requestSeq;
+  try {
+    const queue = await request("/sessions/" + current + "/queue");
+    $("queue-err").textContent = "";
+    if (id > appliedSeq) {
+      appliedSeq = id;
+      renderQueue(queue);
+    }
+    startLive();
+  } catch (error) {
+    if (error.status === 401) { writeToken(null); showAuth(); return; }
+    $("queue-err").textContent = error.message;
+  }
+  timer = setTimeout(refresh, liveConnected ? SAFETY_POLL_MS : POLL_MS);
+}
+
+function renderQueue(queue) {
+  $("queue-title").textContent = queue.title + (queue.group ? " · " + queue.group : "") + (queue.status === "closed" ? " (закрыта)" : "");
+  $("queue-meta").textContent =
+    "Ждут: " + queue.waiting_count + " · среднее время сдачи: " + Math.round(queue.avg_service_seconds / 60 * 10) / 10 + " мин";
+  const closed = queue.status === "closed";
+  $("close-btn").classList.toggle("hidden", closed);
+  const hasCalled = queue.entries.some((e) => e.status === "called");
+  $("next-btn").disabled = hasCalled || queue.waiting_count === 0;
+
+  const labels = { waiting: "ждёт", called: "вызван", skipped: "пропущен" };
+  const tbody = $("entries");
+  tbody.replaceChildren();
+  if (!queue.entries.length) {
+    tbody.append(el("tr", {}, el("td", { colspan: "4", class: "muted" }, "Очередь пуста")));
+  }
+  const ordered = [...queue.entries].sort((a, b) => (a.status === "called" ? -1 : 0) - (b.status === "called" ? -1 : 0));
+  for (const entry of ordered) {
+    const buttons = el("td", { class: "btns" });
+    const act = (label, action, cls) =>
+      buttons.append(el("button", { class: cls || "", onclick: () => entryAction(entry.id, action) }, label));
+    if (entry.status === "called") { act("Сдал", "done", "ok"); act("Пропустить", "skip", "warn"); }
+    if (entry.status === "waiting") { act("Вперёд", "promote", "ghost"); act("Пропустить", "skip", "ghost"); }
+    if (entry.status === "skipped" && !closed) act("Вернуть", "requeue", "ghost");
+    tbody.append(el("tr", { class: entry.status },
+      el("td", {}, "" + entry.ticket),
+      el("td", {}, entry.name),
+      el("td", {}, labels[entry.status] || entry.status),
+      buttons));
+  }
+}
+
+async function entryAction(id, action) {
+  try {
+    await request("/sessions/" + current + "/entries/" + id + "/" + action, { method: "POST" });
+    await refresh();
+  } catch (error) {
+    showActionError(error.message);
+    await refresh();
+  }
+}
+
+async function callNext() {
+  $("next-btn").disabled = true;
+  try {
+    await request("/sessions/" + current + "/next", { method: "POST" });
+  } catch (error) {
+    showActionError(error.message);
+  }
+  await refresh();
+}
+
+async function closeSession() {
+  if (!confirm("Закрыть сессию? Новые студенты не смогут встать в очередь.")) return;
+  try {
+    await request("/sessions/" + current + "/close", { method: "POST" });
+    await loadSessions();
+  } catch (error) {
+    showActionError(error.message);
+  }
+  await refresh();
+}
+
+$("tab-login").addEventListener("click", () => setAuthMode(false));
+$("tab-register").addEventListener("click", () => setAuthMode(true));
+$("auth-btn").addEventListener("click", authenticate);
+$("create-btn").addEventListener("click", createSession);
+$("next-btn").addEventListener("click", callNext);
+$("close-btn").addEventListener("click", closeSession);
+$("logout-btn").addEventListener("click", () => { writeToken(null); showAuth(); });
+for (const id of ["username", "password", "invite"]) {
+  $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") authenticate(); });
+}
+for (const id of ["title", "group"]) {
+  $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") createSession(); });
+}
+
+if (token) showApp(); else showAuth();
+</script>
+</body>
+</html>

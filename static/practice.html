@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тренировка перед сдачей</title>
+<style>
+  :root { --bg:#f5f6f8; --card:#fff; --text:#1c1f26; --muted:#6b7280; --accent:#2563eb; --ok:#16a34a; --warn:#d97706; --bad:#dc2626; --border:#e2e5ea; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#12141a; --card:#1b1e26; --text:#e8eaf0; --muted:#98a0b0; --accent:#5b8def; --ok:#34c26a; --warn:#f0a43a; --bad:#f0625d; --border:#2b2f3a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--text); }
+  main { max-width:640px; margin:0 auto; padding:20px 16px 60px; }
+  h1 { font-size:22px; margin:0 0 12px; }
+  h3 { font-size:15px; margin:16px 0 8px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; margin-bottom:16px; }
+  .banner { border:1px solid var(--warn); border-radius:12px; padding:10px 14px; margin-bottom:16px; color:var(--warn); font-weight:600; }
+  input, textarea { width:100%; font:inherit; padding:10px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); }
+  textarea { min-height:120px; resize:vertical; }
+  button { font:inherit; font-weight:600; padding:10px 14px; border:0; border-radius:10px; cursor:pointer; background:var(--accent); color:#fff; }
+  button.ghost { background:transparent; color:var(--muted); border:1px solid var(--border); }
+  button:disabled { opacity:.6; cursor:default; }
+  .muted { color:var(--muted); }
+  .hidden { display:none; }
+  .err { color:var(--bad); min-height:1.3em; margin-top:8px; font-size:14px; }
+  .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px; }
+  .q { display:block; width:100%; text-align:left; margin-top:8px; background:var(--bg); color:var(--text); border:1px solid var(--border); font-weight:500; }
+  .q.active { border-color:var(--accent); }
+  .verdict { padding:12px 14px; border-radius:10px; margin-top:12px; font-weight:600; }
+  .verdict.correct { background:color-mix(in srgb, var(--ok) 18%, transparent); color:var(--ok); }
+  .verdict.partial { background:color-mix(in srgb, var(--warn) 18%, transparent); color:var(--warn); }
+  .verdict.incorrect { background:color-mix(in srgb, var(--bad) 18%, transparent); color:var(--bad); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Тренировка перед сдачей</h1>
+  <div class="banner" id="banner">Тренировка, не официальная оценка. Ответы не сохраняются и не влияют на оценки.</div>
+
+  <section class="card" id="code-card">
+    <label for="code" class="muted">Код сессии</label>
+    <div class="row"><input id="code" maxlength="8" placeholder="Например: K7REFB" style="flex:1"><button id="open">Открыть</button></div>
+    <div class="err" id="code-err"></div>
+  </section>
+
+  <section class="card hidden" id="work">
+    <div class="muted" id="title"></div>
+    <h3>Выберите вопрос</h3>
+    <div id="questions"></div>
+    <div class="hidden" id="answer-box">
+      <h3 id="current-q"></h3>
+      <textarea id="answer" maxlength="1500" placeholder="Ответьте своими словами, как на устной сдаче"></textarea>
+      <div class="row">
+        <button id="check">Проверить</button>
+        <span class="muted" id="state"></span>
+      </div>
+      <div id="result"></div>
+      <div class="err" id="check-err"></div>
+    </div>
+    <div class="hidden" id="selfcheck">
+      <h3>Самопроверка без помощника</h3>
+      <div class="muted">Помощник сейчас недоступен. Ответьте на вопрос вслух или письменно и сверьтесь с критериями, по которым оценивает преподаватель:</div>
+      <ul id="criteria"></ul>
+      <div class="muted">Проверьте себя: можете ли вы объяснить ответ простыми словами и привести пример? Если нет, перечитайте тему.</div>
+    </div>
+  </section>
+</main>
+
+<script>
+const API = "/api/v1/practice";
+const MESSAGES = {
+  practice_not_available: "Для этой сессии тренировка не включена",
+  ai_disabled: "Помощник выключен на сервере",
+  ai_unavailable: "Помощник недоступен",
+  ai_timeout: "Помощник не успел ответить",
+  ai_bad_response: "Помощник ответил неразборчиво, попробуйте ещё раз",
+  ai_internal: "Не удалось проверить ответ, попробуйте ещё раз",
+  ai_busy: "Помощник занят, повторите через минуту",
+  practice_rate_limited: "Слишком много проверок, попробуйте позже",
+  rate_limited: "Слишком много запросов, подождите минуту",
+  question_not_found: "Вопрос не найден",
+  job_not_found: "Результат устарел, отправьте ответ ещё раз",
+  validation_error: "Проверьте введённые данные",
+};
+const FALLBACK_CODES = new Set(["ai_disabled", "ai_unavailable", "ai_timeout", "ai_bad_response", "ai_internal"]);
+const FIELDS = { answer: "Ответ" };
+const $ = (id) => document.getElementById(id);
+let selected = null;
+let info = null;
+
+async function request(path, options = {}) {
+  const headers = options.body ? { "Content-Type": "application/json" } : {};
+  let response;
+  try {
+    response = await fetch(API + path, { ...options, headers });
+  } catch {
+    throw Object.assign(new Error("Нет связи с сервером. Проверьте подключение и повторите"), { code: "network" });
+  }
+  let body = null;
+  try { body = await response.json(); } catch {}
+  if (!response.ok) {
+    let message = MESSAGES[body?.code];
+    if (body?.code === "validation_error" && Array.isArray(body.errors) && body.errors.length) {
+      const e = body.errors[0];
+      const field = FIELDS[String(e.loc).split(".").pop()] || "Поле";
+      if (e.type === "string_too_long") message = field + ": максимум " + e.ctx.max_length + " симв.";
+      else if (e.type === "string_too_short") message = field + ": введите хотя бы один символ";
+      else message = field + ": недопустимое значение";
+    }
+    throw Object.assign(new Error(message || "Ошибка " + response.status), { code: body?.code });
+  }
+  return body;
+}
+
+function showSelfCheck() {
+  $("selfcheck").classList.remove("hidden");
+  const list = $("criteria");
+  list.replaceChildren();
+  for (const c of info.criteria) {
+    const li = document.createElement("li");
+    li.textContent = c.name + " (до " + c.max_points + " баллов)";
+    list.append(li);
+  }
+  if (!info.criteria.length) {
+    const li = document.createElement("li");
+    li.textContent = "Критерии преподаватель пока не задал";
+    list.append(li);
+  }
+}
+
+function difficultyLabel(n) { return ["", "лёгкий", "средний", "сложный"][n] || ""; }
+
+async function openPractice() {
+  $("code-err").textContent = "";
+  const code = $("code").value.trim().toUpperCase();
+  if (!code) return;
+  try {
+    info = await request("/" + encodeURIComponent(code));
+  } catch (error) {
+    $("code-err").textContent = error.message;
+    return;
+  }
+  $("banner").textContent = info.notice;
+  $("work").classList.remove("hidden");
+  $("title").textContent = info.title;
+  const box = $("questions");
+  box.replaceChildren();
+  for (const q of info.questions) {
+    const b = document.createElement("button");
+    b.className = "q";
+    b.textContent = q.text + (q.difficulty ? " · " + difficultyLabel(q.difficulty) : "");
+    b.addEventListener("click", () => select(q, b));
+    box.append(b);
+  }
+  if (!info.questions.length) box.textContent = "Вопросов пока нет.";
+  if (!info.ai_available) showSelfCheck();
+}
+
+function select(question, button) {
+  selected = question;
+  for (const b of document.querySelectorAll(".q")) b.classList.remove("active");
+  button.classList.add("active");
+  $("answer-box").classList.remove("hidden");
+  $("current-q").textContent = question.text;
+  $("result").replaceChildren();
+  $("check-err").textContent = "";
+  if (info.ai_available) $("answer-box").classList.remove("hidden");
+  else $("answer-box").classList.add("hidden");
+}
+
+async function check() {
+  if (!selected) return;
+  $("check-err").textContent = "";
+  $("result").replaceChildren();
+  $("check").disabled = true;
+  $("state").textContent = "отправлено";
+  const code = $("code").value.trim().toUpperCase();
+  try {
+    const job = await request("/" + encodeURIComponent(code) + "/check", { method: "POST", body: JSON.stringify({ question_id: selected.id, answer: $("answer").value }) });
+    for (let i = 0; i < 200; i++) {
+      await new Promise((r) => setTimeout(r, 2000));
+      const state = await request("/" + encodeURIComponent(code) + "/jobs/" + encodeURIComponent(job.id));
+      $("state").textContent = state.status === "running" ? "помощник думает, это может занять минуту" : state.status === "queued" ? "в очереди" : "";
+      if (state.status === "done") { showResult(state.result); return; }
+      if (state.status === "error") { fail(state.error_code); return; }
+    }
+    $("check-err").textContent = "Помощник слишком долго отвечает";
+  } catch (error) {
+    fail(error.code, error.message);
+  } finally {
+    $("check").disabled = false;
+    $("state").textContent = "";
+  }
+}
+
+function fail(code, message) {
+  $("check-err").textContent = MESSAGES[code] || message || "Не удалось проверить ответ";
+  if (FALLBACK_CODES.has(code)) showSelfCheck();
+}
+
+function showResult(result) {
+  const labels = { correct: "Верно", partial: "Частично верно", incorrect: "Пока неверно" };
+  const box = $("result");
+  const verdict = document.createElement("div");
+  verdict.className = "verdict " + result.verdict;
+  verdict.textContent = labels[result.verdict] || result.verdict;
+  const feedback = document.createElement("div");
+  feedback.style.marginTop = "8px";
+  feedback.textContent = result.feedback;
+  box.replaceChildren(verdict, feedback);
+  if (result.review.length) {
+    const head = document.createElement("h3");
+    head.textContent = "Что повторить";
+    const list = document.createElement("ul");
+    for (const topic of result.review) {
+      const li = document.createElement("li");
+      li.textContent = topic;
+      list.append(li);
+    }
+    box.append(head, list);
+  }
+  const note = document.createElement("div");
+  note.className = "muted";
+  note.style.marginTop = "8px";
+  note.textContent = "Помощник может ошибаться. Это не оценка.";
+  box.append(note);
+}
+
+$("open").addEventListener("click", openPractice);
+$("check").addEventListener("click", check);
+const urlCode = new URLSearchParams(location.search).get("code");
+if (urlCode) { $("code").value = urlCode.toUpperCase(); openPractice(); }
+</script>
+</body>
+</html>

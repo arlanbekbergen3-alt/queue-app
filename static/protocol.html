@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Протокол сдачи</title>
+<style>
+  :root { --bg:#f5f6f8; --card:#fff; --text:#1c1f26; --muted:#6b7280; --accent:#2563eb; --ok:#16a34a; --warn:#d97706; --bad:#dc2626; --border:#e2e5ea; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#12141a; --card:#1b1e26; --text:#e8eaf0; --muted:#98a0b0; --accent:#5b8def; --ok:#34c26a; --warn:#f0a43a; --bad:#f0625d; --border:#2b2f3a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--text); }
+  main { max-width:820px; margin:0 auto; padding:20px 16px 60px; }
+  h1 { font-size:22px; margin:0; }
+  h2 { font-size:17px; margin:0 0 12px; }
+  h3 { font-size:15px; margin:16px 0 8px; }
+  a { color:var(--accent); }
+  .top { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; flex-wrap:wrap; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; margin-bottom:16px; }
+  label { display:block; font-size:14px; color:var(--muted); margin:10px 0 4px; }
+  input, select, textarea { width:100%; font:inherit; padding:9px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); }
+  textarea { min-height:64px; resize:vertical; }
+  button { font:inherit; font-weight:600; padding:8px 12px; border:0; border-radius:10px; cursor:pointer; background:var(--accent); color:#fff; }
+  button.ghost { background:transparent; color:var(--muted); border:1px solid var(--border); }
+  button.ok { background:var(--ok); }
+  button.bad { background:var(--bad); }
+  button:disabled { opacity:.6; cursor:default; }
+  .muted { color:var(--muted); }
+  .hidden { display:none; }
+  .err { color:var(--bad); min-height:1.3em; margin-top:8px; font-size:14px; }
+  .note { color:var(--ok); min-height:1.3em; margin-top:8px; font-size:14px; }
+  .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .row > * { flex:0 0 auto; }
+  .row > .grow { flex:1 1 220px; }
+  .list > div { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; padding:8px 0; border-bottom:1px solid var(--border); }
+  .list .txt { flex:1; overflow-wrap:anywhere; }
+  .badge { display:inline-block; font-size:12px; padding:2px 8px; border-radius:999px; border:1px solid var(--border); color:var(--muted); margin-left:6px; }
+  .timer { font-size:28px; font-weight:800; font-variant-numeric:tabular-nums; }
+  .score { display:grid; grid-template-columns:1fr 90px; gap:8px; align-items:center; margin-top:8px; }
+  .draft { border:1px dashed var(--warn); border-radius:12px; padding:12px; margin-top:12px; }
+  pre { white-space:pre-wrap; overflow-wrap:anywhere; font-size:13px; margin:6px 0 0; }
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <h1>Протокол сдачи</h1>
+    <div class="row"><a href="/teacher">&larr; Очередь</a></div>
+  </div>
+
+  <section class="card hidden" id="need-login">
+    <p>Войдите на <a href="/teacher">странице преподавателя</a>, затем вернитесь сюда.</p>
+  </section>
+
+  <div id="app" class="hidden">
+    <section class="card">
+      <h2>Работы</h2>
+      <div class="list" id="assignments"></div>
+      <h3>Новая работа</h3>
+      <div class="row">
+        <input class="grow" id="a-title" maxlength="120" placeholder="Название, например: Лабораторная №3">
+        <input id="a-count" type="number" min="1" max="10" value="3" style="width:90px" title="Вопросов на сдачу">
+        <button id="a-create">Создать</button>
+      </div>
+      <div class="err" id="a-err"></div>
+    </section>
+
+    <section class="card hidden" id="a-card">
+      <h2 id="a-name"></h2>
+      <div class="row">
+        <label class="row" style="margin:0">Вопросов на сдачу <input id="s-count" type="number" min="1" max="10" style="width:80px"></label>
+        <label class="row" style="margin:0"><input id="s-practice" type="checkbox" style="width:auto"> Включить тренировку для студентов</label>
+        <button id="s-save">Сохранить</button>
+        <button class="bad" id="a-delete">Удалить работу</button>
+      </div>
+      <div class="muted" style="margin-top:6px">Тренировка показывает студентам вопросы банка, не включайте её, если банк используется на настоящей сдаче.</div>
+      <div class="err" id="s-err"></div>
+
+      <h3>Критерии <span class="badge hidden" id="locked">заблокированы после первой сдачи</span></h3>
+      <div class="list" id="criteria"></div>
+      <div class="row" id="c-form">
+        <input class="grow" id="c-name" maxlength="80" placeholder="Название критерия">
+        <input id="c-max" type="number" min="1" max="100" value="5" style="width:90px" title="Максимум баллов">
+        <button id="c-add">Добавить</button>
+      </div>
+      <div class="err" id="c-err"></div>
+
+      <h3>Банк вопросов <span class="muted" id="q-count"></span></h3>
+      <div class="list" id="questions"></div>
+      <label for="q-text">Новый вопрос</label>
+      <textarea id="q-text" maxlength="1000"></textarea>
+      <div class="row" style="margin-top:6px">
+        <select id="q-diff" style="width:150px"><option value="1">лёгкий</option><option value="2" selected>средний</option><option value="3">сложный</option></select>
+        <input class="grow" id="q-topic" maxlength="60" placeholder="Тема (необязательно)">
+        <button id="q-add">Добавить</button>
+      </div>
+      <div class="err" id="q-err"></div>
+
+      <h3>Черновик банка вопросов от модели <span class="badge" id="ai-badge"></span></h3>
+      <div class="muted">Модель только предлагает: вы проверяете, правите и утверждаете. В модель уходит только вставленный ниже текст работы, без имён и оценок. Модель может ошибаться.</div>
+      <label for="ai-source">Текст работы</label>
+      <textarea id="ai-source" style="min-height:110px"></textarea>
+      <div class="muted" id="ai-count"></div>
+      <div class="row" style="margin-top:6px">
+        <button id="ai-start">Предложить вопросы и критерии</button>
+        <span class="muted" id="ai-state"></span>
+      </div>
+      <div class="err" id="ai-err"></div>
+      <div class="draft hidden" id="ai-draft">
+        <strong>Предложено моделью, проверьте</strong>
+        <div class="err hidden" id="ai-short"></div>
+        <div id="ai-questions"></div>
+        <h3>Критерии</h3>
+        <div id="ai-criteria"></div>
+        <div class="row" style="margin-top:10px">
+          <button class="ok" id="ai-approve">Утвердить выбранное</button>
+          <button class="ghost" id="ai-discard">Отбросить черновик</button>
+        </div>
+        <div class="err" id="ai-approve-err"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Сессия и сдачи</h2>
+      <div class="row">
+        <input class="grow" id="p-code" maxlength="8" placeholder="Код сессии">
+        <button id="p-open">Открыть</button>
+      </div>
+      <div class="err" id="p-err"></div>
+      <div id="p-body" class="hidden">
+        <div class="muted" id="p-title"></div>
+        <div class="row" style="margin-top:8px">
+          <select class="grow" id="p-assignment"></select>
+          <button id="p-attach">Подключить работу к сессии</button>
+        </div>
+        <div class="note" id="p-note"></div>
+
+        <h3>Текущая сдача</h3>
+        <div id="current" class="muted">Нет вызванного студента.</div>
+        <h3>Завершённые и прочие</h3>
+        <div class="list" id="done"></div>
+        <h3>Аналитика сдач</h3>
+        <div class="muted">Агрегаты для самоанализа. Студенты показываются только номером талона.</div>
+        <div class="row"><button class="ghost" id="an-session">По этой сессии</button><button class="ghost" id="an-assignment">По всей работе</button></div>
+        <div class="err" id="an-err"></div>
+        <pre id="an-out"></pre>
+        <div class="hidden" id="audit-box"><h3>Журнал изменений</h3><pre id="audit"></pre></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+const API = "/api/v1";
+const TOKEN_KEY = "queue-teacher-token";
+const MESSAGES = {
+  assignment_title_taken: "Работа с таким названием уже есть",
+  assignment_limit: "Слишком много работ",
+  assignment_not_found: "Работа не найдена",
+  assignment_has_submissions: "Нельзя удалить работу, по которой уже были сдачи",
+  question_duplicate: "Такой вопрос уже есть",
+  question_limit: "Слишком много вопросов в банке",
+  question_not_found: "Вопрос не найден",
+  criterion_duplicate: "Критерий с таким названием уже есть",
+  criteria_limit: "Слишком много критериев",
+  criteria_locked: "Критерии нельзя менять после первой сдачи",
+  criterion_not_found: "Критерий не найден",
+  session_not_found: "Сессия не найдена",
+  session_has_submissions: "В сессии уже есть сдачи, работу менять нельзя",
+  submission_not_found: "Сдача не найдена",
+  grades_incomplete: "Поставьте баллы по всем критериям",
+  points_out_of_range: "Баллы вне допустимого диапазона",
+  already_completed: "Сдача уже завершена",
+  submission_cancelled: "Сдача отменена (студента пропустили)",
+  submission_not_editable: "Эту сдачу уже нельзя править как черновик",
+  not_completed: "Править можно только завершённую сдачу",
+  nothing_to_correct: "Ничего не изменилось",
+  not_authenticated: "Войдите заново на странице преподавателя",
+  invalid_token: "Войдите заново на странице преподавателя",
+  ai_disabled: "ИИ-помощник выключен в настройках сервера",
+  ai_unavailable: "Модель недоступна: проверьте, что Ollama запущена и модель скачана",
+  ai_timeout: "Модель не успела ответить. Повторите или сократите текст",
+  ai_bad_response: "Модель вернула непригодный ответ. Повторите попытку",
+  ai_internal: "Не удалось получить черновик. Повторите попытку",
+  ai_interrupted: "Генерацию прервал перезапуск сервера. Повторите",
+  ai_rate_limited: "Слишком много запросов к модели, попробуйте позже",
+  ai_busy: "Модель сейчас занята, повторите через минуту",
+  draft_not_ready: "Черновик ещё не готов",
+  already_approved: "Этот черновик уже утверждён",
+  job_not_found: "Задача не найдена",
+  rate_limited: "Слишком много запросов, подождите минуту",
+  validation_error: "Проверьте введённые данные",
+};
+const FIELD_LABELS = {
+  title: "Название", description: "Описание", name: "Название критерия", max_points: "Максимум баллов",
+  text: "Текст", topic: "Тема", reason: "Причина", points: "Баллы", comment: "Комментарий",
+  questions_per_submission: "Вопросов на сдачу", difficulty: "Сложность",
+};
+function describeValidation(errors) {
+  return errors.slice(0, 3).map((e) => {
+    const field = String(e.loc || "").split(".").pop();
+    const label = FIELD_LABELS[field] || field || "Поле";
+    const ctx = e.ctx || {};
+    if (e.type === "missing") return label + ": обязательное поле";
+    if (e.type === "string_too_short") return label + ": минимум " + ctx.min_length + " симв.";
+    if (e.type === "string_too_long") return label + ": максимум " + ctx.max_length + " симв.";
+    if (e.type === "greater_than_equal") return label + ": не меньше " + ctx.ge;
+    if (e.type === "less_than_equal") return label + ": не больше " + ctx.le;
+    return label + ": недопустимое значение";
+  }).join("; ");
+}
+
+const $ = (id) => document.getElementById(id);
+let token = null;
+try { token = sessionStorage.getItem(TOKEN_KEY); } catch {}
+let assignments = [];
+let current = null;
+let sessionCode = null;
+let sessionAvg = 300;
+let timerHandle = null;
+
+async function request(path, options = {}) {
+  const headers = { Authorization: "Bearer " + token, ...(options.headers || {}) };
+  if (options.body) headers["Content-Type"] = "application/json";
+  let response;
+  try {
+    response = await fetch(API + path, { ...options, headers });
+  } catch {
+    throw new Error("Нет связи с сервером. Проверьте подключение и повторите");
+  }
+  let body = null;
+  try { body = await response.json(); } catch {}
+  if (!response.ok) {
+    const detailed = body?.code === "validation_error" && Array.isArray(body.errors) && body.errors.length
+      ? describeValidation(body.errors) : "";
+    const known = MESSAGES[body?.code];
+    const missing = body?.code === "grades_incomplete" ? String(body.detail).split(": ")[1] : "";
+    const error = new Error(detailed || (known && missing ? known + ": " + missing : known) || "Ошибка " + response.status);
+    error.code = body?.code;
+    error.status = response.status;
+    throw error;
+  }
+  return body;
+}
+
+function el(tag, props = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [key, value] of Object.entries(props)) {
+    if (key === "onclick") node.addEventListener("click", value);
+    else if (key === "class") node.className = value;
+    else node.setAttribute(key, value);
+  }
+  for (const child of children) node.append(child);
+  return node;
+}
+
+function show(id, message, ok) {
+  const box = $(id);
+  box.textContent = message || "";
+  box.className = ok ? "note" : "err";
+}
+async function guarded(errorId, fn) {
+  show(errorId, "");
+  try { return await fn(); } catch (error) { show(errorId, error.message); }
+}
+
+function difficultyLabel(n) { return ["", "лёгкий", "средний", "сложный"][n] || n; }
+function clock(seconds) {
+  seconds = Math.max(0, Math.floor(seconds));
+  return String(Math.floor(seconds / 60)).padStart(2, "0") + ":" + String(seconds % 60).padStart(2, "0");
+}
+
+async function loadAssignments() {
+  assignments = await request("/assignments");
+  const box = $("assignments");
+  box.replaceChildren();
+  if (!assignments.length) box.append(el("div", { class: "muted" }, "Работ пока нет."));
+  for (const a of assignments) {
+    box.append(el("div", {},
+      el("div", { class: "txt" }, a.title,
+        el("span", { class: "badge" }, a.question_count + " вопр."),
+        el("span", { class: "badge" }, a.criteria_count + " крит."),
+        el("span", { class: "badge" }, a.submissions_count + " сдач")),
+      el("button", { class: "ghost", onclick: () => openAssignment(a.id) }, "Открыть")));
+  }
+  const select = $("p-assignment");
+  select.replaceChildren(el("option", { value: "" }, "— без работы —"));
+  for (const a of assignments) select.append(el("option", { value: a.id }, a.title));
+}
+
+async function openAssignment(id) {
+  const a = await request("/assignments/" + id);
+  current = a;
+  $("a-card").classList.remove("hidden");
+  $("a-name").textContent = a.title;
+  $("s-count").value = a.questions_per_submission;
+  $("s-practice").checked = a.practice_enabled;
+  $("locked").classList.toggle("hidden", !a.criteria_locked);
+  $("c-form").classList.toggle("hidden", a.criteria_locked);
+  const [criteria, questions] = await Promise.all([
+    request("/assignments/" + id + "/criteria"),
+    request("/assignments/" + id + "/questions"),
+  ]);
+  const cbox = $("criteria");
+  cbox.replaceChildren();
+  if (!criteria.length) cbox.append(el("div", { class: "muted" }, "Критериев нет."));
+  for (const c of criteria) {
+    const row = el("div", {}, el("div", { class: "txt" }, c.name, el("span", { class: "badge" }, "макс. " + c.max_points)));
+    if (!a.criteria_locked) row.append(el("button", { class: "ghost", onclick: () => guarded("c-err", async () => {
+      await request("/assignments/" + id + "/criteria/" + c.id, { method: "DELETE" });
+      await openAssignment(id);
+    }) }, "Удалить"));
+    cbox.append(row);
+  }
+  $("q-count").textContent = "(" + questions.length + ")";
+  const qbox = $("questions");
+  qbox.replaceChildren();
+  if (!questions.length) qbox.append(el("div", { class: "muted" }, "Вопросов нет."));
+  for (const q of questions) {
+    qbox.append(el("div", {},
+      el("div", { class: "txt" }, q.text, el("span", { class: "badge" }, difficultyLabel(q.difficulty)),
+        q.topic ? el("span", { class: "badge" }, q.topic) : ""),
+      el("button", { class: "ghost", onclick: () => guarded("q-err", async () => {
+        await request("/assignments/" + id + "/questions/" + q.id, { method: "DELETE" });
+        await openAssignment(id);
+      }) }, "Удалить")));
+  }
+  if (window.onAssignmentOpened) window.onAssignmentOpened(a);
+}
+
+$("a-create").addEventListener("click", () => guarded("a-err", async () => {
+  const a = await request("/assignments", { method: "POST", body: JSON.stringify({
+    title: $("a-title").value, questions_per_submission: Number($("a-count").value) }) });
+  $("a-title").value = "";
+  await loadAssignments();
+  await openAssignment(a.id);
+}));
+$("s-save").addEventListener("click", () => guarded("s-err", async () => {
+  await request("/assignments/" + current.id, { method: "PATCH", body: JSON.stringify({
+    questions_per_submission: Number($("s-count").value), practice_enabled: $("s-practice").checked }) });
+  show("s-err", "Сохранено", true);
+  await loadAssignments();
+}));
+$("a-delete").addEventListener("click", () => guarded("s-err", async () => {
+  if (!confirm("Удалить работу вместе с вопросами и критериями?")) return;
+  await request("/assignments/" + current.id, { method: "DELETE" });
+  $("a-card").classList.add("hidden");
+  await loadAssignments();
+}));
+$("c-add").addEventListener("click", () => guarded("c-err", async () => {
+  await request("/assignments/" + current.id + "/criteria", { method: "POST", body: JSON.stringify({
+    name: $("c-name").value, max_points: Number($("c-max").value) }) });
+  $("c-name").value = "";
+  await openAssignment(current.id);
+}));
+$("q-add").addEventListener("click", () => guarded("q-err", async () => {
+  await request("/assignments/" + current.id + "/questions", { method: "POST", body: JSON.stringify({
+    text: $("q-text").value, difficulty: Number($("q-diff").value), topic: $("q-topic").value }) });
+  $("q-text").value = "";
+  await openAssignment(current.id);
+}));
+
+let aiJob = null;
+let aiTimer = null;
+function aiErrorText(code) { return MESSAGES[code] || "Ошибка модели"; }
+
+async function loadAiStatus() {
+  try {
+    const status = await request("/ai/status");
+    $("ai-badge").textContent = status.enabled ? "модель: " + status.model : "выключено";
+    $("ai-start").disabled = !status.enabled;
+    if (!status.enabled) show("ai-err", MESSAGES.ai_disabled);
+    $("ai-source").maxLength = status.max_source_chars;
+    updateAiCount();
+  } catch {}
+}
+
+function draftRow(question) {
+  const text = el("textarea", { maxlength: "1000" });
+  text.value = question.text;
+  const diff = el("select", { style: "width:120px" },
+    ...[1, 2, 3].map((n) => el("option", { value: String(n) }, difficultyLabel(n))));
+  diff.value = String(question.difficulty);
+  const topic = el("input", { maxlength: "60", placeholder: "тема", style: "width:140px" });
+  topic.value = question.topic || "";
+  const box = el("input", { type: "checkbox", style: "width:auto" });
+  box.checked = true;
+  const row = el("div", { style: "padding:8px 0;border-bottom:1px solid var(--border)" },
+    el("label", { class: "row", style: "margin:0" }, box, "включить"), text, el("div", { class: "row" }, diff, topic));
+  row.collect = () => box.checked ? { text: text.value, difficulty: Number(diff.value), topic: topic.value } : null;
+  return row;
+}
+function draftCriterion(criterion) {
+  const name = el("input", { maxlength: "80" });
+  name.value = criterion.name;
+  const max = el("input", { type: "number", min: "1", max: "100", style: "width:90px" });
+  max.value = criterion.max_points;
+  const box = el("input", { type: "checkbox", style: "width:auto" });
+  box.checked = true;
+  const row = el("div", { class: "row", style: "padding:6px 0" }, box, el("div", { class: "grow" }, name), max);
+  row.collect = () => box.checked ? { name: name.value, max_points: Number(max.value) } : null;
+  return row;
+}
+
+function showDraft(result) {
+  $("ai-draft").classList.remove("hidden");
+  const q = $("ai-questions");
+  q.replaceChildren(...result.questions.map(draftRow));
+  const short = $("ai-short");
+  short.textContent = result.below_recommended ? "Меньше рекомендуемого: модель вернула " + result.questions.length + " вопр. при рекомендуемом минимуме " + result.min_questions + ". Можно утвердить, добавить свои вопросы или запросить черновик заново." : "";
+  short.classList.toggle("hidden", !result.below_recommended);
+  const c = $("ai-criteria");
+  c.replaceChildren(...result.criteria.map(draftCriterion));
+  if (current && current.criteria_locked) c.replaceChildren(el("div", { class: "muted" }, "Критерии уже заблокированы, будут добавлены только вопросы."));
+}
+
+let aiStartedAt = 0;
+let aiPollFailures = 0;
+
+function elapsedText() {
+  const seconds = Math.max(0, Math.round((Date.now() - aiStartedAt) / 1000));
+  return Math.floor(seconds / 60) + " мин " + (seconds % 60) + " с";
+}
+
+function updateAiCount() {
+  const area = $("ai-source");
+  const max = area.maxLength > 0 ? area.maxLength : 12000;
+  const length = area.value.length;
+  $("ai-count").textContent = length + " / " + max + " символов" + (length >= max ? ": достигнут предел, лишний текст не принимается" : "");
+}
+
+$("ai-source").addEventListener("input", updateAiCount);
+
+async function pollJob() {
+  clearTimeout(aiTimer);
+  if (!aiJob) return;
+  try {
+    const job = await request("/ai/jobs/" + aiJob);
+    aiPollFailures = 0;
+    const label = { queued: "в очереди", running: "модель думает (на процессоре это может занять несколько минут)", done: "готово", error: "ошибка" }[job.status];
+    $("ai-state").textContent = label + (job.status === "queued" || job.status === "running" ? ", прошло " + elapsedText() : "");
+    $("ai-err").textContent = "";
+    if (job.status === "done") { $("ai-start").disabled = false; showDraft(job.result); return; }
+    if (job.status === "error") { $("ai-start").disabled = false; show("ai-err", aiErrorText(job.error_code)); aiJob = null; return; }
+  } catch (error) {
+    aiPollFailures += 1;
+    if (error.status === 404 || error.status === 401 || aiPollFailures >= 20) {
+      show("ai-err", error.message);
+      $("ai-start").disabled = false;
+      aiJob = null;
+      return;
+    }
+    show("ai-err", error.message + ". Повторяем запрос…");
+  }
+  aiTimer = setTimeout(pollJob, 3000);
+}
+
+$("ai-start").addEventListener("click", () => guarded("ai-err", async () => {
+  $("ai-draft").classList.add("hidden");
+  const job = await request("/assignments/" + current.id + "/ai/draft", { method: "POST", body: JSON.stringify({ source_text: $("ai-source").value }) });
+  aiJob = job.id;
+  aiStartedAt = Date.now();
+  aiPollFailures = 0;
+  $("ai-start").disabled = true;
+  $("ai-state").textContent = "в очереди";
+  pollJob();
+}));
+$("ai-discard").addEventListener("click", () => { aiJob = null; $("ai-draft").classList.add("hidden"); $("ai-state").textContent = ""; });
+$("ai-approve").addEventListener("click", () => guarded("ai-approve-err", async () => {
+  const questions = [...$("ai-questions").children].map((r) => r.collect()).filter(Boolean);
+  const criteria = [...$("ai-criteria").children].map((r) => r.collect ? r.collect() : null).filter(Boolean);
+  const result = await request("/ai/jobs/" + aiJob + "/approve", { method: "POST", body: JSON.stringify({ questions, criteria }) });
+  show("ai-approve-err", "Добавлено вопросов: " + result.added_questions + ", пропущено повторов: " + result.skipped_questions +
+    "; критериев: " + result.added_criteria, true);
+  aiJob = null;
+  $("ai-draft").classList.add("hidden");
+  await openAssignment(current.id);
+  show("ai-approve-err", "Добавлено вопросов: " + result.added_questions + ", критериев: " + result.added_criteria, true);
+}));
+window.onAssignmentOpened = () => { loadAiStatus(); };
+
+async function openSession() {
+  const code = $("p-code").value.trim().toUpperCase();
+  if (!code) return;
+  const queue = await request("/sessions/" + encodeURIComponent(code) + "/queue");
+  sessionCode = code;
+  sessionAvg = queue.avg_service_seconds;
+  $("p-body").classList.remove("hidden");
+  $("p-title").textContent = queue.title + (queue.group ? " · " + queue.group : "") + " · " + code;
+  const sessions = await request("/sessions");
+  const mine = sessions.find((s) => s.code === code);
+  $("p-assignment").value = mine && mine.assignment_id ? mine.assignment_id : "";
+  await refreshSubmissions();
+}
+$("p-open").addEventListener("click", () => guarded("p-err", openSession));
+$("p-attach").addEventListener("click", () => guarded("p-err", async () => {
+  await request("/sessions/" + sessionCode + "/assignment", { method: "PUT", body: JSON.stringify({
+    assignment_id: $("p-assignment").value || null }) });
+  show("p-note", "Работа подключена", true);
+  await refreshSubmissions();
+}));
+
+function scoreForm(submission, criteria, opts) {
+  const form = el("div", {});
+  const inputs = {};
+  for (const c of criteria) {
+    const input = el("input", { type: "number", min: "0", max: String(c.max_points), value: c.points ?? "" });
+    inputs[c.criterion_id] = input;
+    form.append(el("div", { class: "score" }, el("div", {}, c.name + " (макс. " + c.max_points + ")"), input));
+  }
+  const comment = el("textarea", { maxlength: "1000", placeholder: "Комментарий к сдаче" });
+  comment.value = submission.comment || "";
+  form.append(el("label", {}, "Комментарий"), comment);
+  let reason = null;
+  if (opts.reason) {
+    reason = el("input", { maxlength: "300", placeholder: "Причина правки (обязательно)" });
+    form.append(el("label", {}, "Причина правки"), reason);
+  }
+  form.collect = () => ({
+    scores: criteria.filter((c) => inputs[c.criterion_id].value !== "").map((c) => ({
+      criterion_id: c.criterion_id, points: Number(inputs[c.criterion_id].value) })),
+    comment: comment.value,
+    reason: reason ? reason.value : undefined,
+  });
+  return form;
+}
+
+async function sessionCriteria(submission) {
+  const sessionAssignment = $("p-assignment").value;
+  const list = await request("/assignments/" + sessionAssignment + "/criteria");
+  const byId = Object.fromEntries(submission.scores.map((s) => [s.criterion_id, s]));
+  return list.map((c) => ({ criterion_id: c.id, name: c.name, max_points: c.max_points, points: byId[c.id]?.points }));
+}
+
+async function renderCurrent(submission) {
+  clearInterval(timerHandle);
+  const box = $("current");
+  if (!submission) {
+    box.className = "muted";
+    box.replaceChildren("Нет вызванного студента.");
+    return;
+  }
+  box.className = "";
+  const criteria = await sessionCriteria(submission);
+  const form = scoreForm(submission, criteria, {});
+  const timer = el("div", { class: "timer" });
+  const started = new Date(submission.started_at).getTime();
+  const tick = () => { timer.textContent = clock((Date.now() - started) / 1000); };
+  tick();
+  timerHandle = setInterval(tick, 1000);
+  const err = el("div", { class: "err" });
+  const run = async (fn) => { err.textContent = ""; try { await fn(); } catch (e) { err.textContent = e.message; } };
+  box.replaceChildren(
+    el("div", { class: "row" }, el("strong", {}, "Талон №" + submission.ticket), timer,
+      el("span", { class: "muted" }, "обычно около " + Math.round(sessionAvg / 60) + " мин, это подсказка, не ограничение")),
+    el("h3", {}, "Вопросы" + (submission.questions_short ? " (в банке меньше, чем нужно)" : "")),
+    ...submission.questions.map((q) => el("div", {}, q.position + ". " + q.text,
+      el("span", { class: "badge" }, difficultyLabel(q.difficulty)), q.topic ? el("span", { class: "badge" }, q.topic) : "")),
+    el("h3", {}, "Оценка"), form,
+    el("div", { class: "row", style: "margin-top:12px" },
+      el("button", { class: "ghost", onclick: () => run(async () => {
+        const g = form.collect();
+        await request("/submissions/" + submission.id + "/grades", { method: "PUT", body: JSON.stringify({ scores: g.scores, comment: g.comment }) });
+        show("p-note", "Черновик сохранён", true);
+      }) }, "Сохранить черновик"),
+      el("button", { class: "ok", onclick: () => run(async () => {
+        const g = form.collect();
+        await request("/submissions/" + submission.id + "/complete", { method: "POST", body: JSON.stringify({ scores: g.scores, comment: g.comment }) });
+        await refreshSubmissions();
+      }) }, "Завершить сдачу")),
+    err);
+}
+
+function describeSubmission(s) {
+  const status = { completed: "завершена", cancelled: "отменена", in_progress: "идёт" }[s.status] || s.status;
+  const score = s.total_points != null ? " · " + s.total_points + "/" + s.max_points : "";
+  const time = s.duration_seconds != null ? " · " + clock(s.duration_seconds) : "";
+  return "№" + s.ticket + " · " + status + score + time;
+}
+
+async function refreshSubmissions() {
+  const list = await request("/sessions/" + sessionCode + "/submissions");
+  const live = list.find((s) => s.status === "in_progress");
+  await renderCurrent(live || null);
+  const box = $("done");
+  box.replaceChildren();
+  const others = list.filter((s) => s !== live);
+  if (!others.length) box.append(el("div", { class: "muted" }, "Пока нет."));
+  for (const s of others) {
+    const row = el("div", {}, el("div", { class: "txt" }, describeSubmission(s),
+      s.status === "completed" ? el("div", { class: "muted" }, s.scores.map((x) => x.name + ": " + x.points + "/" + x.max_points).join("; ")) : ""));
+    const buttons = el("div", { class: "row" });
+    if (s.status === "completed") buttons.append(el("button", { class: "ghost", onclick: () => correct(s, row) }, "Править"));
+    buttons.append(el("button", { class: "ghost", onclick: () => showAudit(s) }, "Журнал"));
+    row.append(buttons);
+    box.append(row);
+  }
+}
+
+async function correct(submission, row) {
+  const criteria = submission.scores.map((x) => ({ criterion_id: x.criterion_id, name: x.name, max_points: x.max_points, points: x.points }));
+  const form = scoreForm(submission, criteria, { reason: true });
+  const err = el("div", { class: "err" });
+  const holder = el("div", { style: "width:100%" }, form, err,
+    el("button", { onclick: async () => {
+      err.textContent = "";
+      try {
+        const g = form.collect();
+        await request("/submissions/" + submission.id + "/correct", { method: "POST", body: JSON.stringify(g) });
+        await refreshSubmissions();
+      } catch (e) { err.textContent = e.message; }
+    } }, "Сохранить правку"));
+  row.after(holder);
+}
+
+async function showAudit(submission) {
+  const entries = await request("/submissions/" + submission.id + "/audit");
+  $("audit-box").classList.remove("hidden");
+  const names = Object.fromEntries(submission.scores.map((x) => [x.criterion_id, x.name]));
+  $("audit").textContent = entries.map((e) => {
+    const field = e.field.startsWith("score:") ? (names[e.field.slice(6)] || "критерий") : e.field === "comment" ? "комментарий" : e.field;
+    return new Date(e.occurred_at).toLocaleString("ru-RU") + " · " + e.action + " · " + field + ": " +
+      (e.old_value ?? "—") + " → " + (e.new_value ?? "—") + (e.reason ? " · причина: " + e.reason : "");
+  }).join("\n") || "Записей нет.";
+}
+
+function renderAnalytics(a) {
+  const lines = [];
+  lines.push("Завершённых сдач: " + a.submissions);
+  if (!a.sufficient) { lines.push(a.note); return lines.join("\n"); }
+  const d = a.duration;
+  lines.push("Длительность: медиана " + clock(d.median) + ", средние 50% от " + clock(d.p25) + " до " + clock(d.p75) + ", минимум " + clock(d.min) + ", максимум " + clock(d.max));
+  for (const c of a.criteria) {
+    const dist = Object.entries(c.distribution).filter(([, n]) => n > 0).map(([p, n]) => p + ": " + n).join(", ");
+    lines.push(c.name + ": среднее " + String(c.mean).replace(".", ",") + " из " + c.max_points + " (баллы: количество) " + dist);
+  }
+  for (const b of a.bands) lines.push("Результат «" + b.label + "»: " + b.count + " сдач" + (b.median_duration != null ? ", медиана " + clock(b.median_duration) : ", мало для сравнения"));
+  if (a.flags.length) { lines.push("", "Что стоит посмотреть:"); for (const f of a.flags) lines.push("• " + f.text); }
+  else lines.push("Заметных выбросов по длительности нет.");
+  lines.push("", a.note);
+  return lines.join("\n");
+}
+$("an-session").addEventListener("click", () => guarded("an-err", async () => {
+  $("an-out").textContent = renderAnalytics(await request("/sessions/" + sessionCode + "/analytics"));
+}));
+$("an-assignment").addEventListener("click", () => guarded("an-err", async () => {
+  const id = $("p-assignment").value;
+  if (!id) throw new Error("К сессии не подключена работа");
+  $("an-out").textContent = renderAnalytics(await request("/assignments/" + id + "/analytics"));
+}));
+
+async function start() {
+  if (!token) { $("need-login").classList.remove("hidden"); return; }
+  $("app").classList.remove("hidden");
+  try {
+    await loadAssignments();
+  } catch (error) {
+    $("app").classList.add("hidden");
+    $("need-login").classList.remove("hidden");
+    return;
+  }
+  const code = new URLSearchParams(location.search).get("code");
+  if (code) {
+    $("p-code").value = code.toUpperCase();
+    guarded("p-err", openSession);
+  }
+}
+start();
+</script>
+</body>
+</html>

@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Очередь на сдачу</title>
+<style>
+  :root { --bg:#f5f6f8; --card:#fff; --text:#1c1f26; --muted:#6b7280; --accent:#2563eb; --ok:#16a34a; --warn:#d97706; --bad:#dc2626; --border:#e2e5ea; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#12141a; --card:#1b1e26; --text:#e8eaf0; --muted:#98a0b0; --accent:#5b8def; --ok:#34c26a; --warn:#f0a43a; --bad:#f0625d; --border:#2b2f3a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--text); }
+  main { max-width:440px; margin:0 auto; padding:24px 16px 48px; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  .sub { color:var(--muted); margin:0 0 20px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; }
+  label { display:block; font-size:14px; color:var(--muted); margin:14px 0 6px; }
+  label:first-child { margin-top:0; }
+  input { width:100%; font:inherit; padding:12px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); }
+  input#code { text-transform:uppercase; letter-spacing:.2em; font-weight:600; }
+  button { width:100%; font:inherit; font-weight:600; padding:13px; border:0; border-radius:10px; cursor:pointer; background:var(--accent); color:#fff; margin-top:18px; }
+  button.ghost { background:transparent; color:var(--muted); border:1px solid var(--border); margin-top:12px; }
+  button:disabled { opacity:.6; cursor:default; }
+  .big { font-size:64px; font-weight:700; line-height:1; margin:8px 0; }
+  .center { text-align:center; }
+  .muted { color:var(--muted); }
+  .badge { display:inline-block; padding:4px 10px; border-radius:99px; font-size:13px; font-weight:600; color:#fff; background:var(--accent); }
+  .badge.called { background:var(--ok); }
+  .badge.skipped { background:var(--warn); }
+  .badge.left, .badge.done { background:var(--muted); }
+  .alert { padding:12px 14px; border-radius:10px; margin-top:16px; font-weight:600; }
+  .alert.ok { background:color-mix(in srgb, var(--ok) 18%, transparent); color:var(--ok); }
+  .alert.warn { background:color-mix(in srgb, var(--warn) 18%, transparent); color:var(--warn); }
+  .err { color:var(--bad); min-height:1.4em; margin-top:10px; font-size:14px; }
+  .hidden { display:none; }
+  .row { display:flex; justify-content:space-between; gap:12px; margin-top:14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Очередь на сдачу</h1>
+  <p class="sub" id="subtitle"></p>
+
+  <section class="card" id="join-view">
+    <label for="code">Код сессии</label>
+    <input id="code" maxlength="8" autocomplete="off" autocapitalize="characters" placeholder="ABC123">
+    <label for="name">Ваше имя и фамилия</label>
+    <input id="name" maxlength="60" autocomplete="name" placeholder="Анна Иванова">
+    <button id="join-btn">Встать в очередь</button>
+    <div class="err" id="join-err"></div>
+  </section>
+
+  <section class="card hidden" id="queue-view">
+    <div class="center">
+      <span class="badge" id="status-badge"></span>
+      <div class="muted" style="margin-top:10px" id="session-title"></div>
+      <div class="big" id="position">–</div>
+      <div id="position-label" class="muted"></div>
+    </div>
+    <div id="message"></div>
+    <div id="result"></div>
+    <div id="practice-link" class="hidden"><a id="practice-a" href="/practice">Потренироваться перед сдачей (не оценка)</a></div>
+    <div class="row"><span class="muted">Сейчас у преподавателя</span><strong id="now-serving">—</strong></div>
+    <div class="row"><span class="muted">Примерное ожидание</span><strong id="eta">—</strong></div>
+    <div class="row"><span class="muted">Ваш номер</span><strong id="ticket">—</strong></div>
+    <button class="ghost" id="leave-btn">Выйти из очереди</button>
+    <button class="hidden" id="again-btn">Встать в очередь заново</button>
+    <div class="err" id="queue-err"></div>
+  </section>
+</main>
+
+<script>
+const API = "/api/v1/sessions";
+const STORAGE_KEY = "queue-entry";
+const POLL_MS = 5000;
+const POLL_HIDDEN_MS = 15000;
+const POLL_MAX_BACKOFF_MS = 30000;
+const SAFETY_POLL_MS = 60000;
+const LIVE_SILENCE_MS = 45000;
+const LIVE_RETRY_MS = 5000;
+const LIVE_RETRY_MAX_MS = 60000;
+const MESSAGES = {
+  session_closed: "Сессия закрыта",
+  queue_full: "Очередь переполнена",
+  session_full: "В этой сессии больше нет мест",
+  session_not_found: "Сессия с таким кодом не найдена",
+  entry_not_found: "Запись не найдена",
+  rate_limited: "Слишком много запросов, подождите минуту",
+  overloaded: "Сервис перегружен, попробуйте через пару секунд",
+  database_unavailable: "Сервис временно недоступен, попробуйте позже",
+  validation_error: "Проверьте введённые данные",
+};
+
+const FIELD_LABELS = {
+  username: "Логин", password: "Пароль", invite_code: "Код приглашения",
+  title: "Название", group: "Группа", name: "Имя", token: "Токен",
+};
+const PATTERN_HINTS = {
+  username: "только латинские буквы, цифры и символы . _ - (e-mail с @ не подходит)",
+};
+
+function describeValidation(errors) {
+  const parts = errors.slice(0, 3).map((e) => {
+    const field = String(e.loc || "").split(".").pop();
+    const label = FIELD_LABELS[field] || field || "Поле";
+    const ctx = e.ctx || {};
+    if (e.type === "missing") return label + ": обязательное поле";
+    if (e.type === "string_too_short") return label + ": минимум " + ctx.min_length + " симв.";
+    if (e.type === "string_too_long") return label + ": максимум " + ctx.max_length + " симв.";
+    if (e.type === "string_pattern_mismatch") return label + ": " + (PATTERN_HINTS[field] || "недопустимые символы");
+    return label + ": недопустимое значение";
+  });
+  return parts.join("; ");
+}
+
+const $ = (id) => document.getElementById(id);
+let state = loadState();
+let timer = null;
+let failures = 0;
+let announced = false;
+let live = null;
+let sessionInfo = null;
+let liveConnected = false;
+let liveFailures = 0;
+let liveRetryTimer = null;
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch { return null; }
+}
+function saveState(value) {
+  state = value;
+  try {
+    if (value) localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
+    else localStorage.removeItem(STORAGE_KEY);
+  } catch {}
+}
+function randomToken() {
+  const bytes = new Uint8Array(24);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+}
+function sessionLabel() {
+  if (!sessionInfo || sessionInfo.code !== state.code) return "Сессия " + state.code;
+  return sessionInfo.title + (sessionInfo.group ? " · " + sessionInfo.group : "") + " (" + state.code + ")";
+}
+async function loadSessionInfo() {
+  if (!state || (sessionInfo && sessionInfo.code === state.code)) return;
+  try {
+    sessionInfo = await request("/" + encodeURIComponent(state.code));
+    $("session-title").textContent = sessionLabel();
+    $("practice-a").href = "/practice?code=" + encodeURIComponent(state.code);
+    $("practice-link").classList.toggle("hidden", !sessionInfo.practice);
+  } catch {}
+}
+function formatEta(seconds) {
+  if (seconds == null) return "—";
+  if (seconds <= 0) return "сейчас";
+  return "≈ " + Math.max(1, Math.ceil(seconds / 60)) + " мин";
+}
+
+async function readEvents(url, headers, signal, onEvent, onActivity) {
+  const response = await fetch(url, { headers: { ...headers, Accept: "text/event-stream" }, signal });
+  if (!response.ok || !response.body) {
+    const error = new Error("stream " + response.status);
+    error.status = response.status;
+    throw error;
+  }
+  onActivity();
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) return;
+    buffer += decoder.decode(value, { stream: true });
+    let end;
+    while ((end = buffer.indexOf("\n\n")) >= 0) {
+      const block = buffer.slice(0, end);
+      buffer = buffer.slice(end + 2);
+      let name = "message";
+      let data = "";
+      for (const line of block.split("\n")) {
+        if (line.startsWith("event:")) name = line.slice(6).trim();
+        else if (line.startsWith("data:")) data += line.slice(5).trim();
+      }
+      onActivity();
+      if (name === "end") onEvent(name, null);
+      else if (data) onEvent(name, JSON.parse(data));
+    }
+  }
+}
+
+async function request(path, options = {}) {
+  let response;
+  try {
+    response = await fetch(API + path, options);
+  } catch {
+    const error = new Error("Нет связи с сервером. Проверьте подключение и повторите");
+    error.status = 0;
+    throw error;
+  }
+  let body = null;
+  try { body = await response.json(); } catch {}
+  if (!response.ok) {
+    const detailed = body?.code === "validation_error" && Array.isArray(body.errors) && body.errors.length
+      ? describeValidation(body.errors) : "";
+    const error = new Error(detailed || MESSAGES[body?.code] || "Ошибка " + response.status);
+    error.status = response.status;
+    throw error;
+  }
+  return body;
+}
+
+function show(view) {
+  $("join-view").classList.toggle("hidden", view !== "join");
+  $("queue-view").classList.toggle("hidden", view !== "queue");
+  $("subtitle").textContent = view === "join"
+    ? "Введите код, который показал преподаватель"
+    : "Не закрывайте страницу — позиция обновляется сама";
+}
+
+async function join() {
+  const code = $("code").value.trim().toUpperCase();
+  const name = $("name").value.trim();
+  $("join-err").textContent = "";
+  if (!code || !name) { $("join-err").textContent = "Введите код и имя"; return; }
+  $("join-btn").disabled = true;
+  const token = state && state.code === code ? state.token : randomToken();
+  try {
+    const entry = await request("/" + encodeURIComponent(code) + "/join", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, token }),
+    });
+    try { localStorage.setItem("queue-name", name); } catch {}
+    saveState({ code, token });
+    announced = false;
+    failures = 0;
+    render(entry);
+    schedule();
+    startLive();
+  } catch (error) {
+    $("join-err").textContent = error.status === 404 ? "Сессия с таким кодом не найдена" : error.message;
+  } finally {
+    $("join-btn").disabled = false;
+  }
+}
+
+let requestSeq = 0;
+let appliedSeq = 0;
+
+async function poll() {
+  if (!state) return;
+  const id = ++requestSeq;
+  try {
+    const entry = await request("/" + encodeURIComponent(state.code) + "/me", {
+      headers: { "X-Entry-Token": state.token },
+    });
+    failures = 0;
+    $("queue-err").textContent = "";
+    if (id > appliedSeq) {
+      appliedSeq = id;
+      render(entry);
+    }
+    startLive();
+  } catch (error) {
+    if (error.status === 404) { resetToJoin(); return; }
+    failures += 1;
+    $("queue-err").textContent = "Нет связи, пробуем снова…";
+  }
+  schedule();
+}
+
+function schedule() {
+  clearTimeout(timer);
+  if (!state) return;
+  const status = $("status-badge").dataset.status;
+  if (status === "done" || status === "left") return;
+  const base = liveConnected ? SAFETY_POLL_MS : document.visibilityState === "hidden" ? POLL_HIDDEN_MS : POLL_MS;
+  const delay = Math.min(base * 2 ** failures, liveConnected ? SAFETY_POLL_MS : POLL_MAX_BACKOFF_MS) + Math.random() * 1000;
+  timer = setTimeout(poll, delay);
+}
+
+function render(entry) {
+  show("queue");
+  const labels = { waiting: "В очереди", called: "Вас вызвали", done: "Сдано", skipped: "Пропущен", left: "Вы вышли" };
+  const badge = $("status-badge");
+  badge.textContent = labels[entry.status] || entry.status;
+  badge.className = "badge " + entry.status;
+  badge.dataset.status = entry.status;
+  $("session-title").textContent = sessionLabel();
+  loadSessionInfo();
+  $("ticket").textContent = "№ " + entry.ticket;
+  $("now-serving").textContent = entry.now_serving
+    ? "№ " + entry.now_serving.ticket + " " + entry.now_serving.name
+    : "—";
+  $("eta").textContent = entry.status === "waiting" ? formatEta(entry.eta_seconds) : "—";
+
+  const message = $("message");
+  message.replaceChildren();
+  const addMessage = (text, kind) => {
+    const div = document.createElement("div");
+    div.className = "alert " + kind;
+    div.textContent = text;
+    message.appendChild(div);
+  };
+
+  const active = entry.status === "waiting" || entry.status === "called";
+  const finished = entry.status === "done" || entry.status === "left";
+  $("leave-btn").classList.toggle("hidden", !active);
+  $("again-btn").classList.toggle("hidden", !finished);
+
+  if (entry.status === "waiting") {
+    $("position").textContent = entry.position;
+    $("position-label").textContent = "ваше место в очереди";
+    if (entry.position === 1 && entry.people_ahead === 0) addMessage("Вы следующий — подходите к аудитории", "warn");
+    if (entry.session_status === "closed") addMessage("Сессия закрыта преподавателем", "warn");
+  } else if (entry.status === "called") {
+    $("position").textContent = "✓";
+    $("position-label").textContent = "подходите к преподавателю";
+    addMessage("Вас вызвали! Подойдите к преподавателю", "ok");
+    if (!announced) {
+      announced = true;
+      try { if (navigator.vibrate) navigator.vibrate([300, 150, 300]); } catch {}
+    }
+  } else {
+    $("position").textContent = entry.status === "done" ? "✓" : "–";
+    $("position-label").textContent = "";
+    if (entry.status === "skipped") addMessage("Вас пропустили. Подойдите к преподавателю — он может вернуть вас в очередь", "warn");
+    if (entry.status === "done") addMessage("Сдача завершена", "ok");
+  }
+  if (entry.status === "done") loadResult();
+  else if (resultLoaded) { resultLoaded = false; $("result").replaceChildren(); }
+}
+
+let resultLoaded = false;
+async function loadResult() {
+  if (resultLoaded || !state) return;
+  resultLoaded = true;
+  let data = null;
+  try {
+    data = await request("/" + encodeURIComponent(state.code) + "/me/submission", { headers: { "X-Entry-Token": state.token } });
+  } catch { resultLoaded = false; return; }
+  const box = $("result");
+  box.replaceChildren();
+  if (!data || data.status !== "completed") return;
+  const title = document.createElement("h3");
+  title.textContent = "Итог: " + data.total_points + " из " + data.max_points;
+  box.append(title);
+  for (const s of data.scores) {
+    const row = document.createElement("div");
+    row.className = "row";
+    const name = document.createElement("span");
+    name.className = "muted";
+    name.textContent = s.name;
+    const points = document.createElement("strong");
+    points.textContent = s.points + " / " + s.max_points;
+    row.append(name, points);
+    box.append(row);
+    if (s.comment) {
+      const note = document.createElement("div");
+      note.className = "muted";
+      note.textContent = s.comment;
+      box.append(note);
+    }
+  }
+  if (data.comment) {
+    const note = document.createElement("div");
+    note.textContent = "Комментарий: " + data.comment;
+    box.append(note);
+  }
+  if (data.questions.length) {
+    const head = document.createElement("h3");
+    head.textContent = "Ваши вопросы";
+    box.append(head);
+    for (const q of data.questions) {
+      const item = document.createElement("div");
+      item.textContent = q.position + ". " + q.text;
+      box.append(item);
+    }
+  }
+}
+
+async function leave() {
+  if (!state) return;
+  $("leave-btn").disabled = true;
+  try {
+    const entry = await request("/" + encodeURIComponent(state.code) + "/leave", {
+      method: "POST",
+      headers: { "X-Entry-Token": state.token },
+    });
+    render(entry);
+    schedule();
+  } catch (error) {
+    $("queue-err").textContent = error.message;
+  } finally {
+    $("leave-btn").disabled = false;
+  }
+}
+
+function stopLive() {
+  clearTimeout(liveRetryTimer);
+  liveRetryTimer = null;
+  if (live) live.abort();
+  live = null;
+  liveConnected = false;
+}
+
+async function startLive() {
+  if (liveRetryTimer || !state || live || !window.ReadableStream || !window.AbortController) return;
+  const controller = new AbortController();
+  live = controller;
+  const { code, token } = state;
+  let lastActivity = Date.now();
+  let finished = false;
+  const watchdog = setInterval(() => {
+    if (Date.now() - lastActivity > LIVE_SILENCE_MS) controller.abort();
+  }, 10000);
+  try {
+    await readEvents(
+      API + "/" + encodeURIComponent(code) + "/events",
+      { "X-Entry-Token": token },
+      controller.signal,
+      (name, data) => {
+        if (name === "end") { finished = true; return; }
+        liveConnected = true;
+        liveFailures = 0;
+        failures = 0;
+        $("queue-err").textContent = "";
+        appliedSeq = ++requestSeq;
+        render(data);
+      },
+      () => { lastActivity = Date.now(); },
+    );
+  } catch {
+
+  } finally {
+    clearInterval(watchdog);
+    const mine = live === controller;
+    if (mine) live = null;
+    liveConnected = false;
+    if (mine && state && !finished && state.code === code) {
+      liveFailures += 1;
+      const delay = Math.min(LIVE_RETRY_MS * 2 ** (liveFailures - 1), LIVE_RETRY_MAX_MS);
+      liveRetryTimer = setTimeout(() => { liveRetryTimer = null; startLive(); }, delay);
+      schedule();
+    }
+  }
+}
+
+function resetToJoin() {
+  stopLive();
+  clearTimeout(timer);
+  const code = state ? state.code : "";
+  saveState(null);
+  $("status-badge").dataset.status = "";
+  $("code").value = code;
+  show("join");
+}
+
+$("join-btn").addEventListener("click", join);
+$("leave-btn").addEventListener("click", leave);
+$("again-btn").addEventListener("click", resetToJoin);
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && state) poll();
+});
+for (const id of ["code", "name"]) {
+  $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") join(); });
+}
+
+const urlCode = new URLSearchParams(location.search).get("code");
+try { $("name").value = localStorage.getItem("queue-name") || ""; } catch {}
+if (urlCode) $("code").value = urlCode.toUpperCase();
+const resumable = state && state.code && state.token && (!urlCode || state.code === urlCode.toUpperCase());
+if (resumable) { show("queue"); poll(); } else { show("join"); }
+</script>
+</body>
+</html>

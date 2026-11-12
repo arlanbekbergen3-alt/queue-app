@@ -1,0 +1,80 @@
+from fastapi import APIRouter, Depends, status
+
+from core.dependencies import CurrentTeacher, EntryToken, QueueServiceDep
+from core.ratelimit import limit_join, limit_token
+from schemas.queue import (
+    JoinIn,
+    MyEntryOut,
+    SessionCreate,
+    SessionOut,
+    SessionPublic,
+    TeacherEntryOut,
+    TeacherQueueOut,
+)
+
+router = APIRouter(prefix="/sessions", tags=["Sessions"])
+
+
+@router.post("", response_model=SessionOut, status_code=status.HTTP_201_CREATED)
+async def create_session(data: SessionCreate, teacher: CurrentTeacher, service: QueueServiceDep):
+    return await service.create_session(teacher.id, data)
+
+
+@router.get("", response_model=list[SessionOut])
+async def list_sessions(teacher: CurrentTeacher, service: QueueServiceDep):
+    return await service.list_sessions(teacher.id)
+
+
+@router.get("/{code}", response_model=SessionPublic)
+async def session_info(code: str, service: QueueServiceDep):
+    return await service.public_info(code)
+
+
+@router.post("/{code}/join", response_model=MyEntryOut, dependencies=[Depends(limit_join)])
+async def join(code: str, data: JoinIn, service: QueueServiceDep):
+    return await service.join(code, data)
+
+
+@router.get("/{code}/me", response_model=MyEntryOut, dependencies=[Depends(limit_token)])
+async def my_status(code: str, token: EntryToken, service: QueueServiceDep):
+    return await service.my_status(code, token)
+
+
+@router.post("/{code}/leave", response_model=MyEntryOut, dependencies=[Depends(limit_token)])
+async def leave(code: str, token: EntryToken, service: QueueServiceDep):
+    return await service.leave(code, token)
+
+
+@router.get("/{code}/queue", response_model=TeacherQueueOut)
+async def teacher_queue(code: str, teacher: CurrentTeacher, service: QueueServiceDep):
+    return await service.teacher_queue(code, teacher.id)
+
+
+@router.post("/{code}/close", response_model=SessionOut)
+async def close_session(code: str, teacher: CurrentTeacher, service: QueueServiceDep):
+    return await service.close_session(code, teacher.id)
+
+
+@router.post("/{code}/next", response_model=TeacherEntryOut)
+async def call_next(code: str, teacher: CurrentTeacher, service: QueueServiceDep):
+    return await service.call_next(code, teacher.id)
+
+
+@router.post("/{code}/entries/{entry_id}/done", response_model=TeacherEntryOut)
+async def done(code: str, entry_id: str, teacher: CurrentTeacher, service: QueueServiceDep):
+    return await service.finish(code, teacher.id, entry_id)
+
+
+@router.post("/{code}/entries/{entry_id}/skip", response_model=TeacherEntryOut)
+async def skip(code: str, entry_id: str, teacher: CurrentTeacher, service: QueueServiceDep):
+    return await service.skip(code, teacher.id, entry_id)
+
+
+@router.post("/{code}/entries/{entry_id}/requeue", response_model=TeacherEntryOut)
+async def requeue(code: str, entry_id: str, teacher: CurrentTeacher, service: QueueServiceDep):
+    return await service.requeue(code, teacher.id, entry_id)
+
+
+@router.post("/{code}/entries/{entry_id}/promote", response_model=TeacherEntryOut)
+async def promote(code: str, entry_id: str, teacher: CurrentTeacher, service: QueueServiceDep):
+    return await service.promote(code, teacher.id, entry_id)

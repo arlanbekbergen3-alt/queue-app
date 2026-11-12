@@ -1,0 +1,61 @@
+x-app-env: &app-env
+  DATABASE_URL: postgresql+asyncpg://postgres:${DB_PASSWORD:?DB_PASSWORD is not set}@postgres:5432/queue_db
+  JWT_SECRET_KEY: ${JWT_SECRET_KEY:?JWT_SECRET_KEY is not set}
+  TEACHER_INVITE_CODE: ${TEACHER_INVITE_CODE:?TEACHER_INVITE_CODE is not set}
+  LOG_FORMAT: json
+  FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS:-127.0.0.1}
+  METRICS_TOKEN: ${METRICS_TOKEN:-}
+  CORS_ORIGINS: ${CORS_ORIGINS:-[]}
+  AI_ENABLED: ${AI_ENABLED:-false}
+  OLLAMA_URL: ${OLLAMA_URL:-http://host.docker.internal:11434}
+  AI_MODEL: ${AI_MODEL:-qwen3.5:9b}
+  AI_TIMEOUT_SECONDS: ${AI_TIMEOUT_SECONDS:-300}
+  AI_MAX_SOURCE_CHARS: ${AI_MAX_SOURCE_CHARS:-12000}
+  AI_MAX_RESPONSE_CHARS: ${AI_MAX_RESPONSE_CHARS:-20000}
+  AI_MAX_OUTPUT_TOKENS: ${AI_MAX_OUTPUT_TOKENS:-3000}
+  AI_MIN_QUESTIONS: ${AI_MIN_QUESTIONS:-8}
+  AI_DRAFTS_PER_TEACHER_PER_HOUR: ${AI_DRAFTS_PER_TEACHER_PER_HOUR:-5}
+  AI_PRACTICE_PER_IP_PER_HOUR: ${AI_PRACTICE_PER_IP_PER_HOUR:-30}
+  AI_PRACTICE_PER_SESSION_PER_HOUR: ${AI_PRACTICE_PER_SESSION_PER_HOUR:-300}
+  AI_PRACTICE_ANSWER_MAX_CHARS: ${AI_PRACTICE_ANSWER_MAX_CHARS:-1500}
+  AI_PRACTICE_QUEUE_MAX: ${AI_PRACTICE_QUEUE_MAX:-10}
+  AI_PRACTICE_JOB_TTL_SECONDS: ${AI_PRACTICE_JOB_TTL_SECONDS:-600}
+  ANALYTICS_MIN_SUBMISSIONS: ${ANALYTICS_MIN_SUBMISSIONS:-5}
+  ANALYTICS_OUTLIER_FACTOR: ${ANALYTICS_OUTLIER_FACTOR:-2.0}
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: queue_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is not set}
+      POSTGRES_DB: queue_db
+    ports:
+      - "127.0.0.1:5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    container_name: queue_api
+    restart: unless-stopped
+    stop_grace_period: 15s
+    command: sh -c "alembic upgrade head && exec uvicorn main:app --host 0.0.0.0 --port 8000 --proxy-headers --timeout-graceful-shutdown 10"
+    ports:
+      - "127.0.0.1:8000:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment: *app-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Студенты и пересдачи</title>
+<style>
+  :root { --bg:#f5f6f8; --card:#fff; --text:#1c1f26; --muted:#6b7280; --accent:#2563eb; --ok:#16a34a; --warn:#d97706; --bad:#dc2626; --border:#e2e5ea; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#12141a; --card:#1b1e26; --text:#e8eaf0; --muted:#98a0b0; --accent:#5b8def; --ok:#34c26a; --warn:#f0a43a; --bad:#f0625d; --border:#2b2f3a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--text); }
+  main { max-width:820px; margin:0 auto; padding:20px 16px 60px; }
+  h1 { font-size:22px; margin:0; }
+  h2 { font-size:17px; margin:0 0 12px; }
+  h3 { font-size:15px; margin:16px 0 8px; }
+  a { color:var(--accent); }
+  .top { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; flex-wrap:wrap; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; margin-bottom:16px; }
+  label { display:block; font-size:14px; color:var(--muted); margin:10px 0 4px; }
+  input, select { width:100%; font:inherit; padding:9px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); }
+  button { font:inherit; font-weight:600; padding:8px 12px; border:0; border-radius:10px; cursor:pointer; background:var(--accent); color:#fff; }
+  button.ghost { background:transparent; color:var(--muted); border:1px solid var(--border); }
+  button:disabled { opacity:.6; cursor:default; }
+  .muted { color:var(--muted); }
+  .hidden { display:none; }
+  .err { color:var(--bad); min-height:1.3em; margin-top:8px; font-size:14px; }
+  .note { color:var(--ok); min-height:1.3em; margin-top:8px; font-size:14px; }
+  .row { display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap; }
+  .row > .grow { flex:1 1 180px; }
+  .list > div { display:flex; justify-content:space-between; gap:10px; align-items:center; padding:9px 0; border-bottom:1px solid var(--border); cursor:pointer; }
+  .scroll { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; margin-top:6px; font-size:14px; }
+  td, th { text-align:left; padding:7px 6px; border-bottom:1px solid var(--border); vertical-align:top; }
+  th { font-size:13px; color:var(--muted); font-weight:600; }
+  .up { color:var(--ok); font-weight:600; }
+  .down { color:var(--bad); font-weight:600; }
+  .bar { height:8px; border-radius:6px; background:var(--border); overflow:hidden; min-width:60px; }
+  .bar > i { display:block; height:100%; background:var(--accent); }
+  .tools { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:8px; }
+  .tools select { width:auto; max-width:100%; }
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <h1>Студенты и пересдачи</h1>
+    <div class="row"><a href="/teacher">&larr; Очередь</a><a href="/protocol">Протокол сдачи</a></div>
+  </div>
+
+  <section class="card hidden" id="need-login">
+    <p>Войдите на <a href="/teacher">странице преподавателя</a>, затем вернитесь сюда.</p>
+  </section>
+
+  <div id="app" class="hidden">
+    <section class="card">
+      <h2>Студенты</h2>
+      <div class="muted">Сдачи одного человека связываются по группе и имени (без учёта регистра, пробелов и «ё»). Похожие имена автоматически не объединяются: если имена не совпали или совпали у разных людей, объедините или разделите записи вручную.</div>
+      <div class="row">
+        <div class="grow"><label for="f-group">Группа</label><input id="f-group" maxlength="60" placeholder="Например: ИС-22"></div>
+        <div class="grow"><label for="f-assignment">Работа</label><select id="f-assignment"><option value="">Все работы</option></select></div>
+        <div class="grow"><label for="f-q">Имя</label><input id="f-q" maxlength="60" placeholder="Часть имени"></div>
+        <button id="f-go">Показать</button>
+      </div>
+      <div class="err" id="list-err"></div>
+      <div class="list" id="students"></div>
+    </section>
+
+    <section class="card hidden" id="card">
+      <h2 id="c-name"></h2>
+      <div class="muted" id="c-meta"></div>
+      <div id="c-body"></div>
+      <h3>Объединить с другой записью</h3>
+      <div class="tools">
+        <select id="c-merge-target"></select>
+        <button class="ghost" id="c-merge">Объединить</button>
+      </div>
+      <div class="muted">Все сдачи этой записи перейдут в выбранную, номера попыток пересчитаются. Отменить объединение нельзя, но сдачи можно перенести по одной.</div>
+      <div class="err" id="c-err"></div>
+    </section>
+  </div>
+</main>
+
+<script>
+const API = "/api/v1";
+const TOKEN_KEY = "queue-teacher-token";
+const MESSAGES = {
+  student_not_found: "Студент не найден",
+  assignment_not_found: "Работа не найдена",
+  submission_not_found: "Сдача не найдена",
+  merge_same: "Нельзя объединить запись с самой собой",
+  student_already_merged: "Эта запись уже объединена с другой",
+  not_authenticated: "Войдите заново на странице преподавателя",
+  invalid_token: "Войдите заново на странице преподавателя",
+  rate_limited: "Слишком много запросов, подождите минуту",
+  validation_error: "Проверьте введённые данные",
+};
+const STATUS = { completed: "завершена", in_progress: "идёт", cancelled: "отменена" };
+const $ = (id) => document.getElementById(id);
+let token = null;
+try { token = sessionStorage.getItem(TOKEN_KEY); } catch {}
+let students = [];
+let currentId = null;
+
+async function request(path, options = {}) {
+  const headers = { Authorization: "Bearer " + token, ...(options.headers || {}) };
+  if (options.body) headers["Content-Type"] = "application/json";
+  let response;
+  try {
+    response = await fetch(API + path, { ...options, headers });
+  } catch {
+    throw new Error("Нет связи с сервером. Проверьте подключение и повторите");
+  }
+  let body = null;
+  try { body = await response.json(); } catch {}
+  if (!response.ok) {
+    const error = new Error(MESSAGES[body?.code] || "Ошибка " + response.status);
+    error.code = body?.code;
+    error.status = response.status;
+    throw error;
+  }
+  return body;
+}
+function el(tag, props = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [key, value] of Object.entries(props)) {
+    if (key === "onclick") node.addEventListener("click", value);
+    else if (key === "class") node.className = value;
+    else node.setAttribute(key, value);
+  }
+  for (const child of children) node.append(child);
+  return node;
+}
+function show(id, message, ok) {
+  const box = $(id);
+  box.textContent = message || "";
+  box.className = ok ? "note" : "err";
+}
+async function guarded(errorId, fn) {
+  show(errorId, "");
+  try { return await fn(); } catch (error) { show(errorId, error.message); }
+}
+function dateText(value) {
+  if (!value) return "—";
+  return new Date(value).toLocaleString("ru-RU", { dateStyle: "short", timeStyle: "short" });
+}
+function delta(value) {
+  if (value == null) return el("span", { class: "muted" }, "—");
+  const text = (value > 0 ? "+" : "") + String(value).replace(".", ",") + " п.п.";
+  return el("span", { class: value > 0 ? "up" : value < 0 ? "down" : "muted" }, text);
+}
+function percentCell(value) {
+  if (value == null) return el("span", { class: "muted" }, "—");
+  return el("div", {}, String(value).replace(".", ",") + "%", el("div", { class: "bar" }, el("i", { style: "width:" + Math.max(0, Math.min(100, value)) + "%" })));
+}
+
+async function loadAssignments() {
+  const list = await request("/assignments");
+  const select = $("f-assignment");
+  for (const a of list) select.append(el("option", { value: a.id }, a.title));
+}
+
+async function loadStudents() {
+  const params = new URLSearchParams();
+  const group = $("f-group").value.trim();
+  if (group) params.set("group", group);
+  if ($("f-assignment").value) params.set("assignment_id", $("f-assignment").value);
+  if ($("f-q").value.trim()) params.set("q", $("f-q").value.trim());
+  students = await request("/students" + (params.toString() ? "?" + params : ""));
+  const box = $("students");
+  box.replaceChildren();
+  if (!students.length) box.append(el("div", { class: "muted" }, "Студентов пока нет: записи появляются, когда кто-то встаёт в очередь."));
+  for (const s of students) {
+    box.append(el("div", { onclick: () => openCard(s.id) },
+      el("span", {}, s.name, s.group ? el("span", { class: "muted" }, " · " + s.group) : ""),
+      el("span", { class: "muted" }, "сдач: " + s.submissions + (s.last_started_at ? " · " + dateText(s.last_started_at) : ""))));
+  }
+}
+
+function targetSelect(excludeId, withNew) {
+  const select = el("select", {});
+  if (withNew) select.append(el("option", { value: "" }, "Новая запись (отделить)"));
+  for (const s of students) {
+    if (s.id !== excludeId) select.append(el("option", { value: s.id }, s.name + (s.group ? " · " + s.group : "")));
+  }
+  return select;
+}
+
+function attemptRow(attempt, assignmentId) {
+  const scores = attempt.scores.map((s) => s.name + ": " + s.points + "/" + s.max_points).join("; ");
+  const questions = attempt.questions.map((q) => q.text).join(" | ");
+  const total = attempt.total_points == null ? "—" : attempt.total_points + "/" + attempt.max_points;
+  const move = el("td", {});
+  const select = targetSelect(currentId, true);
+  move.append(select, el("button", {
+    class: "ghost",
+    onclick: () => guarded("c-err", async () => {
+      const body = { student_id: select.value || null };
+      const card = await request("/submissions/" + attempt.submission_id + "/student", { method: "POST", body: JSON.stringify(body) });
+      await loadStudents();
+      await openCard(currentId);
+      show("c-err", "Сдача перенесена в запись «" + card.name + "»", true);
+    }),
+  }, "Перенести"));
+  return el("tr", {},
+    el("td", {}, attempt.attempt_number == null ? "—" : "" + attempt.attempt_number),
+    el("td", {}, dateText(attempt.started_at), el("div", { class: "muted" }, attempt.session_title + " (" + attempt.session_code + ")")),
+    el("td", {}, STATUS[attempt.status] || attempt.status),
+    el("td", {}, total, percentCell(attempt.percent)),
+    el("td", {}, delta(attempt.delta_percent)),
+    el("td", {}, scores || "—"),
+    el("td", {}, questions || "—"),
+    move);
+}
+
+async function openCard(id) {
+  currentId = id;
+  const params = $("f-assignment").value ? "?assignment_id=" + encodeURIComponent($("f-assignment").value) : "";
+  const card = await request("/students/" + id + params);
+  $("card").classList.remove("hidden");
+  $("c-name").textContent = card.name + (card.group ? " · " + card.group : "");
+  $("c-meta").textContent = card.names.length > 1 ? "Имена в записях: " + card.names.join(", ") : "";
+  const body = $("c-body");
+  body.replaceChildren();
+  if (!card.assignments.length) body.append(el("p", { class: "muted" }, "Сдач пока нет."));
+  for (const a of card.assignments) {
+    body.append(el("h3", {}, a.title));
+    const head = el("tr", {}, ...["№", "Дата", "Статус", "Итог", "Динамика", "По критериям", "Вопросы", "Перенос"].map((t) => el("th", {}, t)));
+    const table = el("table", {}, el("thead", {}, head), el("tbody", {}, ...a.attempts.map((x) => attemptRow(x, a.assignment_id))));
+    body.append(el("div", { class: "scroll" }, table));
+    if (a.seen_questions.length) {
+      body.append(el("div", { class: "muted", style: "margin-top:8px" }, "Какие вопросы выпадали: " +
+        a.seen_questions.map((q) => q.text + " (×" + q.times + ")").join("; ")));
+    }
+  }
+  const select = $("c-merge-target");
+  select.replaceChildren();
+  for (const s of students) if (s.id !== id) select.append(el("option", { value: s.id }, s.name + (s.group ? " · " + s.group : "")));
+  $("c-merge").disabled = !select.options.length;
+  $("card").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+$("f-go").addEventListener("click", () => guarded("list-err", loadStudents));
+$("c-merge").addEventListener("click", () => guarded("c-err", async () => {
+  const target = $("c-merge-target").value;
+  if (!target || !confirm("Объединить записи? Отменить это действие нельзя.")) return;
+  const card = await request("/students/" + currentId + "/merge", { method: "POST", body: JSON.stringify({ into_student_id: target }) });
+  await loadStudents();
+  await openCard(card.id);
+  show("c-err", "Записи объединены", true);
+}));
+
+async function start() {
+  if (!token) { $("need-login").classList.remove("hidden"); return; }
+  $("app").classList.remove("hidden");
+  try {
+    await loadAssignments();
+    await loadStudents();
+  } catch (error) {
+    $("app").classList.add("hidden");
+    $("need-login").classList.remove("hidden");
+  }
+}
+start();
+</script>
+</body>
+</html>

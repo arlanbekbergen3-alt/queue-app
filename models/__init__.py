@@ -10,6 +10,7 @@ from models.protocol import (
     SubmissionQuestionORM,
 )
 from models.queue_session import QueueSessionORM
+from models.student import StudentORM
 from models.user import UserORM
 
 __all__ = [
@@ -22,6 +23,7 @@ __all__ = [
     "QuestionORM",
     "ScoreORM",
     "SubmissionORM",
+    "StudentORM",
     "SubmissionQuestionORM",
     "UserORM",
 ]

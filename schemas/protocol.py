@@ -159,12 +159,15 @@ class SubmissionOut(BaseModel):
     questions: list[SubmissionQuestionOut]
     scores: list[ScoreOut]
     questions_short: bool = False
+    attempt_number: int = 1
     selection_seed: str | None = None
     pool_question_ids: list[str] | None = None
+    selection_usage: dict[str, int] | None = None
 
 
 class MySubmissionOut(BaseModel):
     status: str
+    attempt_number: int = 1
     questions: list[SubmissionQuestionOut] = []
     scores: list[ScoreOut] = []
     total_points: int | None = None

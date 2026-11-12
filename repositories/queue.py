@@ -138,6 +138,8 @@ class QueueRepository:
         ticket: int,
         max_waiting: int,
         max_total: int,
+        student_id: str | None = None,
+        device_hash: str | None = None,
     ) -> str | None:
         in_session = EntryORM.session_id == session_id
         waiting = (
@@ -154,6 +156,8 @@ class QueueRepository:
             literal(ticket, Integer),
             literal(str(EntryStatus.WAITING), String),
             literal(datetime.now(UTC), DateTime(timezone=True)),
+            literal(student_id, String),
+            literal(device_hash, String),
         ).where(waiting < max_waiting, total < max_total)
         stmt = (
             insert(EntryORM)
@@ -167,6 +171,8 @@ class QueueRepository:
                     "sort_order",
                     "status",
                     "joined_at",
+                    "student_id",
+                    "device_hash",
                 ],
                 source,
             )

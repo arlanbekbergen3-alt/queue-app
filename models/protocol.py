@@ -121,6 +121,12 @@ class SubmissionORM(Base):
     total_points: Mapped[int | None] = mapped_column(Integer, nullable=True)
     max_points: Mapped[int | None] = mapped_column(Integer, nullable=True)
     comment: Mapped[str] = mapped_column(String(1000), default="", nullable=False)
+    attempt_number: Mapped[int] = mapped_column(
+        Integer, default=1, server_default=text("1"), nullable=False
+    )
+    selection_usage: Mapped[dict[str, Any] | None] = mapped_column(
+        JSON().with_variant(JSONB(), "postgresql"), nullable=True
+    )
     selection_seed: Mapped[str] = mapped_column(String(32), nullable=False)
     pool_question_ids: Mapped[list[Any]] = mapped_column(
         JSON().with_variant(JSONB(), "postgresql"), nullable=False

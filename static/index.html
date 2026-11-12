@@ -142,6 +142,13 @@ function saveState(value) {
     else localStorage.removeItem(STORAGE_KEY);
   } catch {}
 }
+function deviceKey() {
+  try {
+    let key = localStorage.getItem("queue-device");
+    if (!key) { key = randomToken(); localStorage.setItem("queue-device", key); }
+    return key;
+  } catch { return null; }
+}
 function randomToken() {
   const bytes = new Uint8Array(24);
   crypto.getRandomValues(bytes);
@@ -238,7 +245,7 @@ async function join() {
     const entry = await request("/" + encodeURIComponent(code) + "/join", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, token }),
+      body: JSON.stringify({ name, token, device_key: deviceKey() }),
     });
     try { localStorage.setItem("queue-name", name); } catch {}
     saveState({ code, token });
@@ -396,6 +403,30 @@ async function loadResult() {
       item.textContent = q.position + ". " + q.text;
       box.append(item);
     }
+  }
+  loadHistory(box);
+}
+
+async function loadHistory(box) {
+  let data = null;
+  try {
+    data = await request("/" + encodeURIComponent(state.code) + "/me/history", { headers: { "X-Entry-Token": state.token } });
+  } catch { return; }
+  if (!data || data.attempts.length < 2) return;
+  const head = document.createElement("h3");
+  head.textContent = "Ваши попытки";
+  box.append(head);
+  for (const a of data.attempts) {
+    const row = document.createElement("div");
+    row.className = "row";
+    const name = document.createElement("span");
+    name.className = "muted";
+    name.textContent = a.assignment_title + ", попытка " + a.attempt_number;
+    const points = document.createElement("strong");
+    const change = a.delta_percent == null ? "" : " (" + (a.delta_percent > 0 ? "+" : "") + String(a.delta_percent).replace(".", ",") + " п.п.)";
+    points.textContent = a.total_points + " / " + a.max_points + change;
+    row.append(name, points);
+    box.append(row);
   }
 }
 

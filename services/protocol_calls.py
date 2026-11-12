@@ -11,12 +11,23 @@ from models.queue_session import QueueSessionORM
 from repositories.protocol import ProtocolRepository
 
 
-def choose_question_ids(seed: str, pool_ids: list[str], count: int) -> list[str]:
+def choose_question_ids(
+    seed: str, pool_ids: list[str], count: int, usage: dict[str, int] | None = None
+) -> list[str]:
     count = min(count, len(pool_ids))
     if count <= 0:
         return []
     rng = random.Random(seed)
-    return [pool_ids[i] for i in rng.sample(range(len(pool_ids)), count)]
+    if not usage or not any(usage.get(i, 0) for i in pool_ids):
+        return [pool_ids[i] for i in rng.sample(range(len(pool_ids)), count)]
+    chosen: list[str] = []
+    for level in sorted({usage.get(i, 0) for i in pool_ids}):
+        need = count - len(chosen)
+        if need <= 0:
+            break
+        tier = [i for i in pool_ids if usage.get(i, 0) == level]
+        chosen += [tier[j] for j in rng.sample(range(len(tier)), min(need, len(tier)))]
+    return chosen
 
 
 async def start_submission(db: AsyncSession, session: QueueSessionORM, entry: EntryORM) -> None:
@@ -37,6 +48,9 @@ async def start_submission(db: AsyncSession, session: QueueSessionORM, entry: En
                 old_value=SubmissionStatus.CANCELLED,
                 new_value=SubmissionStatus.IN_PROGRESS,
             )
+            if entry.student_id is not None:
+                await db.flush()
+                await repo.renumber_attempts(entry.student_id, existing.assignment_id)
         return
     assignment = await repo.lock_assignment_by_id(session.assignment_id)
     if assignment is None:
@@ -45,7 +59,11 @@ async def start_submission(db: AsyncSession, session: QueueSessionORM, entry: En
     pool_ids = [q.id for q in pool]
     by_id = {q.id: q for q in pool}
     seed = secrets.token_hex(16)
-    chosen = choose_question_ids(seed, pool_ids, assignment.questions_per_submission)
+    usage: dict[str, int] = {}
+    if entry.student_id is not None:
+        usage = await repo.question_usage(entry.student_id, assignment.id)
+    usage = {qid: n for qid, n in usage.items() if qid in by_id}
+    chosen = choose_question_ids(seed, pool_ids, assignment.questions_per_submission, usage)
     submission = SubmissionORM(
         entry_id=entry.id,
         session_id=session.id,
@@ -53,6 +71,7 @@ async def start_submission(db: AsyncSession, session: QueueSessionORM, entry: En
         started_at=datetime.now(UTC),
         selection_seed=seed,
         pool_question_ids=pool_ids,
+        selection_usage=usage or None,
     )
     db.add(submission)
     await db.flush()
@@ -68,6 +87,9 @@ async def start_submission(db: AsyncSession, session: QueueSessionORM, entry: En
                 position=position,
             )
         )
+    if entry.student_id is not None:
+        await db.flush()
+        await repo.renumber_attempts(entry.student_id, assignment.id)
 
 
 async def cancel_open_submission(

@@ -24,6 +24,7 @@ from schemas.queue import (
     TeacherEntryOut,
     TeacherQueueOut,
 )
+from services.identity import find_or_create_student
 from services.protocol_calls import (
     cancel_open_submission,
     cancel_open_submissions,
@@ -163,6 +164,9 @@ class QueueService:
         self._check_registration(session)
         self._check_capacity(*await self.repo.queue_counts(session.id))
         try:
+            student = await find_or_create_student(
+                self.db, session.teacher_id, session.group_name, data.name
+            )
             ticket = await self.repo.allocate_ticket(session.id)
             inserted = await self.repo.insert_entry_if_room(
                 session.id,
@@ -171,6 +175,8 @@ class QueueService:
                 ticket,
                 settings.MAX_QUEUE_SIZE,
                 settings.MAX_ENTRIES_PER_SESSION,
+                student.id,
+                hash_token(data.device_key) if data.device_key else None,
             )
             if inserted is None:
                 await self.db.rollback()

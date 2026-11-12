@@ -316,6 +316,7 @@ async def test_student_sees_only_own_breakdown_after_completion(client, setup):
     r = await client.get(mine, headers={"X-Entry-Token": first["token"]})
     assert r.status_code == 200 and r.json() == {
         "status": "in_progress",
+        "attempt_number": 1,
         "questions": [],
         "scores": [],
         "total_points": None,

@@ -64,6 +64,10 @@ class EntryORM(Base):
     not_ready_count: Mapped[int] = mapped_column(
         Integer, default=0, server_default=text("0"), nullable=False
     )
+    student_id: Mapped[str | None] = mapped_column(
+        ForeignKey("students.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    device_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
     joined_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False
     )

@@ -64,6 +64,7 @@ class RegistrationIn(BaseModel):
 class JoinIn(BaseModel):
     name: str = Field(min_length=1, max_length=60)
     token: str = Field(min_length=16, max_length=128)
+    device_key: str | None = Field(default=None, min_length=16, max_length=128)
 
     @field_validator("name")
     @classmethod

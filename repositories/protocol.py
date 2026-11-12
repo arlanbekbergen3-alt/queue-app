@@ -188,6 +188,36 @@ class ProtocolRepository:
                 by_submission[submission_id][criterion_id] = points
         return [(row[0], row[1], by_submission[row[0].id]) for row in rows]
 
+    async def question_usage(self, student_id: str, assignment_id: str) -> dict[str, int]:
+        stmt = (
+            select(SubmissionQuestionORM.question_id, func.count())
+            .join(SubmissionORM, SubmissionORM.id == SubmissionQuestionORM.submission_id)
+            .join(EntryORM, EntryORM.id == SubmissionORM.entry_id)
+            .where(
+                EntryORM.student_id == student_id,
+                SubmissionORM.assignment_id == assignment_id,
+                SubmissionORM.status != SubmissionStatus.CANCELLED,
+                SubmissionQuestionORM.question_id.is_not(None),
+            )
+            .group_by(SubmissionQuestionORM.question_id)
+        )
+        return {qid: n for qid, n in (await self.db.execute(stmt)).all()}
+
+    async def renumber_attempts(self, student_id: str, assignment_id: str) -> None:
+        stmt = (
+            select(SubmissionORM)
+            .join(EntryORM, EntryORM.id == SubmissionORM.entry_id)
+            .where(
+                EntryORM.student_id == student_id,
+                SubmissionORM.assignment_id == assignment_id,
+                SubmissionORM.status != SubmissionStatus.CANCELLED,
+            )
+            .order_by(SubmissionORM.started_at, SubmissionORM.created_at, SubmissionORM.id)
+            .execution_options(populate_existing=True)
+        )
+        for number, submission in enumerate((await self.db.execute(stmt)).scalars(), start=1):
+            submission.attempt_number = number
+
     async def current_submission(self, session_id: str) -> Row | None:
         stmt = (
             select(SubmissionORM, EntryORM.ticket)

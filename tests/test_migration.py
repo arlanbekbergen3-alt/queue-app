@@ -230,3 +230,93 @@ async def test_not_ready_and_join_window_columns_default_safely_and_roll_back(mi
     assert not {"not_ready", "not_ready_count", "join_open"} & set(columns)
     assert count == 2
     await alembic_async("upgrade", "head")
+
+
+@pytest.mark.asyncio
+async def test_student_history_migration_links_existing_entries_and_numbers_attempts(
+    migration_engine,
+):
+    await alembic_async("upgrade", "f6a7b8c9d0e1")
+    async with migration_engine.begin() as conn:
+        await conn.execute(
+            text("INSERT INTO users (id, username, password_hash) VALUES ('u1', 't', 'x')")
+        )
+        await conn.execute(
+            text(
+                "INSERT INTO assignments (id, teacher_id, title, description,"
+                " questions_per_submission, practice_enabled, created_at)"
+                " VALUES ('a1', 'u1', 'Lab', '', 3, false, now())"
+            )
+        )
+        for sid, code, group in (("s1", "AAAAAA", "ИС-22"), ("s2", "BBBBBB", " ис-22 ")):
+            await conn.execute(
+                text(
+                    "INSERT INTO queue_sessions (id, teacher_id, title, group_name, code, status,"
+                    " next_ticket, avg_service_seconds, created_at, assignment_id)"
+                    " VALUES (:id, 'u1', 'S', :g, :c, 'open', 5, 300, now(), 'a1')"
+                ),
+                {"id": sid, "g": group, "c": code},
+            )
+        rows = [
+            ("e1", "s1", "Алёна Фёдорова", 1, "completed", 1),
+            ("e2", "s2", "алена  федорова", 1, "completed", 2),
+            ("e3", "s2", "Борис", 2, "completed", 3),
+            ("e4", "s1", "Алена Федорова", 2, "cancelled", 4),
+        ]
+        for entry_id, session_id, name, ticket, status, minute in rows:
+            await conn.execute(
+                text(
+                    "INSERT INTO entries (id, session_id, name, token_hash, ticket, sort_order,"
+                    " status, joined_at) VALUES (:id, :s, :n, :th, :t, :t, 'done', now())"
+                ),
+                {"id": entry_id, "s": session_id, "n": name, "th": entry_id * 16, "t": ticket},
+            )
+            await conn.execute(
+                text(
+                    "INSERT INTO submissions (id, entry_id, session_id, assignment_id, status,"
+                    " started_at, comment, selection_seed, pool_question_ids, created_at)"
+                    " VALUES (:id, :e, :s, 'a1', :st, now() + make_interval(mins => :m), '',"
+                    " 'seed', '[]', now())"
+                ),
+                {"id": f"sub{entry_id}", "e": entry_id, "s": session_id, "st": status, "m": minute},
+            )
+
+    await alembic_async("upgrade", "a7b8c9d0e1f2")
+
+    async with migration_engine.connect() as conn:
+        students = (
+            await conn.execute(
+                text("SELECT id, name_key, group_key FROM students ORDER BY name_key")
+            )
+        ).all()
+        linked = (
+            await conn.execute(text("SELECT e.id, e.student_id FROM entries e ORDER BY e.id"))
+        ).all()
+        attempts = (
+            await conn.execute(text("SELECT id, attempt_number FROM submissions ORDER BY id"))
+        ).all()
+    assert [(s.name_key, s.group_key) for s in students] == [
+        ("алена" + "федорова", "ис-22"),
+        ("борис", "ис-22"),
+    ]
+    by_entry = {row.id: row.student_id for row in linked}
+    assert by_entry["e1"] == by_entry["e2"] == by_entry["e4"] != by_entry["e3"]
+    numbers = {row.id: row.attempt_number for row in attempts}
+    assert (numbers["sube1"], numbers["sube2"], numbers["sube3"]) == (1, 2, 1)
+
+    await alembic_async("downgrade", "f6a7b8c9d0e1")
+    async with migration_engine.connect() as conn:
+        tables = (
+            (
+                await conn.execute(
+                    text(
+                        "SELECT table_name FROM information_schema.tables WHERE table_name = 'students'"
+                    )
+                )
+            )
+            .scalars()
+            .all()
+        )
+        count = (await conn.execute(text("SELECT count(*) FROM submissions"))).scalar_one()
+    assert tables == [] and count == 4
+    await alembic_async("upgrade", "head")

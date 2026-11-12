@@ -28,6 +28,7 @@ from db.database import AsyncSessionLocal, engine
 from routers.ai import router as ai_router
 from routers.analytics import router as analytics_router
 from routers.auth import router as auth_router
+from routers.history import router as history_router
 from routers.live import router as live_router
 from routers.practice import router as practice_router
 from routers.protocol import router as protocol_router
@@ -97,6 +98,7 @@ app.include_router(protocol_router, prefix=API_V1_PREFIX)
 app.include_router(ai_router, prefix=API_V1_PREFIX)
 app.include_router(practice_router, prefix=API_V1_PREFIX)
 app.include_router(analytics_router, prefix=API_V1_PREFIX)
+app.include_router(history_router, prefix=API_V1_PREFIX)
 
 
 def _error(status: int, detail: str, code: str, headers: dict | None = None, **extra):
@@ -195,6 +197,11 @@ async def teacher_page():
 @app.get("/protocol", include_in_schema=False)
 async def protocol_page():
     return FileResponse(STATIC_DIR / "protocol.html")
+
+
+@app.get("/students", include_in_schema=False)
+async def students_page():
+    return FileResponse(STATIC_DIR / "students.html")
 
 
 @app.get("/practice", include_in_schema=False)

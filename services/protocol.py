@@ -270,8 +270,10 @@ class ProtocolService:
             questions=[SubmissionQuestionOut.model_validate(q) for q in questions],
             scores=[self._score_out(s, c) for s, c in scores],
             questions_short=len(questions) < wanted,
+            attempt_number=submission.attempt_number,
             selection_seed=submission.selection_seed if audit_view else None,
             pool_question_ids=pool if audit_view else None,
+            selection_usage=(submission.selection_usage or None) if audit_view else None,
         )
 
     async def _per_submission(self, assignment_id: str) -> int | None:
@@ -481,11 +483,14 @@ class ProtocolService:
         if submission is None:
             raise NotFoundError("Submission not found", code="submission_not_found")
         if submission.status != SubmissionStatus.COMPLETED:
-            return MySubmissionOut(status=submission.status)
+            return MySubmissionOut(
+                status=submission.status, attempt_number=submission.attempt_number
+            )
         questions = await self.repo.submission_questions(submission.id)
         scores = await self.repo.scores(submission.id)
         return MySubmissionOut(
             status=submission.status,
+            attempt_number=submission.attempt_number,
             questions=[SubmissionQuestionOut.model_validate(q) for q in questions],
             scores=[self._score_out(s, c) for s, c in scores],
             total_points=submission.total_points,

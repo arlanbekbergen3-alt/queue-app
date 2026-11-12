@@ -1,0 +1,29 @@
+
+     ✓ join 200
+     ✓ me 200
+     ✓ queue 200
+
+     checks.........................: 100.00% 3451 out of 3451
+     data_received..................: 2.1 MB  28 kB/s
+     data_sent......................: 544 kB  7.1 kB/s
+     http_req_blocked...............: avg=497.71µs min=0s         med=370.3µs  p(90)=554.64µs p(95)=676.47µs p(99)=2.74ms   max=56.71ms 
+     http_req_connecting............: avg=357.14µs min=-1945883ns med=257.12µs p(90)=389.47µs p(95)=469.44µs p(99)=2.42ms   max=28.81ms 
+     http_req_duration..............: avg=78.58ms  min=3.77ms     med=8.67ms   p(90)=77.71ms  p(95)=549.8ms  p(99)=1.48s    max=2.28s   
+       { expected_response:true }...: avg=78.58ms  min=3.77ms     med=8.67ms   p(90)=77.71ms  p(95)=549.8ms  p(99)=1.48s    max=2.28s   
+     ✓ { name:done }................: avg=0s       min=0s         med=0s       p(90)=0s       p(95)=0s       p(99)=0s       max=0s      
+     ✗ { name:join }................: avg=760.88ms min=81.85ms    med=642.28ms p(90)=1.56s    p(95)=1.73s    p(99)=1.92s    max=2.28s   
+     ✓ { name:me }..................: avg=13.38ms  min=3.77ms     med=8.09ms   p(90)=25.43ms  p(95)=40.94ms  p(99)=90.53ms  max=176.71ms
+     ✓ { name:next }................: avg=26.07ms  min=26.07ms    med=26.07ms  p(90)=26.07ms  p(95)=26.07ms  p(99)=26.07ms  max=26.07ms 
+     ✓ { name:queue }...............: avg=32.25ms  min=12.46ms    med=20.17ms  p(90)=61.67ms  p(95)=102.53ms p(99)=117.3ms  max=120.99ms
+   ✓ http_req_failed................: 0.00%   0 out of 3455
+     http_req_receiving.............: avg=697.36µs min=37.78µs    med=293.08µs p(90)=1.3ms    p(95)=2.26ms   p(99)=6.41ms   max=127.58ms
+     http_req_sending...............: avg=77.84µs  min=15.11µs    med=59.12µs  p(90)=122.22µs p(95)=154.69µs p(99)=301.88µs max=3.26ms  
+     http_req_tls_handshaking.......: avg=0s       min=0s         med=0s       p(90)=0s       p(95)=0s       p(99)=0s       max=0s      
+     http_req_waiting...............: avg=77.81ms  min=3.57ms     med=8.24ms   p(90)=74.14ms  p(95)=545.94ms p(99)=1.48s    max=2.28s   
+     http_reqs......................: 3455    45.236086/s
+     iteration_duration.............: avg=1m0s     min=55.43s     med=1m0s     p(90)=1m4s     p(95)=1m4s     p(99)=1m5s     max=1m5s    
+     iterations.....................: 301     3.940973/s
+     vus............................: 1       min=1            max=301
+     vus_max........................: 301     min=301          max=301
+
+time="2026-11-10T12:27:14Z" level=error msg="thresholds on metrics 'http_req_duration{name:join}' have been crossed"

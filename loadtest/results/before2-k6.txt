@@ -1,0 +1,910 @@
+time="2026-11-09T15:27:02Z" level=error msg="next -> 409 {\"detail\":\"Queue is empty\"}" source=console
+time="2026-11-09T15:27:57Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:27:57Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:27:58Z" level=warning msg="Request Failed" error="Post \"http://host.docker.internal:8001/api/v1/sessions/J273MK/join\": dial: i/o timeout"
+time="2026-11-09T15:27:58Z" level=error msg="join -> 0 null" source=console
+time="2026-11-09T15:27:58Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:27:58Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:27:58Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:27:58Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:27:59Z" level=warning msg="Request Failed" error="Post \"http://host.docker.internal:8001/api/v1/sessions/J273MK/join\": dial: i/o timeout"
+time="2026-11-09T15:27:59Z" level=error msg="join -> 0 null" source=console
+time="2026-11-09T15:27:59Z" level=warning msg="Request Failed" error="Post \"http://host.docker.internal:8001/api/v1/sessions/J273MK/join\": dial: i/o timeout"
+time="2026-11-09T15:27:59Z" level=error msg="join -> 0 null" source=console
+time="2026-11-09T15:28:00Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:00Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:01Z" level=warning msg="Request Failed" error="Post \"http://host.docker.internal:8001/api/v1/sessions/J273MK/join\": dial: i/o timeout"
+time="2026-11-09T15:28:01Z" level=error msg="join -> 0 null" source=console
+time="2026-11-09T15:28:01Z" level=warning msg="Request Failed" error="Post \"http://host.docker.internal:8001/api/v1/sessions/J273MK/join\": dial: i/o timeout"
+time="2026-11-09T15:28:01Z" level=error msg="join -> 0 null" source=console
+time="2026-11-09T15:28:01Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:01Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:01Z" level=warning msg="Request Failed" error="Post \"http://host.docker.internal:8001/api/v1/sessions/J273MK/join\": dial: i/o timeout"
+time="2026-11-09T15:28:01Z" level=error msg="join -> 0 null" source=console
+time="2026-11-09T15:28:01Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:01Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:02Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:02Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:02Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:02Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:02Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:02Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:03Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:03Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:03Z" level=warning msg="Request Failed" error="Post \"http://host.docker.internal:8001/api/v1/sessions/J273MK/join\": dial: i/o timeout"
+time="2026-11-09T15:28:03Z" level=error msg="join -> 0 null" source=console
+time="2026-11-09T15:28:03Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:03Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:03Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:03Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:03Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:03Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:03Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:03Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:04Z" level=warning msg="Request Failed" error="Post \"http://host.docker.internal:8001/api/v1/sessions/J273MK/join\": dial: i/o timeout"
+time="2026-11-09T15:28:04Z" level=error msg="join -> 0 null" source=console
+time="2026-11-09T15:28:04Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:04Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:04Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:04Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:04Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:04Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:04Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:04Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:04Z" level=warning msg="Request Failed" error="Post \"http://host.docker.internal:8001/api/v1/sessions/J273MK/join\": dial: i/o timeout"
+time="2026-11-09T15:28:04Z" level=error msg="join -> 0 null" source=console
+time="2026-11-09T15:28:05Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:28:05Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:05Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:28:07Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:07Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:28:08Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:28:10Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:11Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:11Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:12Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:28:12Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:28:12Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:13Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:14Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:14Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:14Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:28:15Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:28:15Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:16Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:28:16Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:28:16Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:28:17Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:28:18Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:18Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:28:19Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:19Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:28:20Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:21Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:22Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:28:22Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:22Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:24Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:25Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:26Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:26Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:28Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:29Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:29Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:30Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:31Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:34Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:36Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:37Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:37Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:37Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:39Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:40Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:41Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:41Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:42Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:43Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:43Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:47Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:47Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:48Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:48Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:48Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:48Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:48Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:48Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:48Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:48Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:48Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:48Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:48Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:48Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:48Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:48Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:48Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:49Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:49Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:49Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:49Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:49Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:49Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:49Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:49Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:49Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:49Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:49Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:49Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:49Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:49Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:49Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:50Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:50Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:50Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:50Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:50Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:50Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:50Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:50Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:50Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:50Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:50Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:50Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:50Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:50Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:28:50Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:28:51Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:52Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:52Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:53Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:54Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:55Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:28:55Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:00Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:00Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:00Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:01Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:01Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:01Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:01Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:01Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:02Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:03Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:03Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:03Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:05Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:12Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:12Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:12Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:12Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:13Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:13Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:13Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:13Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:14Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:14Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:14Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:14Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:14Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:14Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:14Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:14Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:14Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:14Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:15Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:15Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:15Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:15Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:15Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:15Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:15Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:16Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:16Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:16Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:16Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:16Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:16Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:17Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:17Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:22Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:23Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:24Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:25Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:25Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:25Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:26Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:27Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:28Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:29Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:30Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:31Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:34Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:34Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:35Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:36Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:38Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:38Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:40Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:41Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:42Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:42Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:42Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:43Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:29:43Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:43Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:29:45Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:45Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:45Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:45Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:45Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:46Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:46Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:46Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:46Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:46Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:46Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:46Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:47Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:47Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:47Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:29:47Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:47Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:47Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:47Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:47Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:29:47Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:29:48Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:49Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:49Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:50Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:52Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:29:59Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:00Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:02Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:03Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:04Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:07Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:07Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:10Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:10Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:11Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:11Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:11Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:11Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:11Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:11Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:11Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:11Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:11Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:11Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:12Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:12Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:12Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:12Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:12Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:12Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:12Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:12Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:12Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:12Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:12Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:12Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:12Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:12Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:12Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:12Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:12Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:13Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:13Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:13Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:13Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:13Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:13Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:13Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:13Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:13Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:13Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:13Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:13Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:13Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:13Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:13Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:13Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:13Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:13Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:13Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:14Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:14Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:14Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:14Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:14Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:14Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:14Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:14Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:14Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:14Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:14Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:14Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:14Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:14Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:14Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:14Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:14Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:14Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:14Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:14Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:14Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:15Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:15Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:15Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:15Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:15Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:15Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:15Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:15Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:15Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:15Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:15Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:15Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:15Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:15Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:15Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:15Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:15Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:15Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:16Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:16Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:16Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:16Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:16Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:16Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:16Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:16Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:16Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:16Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:19Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:22Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:22Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:22Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:23Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:23Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:23Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:23Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:24Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:31Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:32Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:32Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:32Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:32Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:32Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:33Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:33Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:34Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:34Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:34Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:34Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:35Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:35Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:35Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:35Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:35Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:36Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:36Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:36Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:36Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:36Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:36Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:36Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:36Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:36Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:36Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:36Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:36Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:36Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:36Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:38Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:42Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:42Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:42Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:42Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:42Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:42Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:42Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:42Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:43Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:43Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:44Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:45Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:45Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:45Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:50Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:50Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:52Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:52Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:53Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:54Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:55Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:56Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:30:58Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:58Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:58Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:58Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:58Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:58Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:58Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:58Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:30:59Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:30:59Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:00Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:00Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:00Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:00Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:00Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:00Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:00Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:01Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:01Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:01Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:01Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:01Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:02Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:02Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:02Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:02Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:02Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:02Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:02Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:02Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:02Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:02Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:02Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:02Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:02Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:02Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:03Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:03Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:04Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:04Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:04Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:04Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:05Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:05Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:05Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:05Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:05Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:05Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:06Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:06Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:06Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:06Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:06Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:06Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:06Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:06Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:06Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:06Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:07Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:07Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:07Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:07Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:07Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:07Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:11Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:13Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:13Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:13Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:14Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:15Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:16Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:17Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:18Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:18Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:18Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:18Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:18Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:18Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:18Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:18Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:18Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:18Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:18Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:18Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:18Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:18Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:18Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:18Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:18Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:18Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:18Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:18Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:18Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:18Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:18Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:18Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:18Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:18Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:18Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:18Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:18Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:19Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:19Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:19Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:19Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:19Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:19Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:19Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:19Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:19Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:19Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:19Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:19Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:19Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:19Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:19Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:20Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:20Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:20Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:20Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:24Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:24Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:25Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:26Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:26Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:26Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:27Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:30Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:31Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:35Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:35Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:35Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:35Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:36Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:37Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:37Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:38Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:38Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:40Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:41Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:41Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:42Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:42Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:46Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:46Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:47Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:47Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:47Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:47Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:47Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:47Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:47Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:47Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:48Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:48Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:48Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:48Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:48Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:48Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:48Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:48Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:48Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:48Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:48Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:48Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:48Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:48Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:48Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:48Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:48Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:49Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:49Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:49Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:49Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:49Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:49Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:49Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:49Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:49Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:49Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:49Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:49Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:49Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:49Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:49Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:49Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:49Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:49Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:50Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:50Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:50Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:50Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:50Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:50Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:50Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:50Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:50Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:50Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:50Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:50Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:50Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:50Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:50Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:50Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:50Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:50Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:51Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:51Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:51Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:51Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:51Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:51Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:51Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:51Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:51Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:51Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:51Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:51Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:51Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:51Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:51Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:51Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:52Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:52Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:52Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:52Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:52Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:52Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:52Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:52Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:52Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:52Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:53Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:53Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:53Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:53Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:53Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:53Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:54Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:54Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:54Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:54Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:54Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:54Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:54Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:54Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:54Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:54Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:54Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:54Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:54Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:54Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:54Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:54Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:54Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:54Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:55Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:55Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:55Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:55Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:55Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:55Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:55Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:55Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8001/api/v1/sessions/J273MK/me\": dial: i/o timeout"
+time="2026-11-09T15:31:55Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:31:59Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:31:59Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:32:00Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:32:00Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:32:00Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:32:00Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:32:00Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:32:00Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:32:00Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:32:04Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:32:05Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:32:05Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:32:06Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:32:06Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:32:06Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+
+     ✗ join 200
+      ↳  97% — ✓ 291 / ✗ 9
+     ✓ queue 200
+     ✗ me 200
+      ↳  92% — ✓ 6634 / ✗ 544
+     ✓ done 200
+
+     checks.........................: 92.67% 6992 out of 7545
+     data_received..................: 5.0 MB 16 kB/s
+     data_sent......................: 1.3 MB 4.2 kB/s
+     http_req_blocked...............: avg=472.56ms min=0s       med=17.61ms  p(90)=148.44ms p(95)=602.76ms p(99)=19.48s   max=19.67s
+     http_req_connecting............: avg=411.92ms min=0s       med=12.91ms  p(90)=83.47ms  p(95)=269.86ms p(99)=19.46s   max=19.67s
+     http_req_duration..............: avg=3.17s    min=0s       med=2.83s    p(90)=6.36s    p(95)=7.3s     p(99)=10.91s   max=31.05s
+       { expected_response:true }...: avg=3.16s    min=14.32ms  med=3s       p(90)=6.33s    p(95)=7.16s    p(99)=9.87s    max=26.47s
+     ✗ { name:done }................: avg=2.95s    min=272.04ms med=3.9s     p(90)=4.54s    p(95)=4.62s    p(99)=4.68s    max=4.7s  
+     ✗ { name:join }................: avg=3.39s    min=0s       med=2.61s    p(90)=8.59s    p(95)=10.82s   p(99)=13.3s    max=14.76s
+     ✗ { name:me }..................: avg=3.18s    min=0s       med=2.87s    p(90)=6.32s    p(95)=7.18s    p(99)=10.65s   max=31.05s
+     ✗ { name:next }................: avg=1.61s    min=72.88ms  med=750.2ms  p(90)=3.76s    p(95)=4.14s    p(99)=4.45s    max=4.52s 
+     ✗ { name:queue }...............: avg=1.63s    min=25.58ms  med=947.81ms p(90)=4.37s    p(95)=4.89s    p(99)=6.05s    max=6.61s 
+   ✗ http_req_failed................: 7.33%  554 out of 7553
+     http_req_receiving.............: avg=28.94ms  min=0s       med=16.36ms  p(90)=53.32ms  p(95)=75.76ms  p(99)=307.68ms max=2.51s 
+     http_req_sending...............: avg=97.38ms  min=0s       med=115.81µs p(90)=60.29ms  p(95)=288.95ms p(99)=2.08s    max=20.55s
+     http_req_tls_handshaking.......: avg=0s       min=0s       med=0s       p(90)=0s       p(95)=0s       p(99)=0s       max=0s    
+     http_req_waiting...............: avg=3.04s    min=0s       med=2.67s    p(90)=6.22s    p(95)=7.15s    p(99)=10.7s    max=31.05s
+     http_reqs......................: 7553   23.856741/s
+     iteration_duration.............: avg=4m37s    min=1m0s     med=4m45s    p(90)=5m4s     p(95)=5m8s     p(99)=5m11s    max=5m14s 
+     iterations.....................: 305    0.963366/s
+     vus............................: 2      min=0            max=301
+     vus_max........................: 301    min=301          max=301
+
+time="2026-11-09T15:32:18Z" level=error msg="thresholds on metrics 'http_req_duration{name:done}, http_req_duration{name:join}, http_req_duration{name:me}, http_req_duration{name:next}, http_req_duration{name:queue}, http_req_failed' have been crossed"

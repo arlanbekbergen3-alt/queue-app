@@ -1,0 +1,99 @@
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"8e64e175b2e54aec9f60fb0acf0483af\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"b347882d59f048f986057682715c6ccd\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"ae5fe0b88238437e89dcee5ce1491546\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"9a6c548250db4f52945a88fe50468a69\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"dad886c344484b1ab3af37f046dda641\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"4b4f78418c064bd6bdca3fea93dcb4b5\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"234def9b25ca4138afdf5af38243a719\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"ed15ee5652b5475d80373e889eb91de8\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"796d120694384da0989c2972f7fac05a\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"48ffe323dc1c46b4927425a8e786790f\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"0c160e51f0ea476d9f9290553cb0633f\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"f6437291c57b4862ad6727a96cc1b1de\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"bd86a4ac3c4d4122ab4cd816f90efc35\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"bc254b322a3943e597bedce2847fde50\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"5cf5048f48ee46e6a42a4d92ee47cfdb\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"462d283df21e431cac16d3051683ab0d\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"a9b1a1bdacb7490ebb49d0f271a3d28e\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"be09156a6b484135a18b6204f8de046c\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"a14237ad7706441485b29e0e3937823c\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"efb08bcdbfab4e308e8fc2c1d68356b1\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"0c7de0d9b6d94b13a43a2a202d03eeda\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"0988de1ec1e44e368158ef22eb248df6\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"4680393a087d4956b3b746eb2372b784\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"c74414bcd92e4bd880a6e3bc9edeb6b5\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"6e33951567cf4f749d2065e783ea2590\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"6a41710c788c4034bb947319ea1909f0\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"4075a3f76c534f3f8633182615ed0356\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"12f279294fd94fee90ae14c34b21b54c\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"dbf488fc9b0f4540bf8d9aadd8433523\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"da845e1f7a79471e85ca5e6a96b1c0d2\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"57d28cc4d6164136a6f0eb9dd0de3496\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"a33f95333eb447b6af66166bd9027efe\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"2785a6b1df654c70bf40780ae7923253\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"afc29cf7467f4bafb0c13c2604767d11\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"e70ef04f4c464e9f85e2c20b2d5d4f0b\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"aae4b70a8f304d5785fed999372c131a\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"95f05e3d2ecb448da0ae99f241dcbde5\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"1cfcc6ca97db4e0da3d09f834f9ff74c\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"dd0f5d750d034157a0050b26e67f5f33\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"2a91173fb85c49acbb0860d59a00e3ee\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"8eaaf00934f94e0ea0573b86ef97e487\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"ff76b736dfc64a1085dfe13eb47a33e9\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"a6c274f75e04497ba9ebb77da266f387\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"343b09a43bb14f7a92f1165818f5114c\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"0dac7e235aa845f4a245b81f1f0d892f\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"a698b76ac9054f199493f58fa759043c\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"7145e879499643ae8cbbfc5a251d2823\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"823655aaa53940aca1a25139970fcf68\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"641322b5f66546a6a578a8ba933e260c\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"44656eeeab864b22bc2317be1c344dc9\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"4403f2ce03eb4ee2a95cc8e88dabb04c\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"ef1951a70cb24e9389933ec554ef93b5\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"20bafe82f5394e0895d5d97835dfa8d4\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"c88384dd174b4bb89508faf3d7466578\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"3b9b3763cd444525994eae9083e3e1d6\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"36841a03e5224a638d7866eacb335d64\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"84dac336184d4485b614ef3b9f1b80b5\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"7fb97282c0cc4f2db02b53459cdae750\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"b6966e63c78b4fcdaacd5e8d579d9f4c\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"9b854be9eb464800b0933202beade294\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"a9c9330ba0e54fe3af863360594386fa\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"508899a065c74b12827bcfc12b2e5f20\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"6eec8899a9594c39946f2cb86d4bf720\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"0b81795883464461bd4ec8cb92207809\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"f83ee9b3245947d3ad6a7db187fcea98\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"732ea7a264ae49eeaf3270d469147b37\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"3e4c9e321e1e4e9a8e30b91d9e25ab18\"}" source=console
+time="2026-11-10T13:06:05Z" level=error msg="me -> 503 {\"detail\":\"Service is overloaded, retry later\",\"code\":\"overloaded\",\"request_id\":\"050eb6cfc19d4423b17c899b91c27d67\"}" source=console
+
+     ✓ join 200
+     ✗ me 200
+      ↳  99% — ✓ 9734 / ✗ 68
+     ✓ queue 200
+     ✓ done 200
+
+     checks.........................: 99.33% 10114 out of 10182
+     data_received..................: 6.9 MB 21 kB/s
+     data_sent......................: 1.7 MB 5.1 kB/s
+     http_req_blocked...............: avg=35.37ms  min=1.96µs  med=347.12µs p(90)=714.7µs  p(95)=4.58ms   p(99)=1.51s    max=9.9s    
+     http_req_connecting............: avg=13.67ms  min=0s      med=239.71µs p(90)=378.92µs p(95)=862.13µs p(99)=98.63ms  max=9.9s    
+     http_req_duration..............: avg=1.62s    min=3.1ms   med=27.87ms  p(90)=5.78s    p(95)=9.52s    p(99)=14.51s   max=18.19s  
+       { expected_response:true }...: avg=1.52s    min=3.1ms   med=26.66ms  p(90)=5.57s    p(95)=9.15s    p(99)=13.47s   max=18.19s  
+     ✗ { name:done }................: avg=4.68s    min=13.78ms med=259.83ms p(90)=12.84s   p(95)=15.52s   p(99)=17.66s   max=18.19s  
+     ✗ { name:join }................: avg=1.18s    min=9.94ms  med=17.35ms  p(90)=6.58s    p(95)=6.77s    p(99)=8.51s    max=13.05s  
+     ✗ { name:me }..................: avg=1.64s    min=3.1ms   med=30.28ms  p(90)=5.76s    p(95)=9.6s     p(99)=14.78s   max=16.25s  
+     ✓ { name:next }................: avg=284.93ms min=13.87ms med=86.32ms  p(90)=690.62ms p(95)=781.32ms p(99)=853.88ms max=872.02ms
+     ✗ { name:queue }...............: avg=730.91ms min=8.8ms   med=25.47ms  p(90)=2s       p(95)=4.62s    p(99)=9.48s    max=12.21s  
+   ✓ http_req_failed................: 0.66%  68 out of 10190
+     http_req_receiving.............: avg=361.49µs min=16.69µs med=119.57µs p(90)=177.85µs p(95)=231.27µs p(99)=801.35µs max=1.74s   
+     http_req_sending...............: avg=256.89ms min=5.57µs  med=54.2µs   p(90)=559.99µs p(95)=290.11ms p(99)=10.71s   max=11.63s  
+     http_req_tls_handshaking.......: avg=0s       min=0s      med=0s       p(90)=0s       p(95)=0s       p(99)=0s       max=0s      
+     http_req_waiting...............: avg=1.36s    min=2.97ms  med=27.48ms  p(90)=5.01s    p(95)=6.57s    p(99)=13.69s   max=18.19s  
+     http_reqs......................: 10190  30.79886/s
+     iteration_duration.............: avg=4m32s    min=1m1s    med=4m33s    p(90)=5m5s     p(95)=5m6s     p(99)=5m6s     max=5m7s    
+     iterations.....................: 304    0.918828/s
+     vus............................: 1      min=0              max=301
+     vus_max........................: 301    min=301            max=301
+
+time="2026-11-10T13:10:11Z" level=error msg="thresholds on metrics 'http_req_duration{name:done}, http_req_duration{name:join}, http_req_duration{name:me}, http_req_duration{name:queue}' have been crossed"

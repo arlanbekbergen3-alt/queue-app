@@ -1,0 +1,918 @@
+time="2026-11-09T15:32:34Z" level=error msg="next -> 409 {\"detail\":\"Queue is empty\"}" source=console
+time="2026-11-09T15:33:26Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:33:26Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:33:26Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:33:26Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:33:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:33:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:33:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:33:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:33:27Z" level=warning msg="Request Failed" error="Post \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/join\": dial: i/o timeout"
+time="2026-11-09T15:33:27Z" level=error msg="join -> 0 null" source=console
+time="2026-11-09T15:33:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:33:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:33:37Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:33:42Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:33:52Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:33:52Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:33:52Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:33:52Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:33:53Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:34:03Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:34:09Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:34:19Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:34:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:29Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:34:40Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:34:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:42Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:42Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:42Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:42Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:42Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:42Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:42Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:42Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:42Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:42Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:42Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:42Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:43Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:43Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:49Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:34:50Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:50Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:50Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:50Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:51Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:51Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:51Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:51Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:51Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:51Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:51Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:51Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:52Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:52Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:52Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:52Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:52Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:52Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:52Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:52Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:52Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:34:52Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:34:55Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:35:02Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:02Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:03Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:03Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:04Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:04Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:30Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:30Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:30Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:30Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:31Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:31Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:31Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:31Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:31Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:31Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:32Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:32Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:32Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:32Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:36Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:36Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:37Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:35:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:39Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:39Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:40Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:40Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:40Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:40Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:40Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:40Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:40Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:40Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:40Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:40Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:40Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:40Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:40Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:40Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:40Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:40Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:40Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:40Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:40Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:40Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:40Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:40Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:40Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:40Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:40Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:40Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:40Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:40Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:40Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:40Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:40Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:40Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:41Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:41Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:42Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:42Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:42Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:42Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:42Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:42Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:42Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:42Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:42Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:42Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:42Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:42Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:42Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:42Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:43Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:43Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:43Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:43Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:43Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:43Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:43Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:43Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:43Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:43Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:44Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:44Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:44Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:44Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:44Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:44Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:44Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:44Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:44Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:44Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:44Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:44Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:44Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:44Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:44Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:44Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:45Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:45Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:45Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:45Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:46Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:35:47Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:47Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:58Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:58Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:35:59Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:35:59Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:17Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:17Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:18Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:18Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:18Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:18Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:18Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:18Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:18Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:18Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:19Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:19Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:19Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:19Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:19Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:19Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:19Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:19Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:20Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:20Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:20Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:20Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:20Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:20Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:20Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:20Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:20Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:20Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:20Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:20Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:20Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:20Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:20Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:20Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:20Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:20Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:25Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:25Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:25Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:25Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:25Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:25Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:25Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:25Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:25Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:25Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:26Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:26Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:26Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:26Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:26Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:26Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:26Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:26Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:26Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:26Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:26Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:26Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:26Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:26Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:26Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:26Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:28Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:28Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:29Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:29Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:29Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:36:32Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:32Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:33Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:33Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:34Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:34Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:35Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:35Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:35Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:35Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:35Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:35Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:36Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:36:36Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:36Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:36Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:36Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:37Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:36:37Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:36:47Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:36:58Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:37:04Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:37:08Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:08Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:08Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:08Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:08Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:08Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:08Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:08Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:08Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:08Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:08Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:08Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:08Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:08Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:08Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:08Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:09Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:09Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:09Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:09Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:09Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:09Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:09Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:09Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:09Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:09Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:09Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:09Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:09Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:09Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:09Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:09Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:09Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:09Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:09Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:09Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:09Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:37:09Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:09Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:09Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:09Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:09Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:09Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:09Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:09Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:09Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:09Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:10Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:10Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:10Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:10Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:10Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:10Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:10Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:10Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:10Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:10Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:16Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:37:20Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:20Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:21Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:21Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:22Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:22Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:23Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:23Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:24Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:37:24Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:24Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:25Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:25Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:25Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:25Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:25Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:25Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:25Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:25Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:26Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:26Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:27Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:27Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:30Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:37:58Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:58Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:58Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:58Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:58Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:58Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:58Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:58Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:59Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:59Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:37:59Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:37:59Z" level=error msg="me -> 0 null" source=console
+time="2026-11-09T15:38:00Z" level=warning msg="Request Failed" error="Get \"http://host.docker.internal:8000/api/v1/sessions/EVDQYT/me\": dial: i/o timeout"
+time="2026-11-09T15:38:00Z" level=error msg="me -> 0 null" source=console
+
+     ✗ join 200
+      ↳  99% — ✓ 299 / ✗ 1
+     ✓ queue 200
+     ✗ me 200
+      ↳  93% — ✓ 6692 / ✗ 452
+     ✓ done 200
+
+     checks.........................: 93.97% 7063 out of 7516
+     data_received..................: 5.3 MB 16 kB/s
+     data_sent......................: 1.2 MB 3.8 kB/s
+     http_req_blocked...............: avg=291.44ms min=0s      med=8.96ms   p(90)=39.04ms  p(95)=98.22ms p(99)=11.45s   max=19.74s
+     http_req_connecting............: avg=269.27ms min=0s      med=7.53ms   p(90)=33.44ms  p(95)=74.53ms p(99)=11.39s   max=19.74s
+     http_req_duration..............: avg=2.9s     min=0s      med=2.43s    p(90)=6.12s    p(95)=7.18s   p(99)=9.31s    max=30.53s
+       { expected_response:true }...: avg=2.89s    min=14.18ms med=2.67s    p(90)=6.12s    p(95)=7.04s   p(99)=8.5s     max=24.64s
+     ✗ { name:done }................: avg=1.37s    min=70.99ms med=668.69ms p(90)=2.83s    p(95)=3.1s    p(99)=3.32s    max=3.37s 
+     ✗ { name:join }................: avg=2.35s    min=0s      med=531.53ms p(90)=7.58s    p(95)=8.62s   p(99)=10.49s   max=15.01s
+     ✗ { name:me }..................: avg=2.94s    min=0s      med=2.5s     p(90)=6.12s    p(95)=7.1s    p(99)=9.13s    max=30.53s
+     ✗ { name:next }................: avg=657.94ms min=55.76ms med=475.07ms p(90)=1.45s    p(95)=1.68s   p(99)=1.86s    max=1.91s 
+     ✗ { name:queue }...............: avg=1.45s    min=27.66ms med=313.12ms p(90)=4.19s    p(95)=5.18s   p(99)=5.86s    max=6.28s 
+   ✗ http_req_failed................: 6.03%  454 out of 7524
+     http_req_receiving.............: avg=25.26ms  min=0s      med=9.65ms   p(90)=52.02ms  p(95)=95.36ms p(99)=309.77ms max=1.51s 
+     http_req_sending...............: avg=33.27ms  min=0s      med=110.25µs p(90)=215.94µs p(95)=80.46ms p(99)=391.87ms max=19.63s
+     http_req_tls_handshaking.......: avg=0s       min=0s      med=0s       p(90)=0s       p(95)=0s      p(99)=0s       max=0s    
+     http_req_waiting...............: avg=2.84s    min=0s      med=2.34s    p(90)=6.06s    p(95)=7.09s   p(99)=9.04s    max=30.53s
+     http_reqs......................: 7524   22.979282/s
+     iteration_duration.............: avg=4m35s    min=1m1s    med=4m35s    p(90)=5m2s     p(95)=5m7s    p(99)=5m24s    max=5m25s 
+     iterations.....................: 305    0.93151/s
+     vus............................: 2      min=0            max=301
+     vus_max........................: 301    min=301          max=301
+
+time="2026-11-09T15:38:00Z" level=error msg="thresholds on metrics 'http_req_duration{name:done}, http_req_duration{name:join}, http_req_duration{name:me}, http_req_duration{name:next}, http_req_duration{name:queue}, http_req_failed' have been crossed"

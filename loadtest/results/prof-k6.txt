@@ -1,0 +1,77 @@
+time="2026-11-09T15:50:43Z" level=error msg="next -> 409 {\"detail\":\"Queue is empty\"}" source=console
+time="2026-11-09T15:51:01Z" level=error msg="join -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:03Z" level=error msg="join -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:04Z" level=error msg="join -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:04Z" level=error msg="join -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:04Z" level=error msg="join -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:04Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:06Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:06Z" level=error msg="join -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:06Z" level=error msg="join -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:06Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:06Z" level=error msg="join -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:07Z" level=error msg="join -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:07Z" level=error msg="join -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:08Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:08Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:08Z" level=error msg="join -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:09Z" level=error msg="join -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:09Z" level=error msg="join -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:11Z" level=error msg="join -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:11Z" level=error msg="join -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:11Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:12Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:14Z" level=error msg="join -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:14Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:16Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:18Z" level=error msg="me -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:19Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:19Z" level=error msg="join -> 500 {\"detail\":\"Internal server error\"}" source=console
+time="2026-11-09T15:51:20Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:20Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:21Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:21Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:22Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:24Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:30Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:30Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:31Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:31Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:31Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:31Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:36Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:37Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:39Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:40Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+time="2026-11-09T15:51:43Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\"}" source=console
+
+     ✗ join 200
+      ↳  94% — ✓ 283 / ✗ 17
+     ✓ queue 200
+     ✗ me 200
+      ↳  97% — ✓ 993 / ✗ 28
+
+     checks.........................: 96.62% 1288 out of 1333
+     data_received..................: 876 kB 13 kB/s
+     data_sent......................: 236 kB 3.5 kB/s
+     http_req_blocked...............: avg=569.75µs min=0s         med=472.29µs p(90)=665.71µs p(95)=810.95µs p(99)=3.12ms   max=18.69ms
+     http_req_connecting............: avg=408.52µs min=-3066674ns med=331.59µs p(90)=467.07µs p(95)=566.88µs p(99)=2.78ms   max=18.54ms
+     http_req_duration..............: avg=4.12s    min=22.33ms    med=3.84s    p(90)=8.93s    p(95)=10.5s    p(99)=14.22s   max=18.73s 
+       { expected_response:true }...: avg=4s       min=22.33ms    med=3.79s    p(90)=8.5s     p(95)=9.92s    p(99)=12.73s   max=16.98s 
+     ✓ { name:done }................: avg=0s       min=0s         med=0s       p(90)=0s       p(95)=0s       p(99)=0s       max=0s     
+     ✗ { name:join }................: avg=7.45s    min=343.73ms   med=7s       p(90)=12.4s    p(95)=13.97s   p(99)=16.73s   max=18.73s 
+     ✗ { name:me }..................: avg=3.18s    min=22.33ms    med=3.32s    p(90)=5.75s    p(95)=7.57s    p(99)=9.7s     max=10.82s 
+     ✓ { name:next }................: avg=70.21ms  min=70.21ms    med=70.21ms  p(90)=70.21ms  p(95)=70.21ms  p(99)=70.21ms  max=70.21ms
+     ✗ { name:queue }...............: avg=2.21s    min=67.27ms    med=1.73s    p(90)=5.13s    p(95)=5.41s    p(99)=5.68s    max=5.75s  
+   ✗ http_req_failed................: 3.44%  46 out of 1337
+     http_req_receiving.............: avg=30.25ms  min=109.55µs   med=16.8ms   p(90)=56.24ms  p(95)=97.17ms  p(99)=294.43ms max=1.15s  
+     http_req_sending...............: avg=8.12ms   min=25.22µs    med=93.8µs   p(90)=182.51µs p(95)=2.82ms   p(99)=253.4ms  max=1.18s  
+     http_req_tls_handshaking.......: avg=0s       min=0s         med=0s       p(90)=0s       p(95)=0s       p(99)=0s       max=0s     
+     http_req_waiting...............: avg=4.08s    min=21.65ms    med=3.78s    p(90)=8.9s     p(95)=10.46s   p(99)=14.19s   max=18.73s 
+     http_reqs......................: 1337   19.968324/s
+     iteration_duration.............: avg=46.86s   min=26.69s     med=47.75s   p(90)=59.66s   p(95)=59.8s    p(99)=1m1s     max=1m5s   
+     iterations.....................: 301    4.495487/s
+     vus............................: 1      min=0            max=301
+     vus_max........................: 301    min=301          max=301
+
+time="2026-11-09T15:51:49Z" level=error msg="thresholds on metrics 'http_req_duration{name:join}, http_req_duration{name:me}, http_req_duration{name:queue}, http_req_failed' have been crossed"

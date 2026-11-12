@@ -1,0 +1,43 @@
+time="2026-11-10T12:22:50Z" level=error msg="join -> 503 {\"detail\": \"Service is overloaded, retry later\", \"code\": \"overloaded\", \"request_id\": \"5b94ba40684e4faf97a6bf12a76f4788\"}" source=console
+time="2026-11-10T12:22:55Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"2e90e55bd0514b39ad2d873476b76918\"}" source=console
+time="2026-11-10T12:23:00Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"a9b9b2d9b855458b9604570e0898d3de\"}" source=console
+time="2026-11-10T12:23:06Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"41c3b6880c5848adb7efcba47b397071\"}" source=console
+time="2026-11-10T12:23:12Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"187854edc8dc42a6ae742049b2c28e79\"}" source=console
+time="2026-11-10T12:23:17Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"d1208fa1e95d46b0b1ff8b678fa2ede3\"}" source=console
+time="2026-11-10T12:23:22Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"b4c01ca7af064658b7bc90dbfee53e3a\"}" source=console
+time="2026-11-10T12:23:28Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"c873f7f9c3124e9d8861e6a87e53597d\"}" source=console
+time="2026-11-10T12:23:33Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"f9bbc1fa3ab446f0bcc04158f9a0bcfa\"}" source=console
+time="2026-11-10T12:23:38Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"ce25ba2628a34b5f80d1be089deec279\"}" source=console
+time="2026-11-10T12:23:43Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"f44f6b9ced144bda825e461b08cbe5d2\"}" source=console
+time="2026-11-10T12:23:49Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"9075bb02525749f8ae1772c4f6382804\"}" source=console
+
+     ✗ join 200
+      ↳  99% — ✓ 299 / ✗ 1
+     ✗ me 200
+      ↳  99% — ✓ 3129 / ✗ 11
+     ✓ queue 200
+
+     checks.........................: 99.65% 3448 out of 3460
+     data_received..................: 2.1 MB 28 kB/s
+     data_sent......................: 545 kB 7.1 kB/s
+     http_req_blocked...............: avg=424.06µs min=4.02µs  med=351.64µs p(90)=522.34µs p(95)=607.07µs p(99)=1.7ms    max=19.79ms
+     http_req_connecting............: avg=306.73µs min=0s      med=248.09µs p(90)=373.72µs p(95)=434.4µs  p(99)=1.37ms   max=19.66ms
+     http_req_duration..............: avg=83.06ms  min=2.42ms  med=6.59ms   p(90)=43.93ms  p(95)=630ms    p(99)=1.52s    max=3.21s  
+       { expected_response:true }...: avg=83.32ms  min=2.42ms  med=6.59ms   p(90)=44.44ms  p(95)=630.62ms p(99)=1.52s    max=3.21s  
+     ✓ { name:done }................: avg=0s       min=0s      med=0s       p(90)=0s       p(95)=0s       p(99)=0s       max=0s     
+     ✗ { name:join }................: avg=860.41ms min=7.78ms  med=745.05ms p(90)=1.55s    p(95)=1.71s    p(99)=2.26s    max=3.21s  
+     ✓ { name:me }..................: avg=9.01ms   min=2.42ms  med=6.26ms   p(90)=15.46ms  p(95)=23.2ms   p(99)=53.54ms  max=93.17ms
+     ✓ { name:next }................: avg=151.6ms  min=151.6ms med=151.6ms  p(90)=151.6ms  p(95)=151.6ms  p(99)=151.6ms  max=151.6ms
+     ✓ { name:queue }...............: avg=20.09ms  min=14.78ms med=18.33ms  p(90)=27.99ms  p(95)=28.69ms  p(99)=34.12ms  max=35.48ms
+   ✓ http_req_failed................: 0.34%  12 out of 3464
+     http_req_receiving.............: avg=156.67µs min=26.53µs med=122.18µs p(90)=206.63µs p(95)=262.66µs p(99)=600.73µs max=6.89ms 
+     http_req_sending...............: avg=73.79µs  min=15.54µs med=56.35µs  p(90)=110.61µs p(95)=135.44µs p(99)=200.47µs max=13.15ms
+     http_req_tls_handshaking.......: avg=0s       min=0s      med=0s       p(90)=0s       p(95)=0s       p(99)=0s       max=0s     
+     http_req_waiting...............: avg=82.83ms  min=2.23ms  med=6.39ms   p(90)=43.75ms  p(95)=629.8ms  p(99)=1.52s    max=3.21s  
+     http_reqs......................: 3464   45.390735/s
+     iteration_duration.............: avg=1m1s     min=57.07s  med=1m0s     p(90)=1m4s     p(95)=1m5s     p(99)=1m5s     max=1m6s   
+     iterations.....................: 301    3.944172/s
+     vus............................: 1      min=1            max=301
+     vus_max........................: 301    min=301          max=301
+
+time="2026-11-10T12:24:04Z" level=error msg="thresholds on metrics 'http_req_duration{name:join}' have been crossed"

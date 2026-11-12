@@ -1,0 +1,65 @@
+time="2026-11-10T12:21:11Z" level=error msg="join -> 503 {\"detail\": \"Service is overloaded, retry later\", \"code\": \"overloaded\", \"request_id\": \"74e45a20e08741138106b8fad7a03d35\"}" source=console
+time="2026-11-10T12:21:11Z" level=error msg="join -> 503 {\"detail\": \"Service is overloaded, retry later\", \"code\": \"overloaded\", \"request_id\": \"1057efeb9706433cba67946078808263\"}" source=console
+time="2026-11-10T12:21:13Z" level=error msg="join -> 503 {\"detail\": \"Service is overloaded, retry later\", \"code\": \"overloaded\", \"request_id\": \"13ee43f8e2b04907ac5e07a8e62014d6\"}" source=console
+time="2026-11-10T12:21:16Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"1b06b6d7ec094e13be680c6797729753\"}" source=console
+time="2026-11-10T12:21:17Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"d0547273606c403fb4d809a3fae7b134\"}" source=console
+time="2026-11-10T12:21:19Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"03043e93d93b456eaab82b83924ae77c\"}" source=console
+time="2026-11-10T12:21:22Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"9d392393a76b40739dde0c9af69b85a6\"}" source=console
+time="2026-11-10T12:21:23Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"9c996b571eb84470ac9ecb0ece6b5b8c\"}" source=console
+time="2026-11-10T12:21:25Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"5875d8f7c767496b9f04fe58a8bf98d2\"}" source=console
+time="2026-11-10T12:21:28Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"177032340a1b438f95ed89a167af6496\"}" source=console
+time="2026-11-10T12:21:28Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"6d8c3e3359d84047a05259cb38caba9a\"}" source=console
+time="2026-11-10T12:21:30Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"30cc67b8126648b2a9dea8841a635782\"}" source=console
+time="2026-11-10T12:21:34Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"784f1e3265eb4acca75b6c62ae3f4a3b\"}" source=console
+time="2026-11-10T12:21:34Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"fe4e1b3c5cdd46edb8ee9a715602b46d\"}" source=console
+time="2026-11-10T12:21:36Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"0b6bb2e94d5742b8a86ba1c677137047\"}" source=console
+time="2026-11-10T12:21:40Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"270a4d402e30450d9346ded6008566e9\"}" source=console
+time="2026-11-10T12:21:40Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"5b06966869e548b3a7d2dad70779404b\"}" source=console
+time="2026-11-10T12:21:41Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"d5814d5112d2456aa5fe062d9f9ce933\"}" source=console
+time="2026-11-10T12:21:45Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"19b1c25e920f4c7a95c93f6b8cac5368\"}" source=console
+time="2026-11-10T12:21:45Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"4a0b854e01db40c7ae498289947523c8\"}" source=console
+time="2026-11-10T12:21:46Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"50c8d44c1ab44ced9f3eb3c283cd75a8\"}" source=console
+time="2026-11-10T12:21:50Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"4fc757dd3250495a8c0a9df920250f64\"}" source=console
+time="2026-11-10T12:21:51Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"37645a9236114d148a836db40f8038bb\"}" source=console
+time="2026-11-10T12:21:52Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"58ce21c99416472cb78f0835ff49b864\"}" source=console
+time="2026-11-10T12:21:55Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"02a1075377b64844a7eed97469bd7ac1\"}" source=console
+time="2026-11-10T12:21:56Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"7e62d4b78f604bd8b33e968b07e028ef\"}" source=console
+time="2026-11-10T12:21:58Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"55739e0ae9b44a6ab0c031ff4fbf20b2\"}" source=console
+time="2026-11-10T12:22:01Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"6879017ed5904efa9a3c55ad05f7f7da\"}" source=console
+time="2026-11-10T12:22:02Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"55929ddc24c94aaf964709c803415b12\"}" source=console
+time="2026-11-10T12:22:04Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"7d0fe0bc235e465cb36a45e5f4fabc15\"}" source=console
+time="2026-11-10T12:22:06Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"435fb241e5594c43acc0303d70a3b512\"}" source=console
+time="2026-11-10T12:22:07Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"d74fb7feb0384f5888ceb46fa6791f62\"}" source=console
+time="2026-11-10T12:22:09Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"94145b538b3b4f98a2cf2b4a773ac635\"}" source=console
+time="2026-11-10T12:22:12Z" level=error msg="me -> 404 {\"detail\":\"Entry not found\",\"code\":\"entry_not_found\",\"request_id\":\"c783484a58c341d5a92f15ab1430b1d5\"}" source=console
+
+     ✗ join 200
+      ↳  99% — ✓ 297 / ✗ 3
+     ✗ me 200
+      ↳  99% — ✓ 3110 / ✗ 31
+     ✓ queue 200
+
+     checks.........................: 99.01% 3427 out of 3461
+     data_received..................: 2.1 MB 28 kB/s
+     data_sent......................: 546 kB 7.2 kB/s
+     http_req_blocked...............: avg=436.69µs min=6.05µs  med=362.46µs p(90)=528.78µs p(95)=640.72µs p(99)=1.79ms   max=22.04ms 
+     http_req_connecting............: avg=317.6µs  min=0s      med=255.58µs p(90)=380.32µs p(95)=461.29µs p(99)=1.29ms   max=21.97ms 
+     http_req_duration..............: avg=102.35ms min=2.95ms  med=7.06ms   p(90)=74.8ms   p(95)=945.12ms p(99)=1.67s    max=3.7s    
+       { expected_response:true }...: avg=103.27ms min=2.95ms  med=7.05ms   p(90)=76.45ms  p(95)=953.07ms p(99)=1.67s    max=3.7s    
+     ✓ { name:done }................: avg=0s       min=0s      med=0s       p(90)=0s       p(95)=0s       p(99)=0s       max=0s      
+     ✗ { name:join }................: avg=1.05s    min=8.63ms  med=1.06s    p(90)=1.78s    p(95)=2.01s    p(99)=2.62s    max=3.7s    
+     ✓ { name:me }..................: avg=11.92ms  min=2.95ms  med=6.68ms   p(90)=23.32ms  p(95)=40.59ms  p(99)=90.39ms  max=152.54ms
+     ✓ { name:next }................: avg=43.11ms  min=43.11ms med=43.11ms  p(90)=43.11ms  p(95)=43.11ms  p(99)=43.11ms  max=43.11ms 
+     ✓ { name:queue }...............: avg=20.74ms  min=10.33ms med=18.1ms   p(90)=30.23ms  p(95)=32.83ms  p(99)=53.55ms  max=58.73ms 
+   ✓ http_req_failed................: 0.98%  34 out of 3465
+     http_req_receiving.............: avg=164.1µs  min=37.25µs med=125.13µs p(90)=219.93µs p(95)=290.9µs  p(99)=784.74µs max=6.81ms  
+     http_req_sending...............: avg=76.68µs  min=16.87µs med=58.21µs  p(90)=111.69µs p(95)=136.03µs p(99)=245.44µs max=7.57ms  
+     http_req_tls_handshaking.......: avg=0s       min=0s      med=0s       p(90)=0s       p(95)=0s       p(99)=0s       max=0s      
+     http_req_waiting...............: avg=102.11ms min=2.83ms  med=6.85ms   p(90)=74.57ms  p(95)=944.87ms p(99)=1.67s    max=3.7s    
+     http_reqs......................: 3465   45.411736/s
+     iteration_duration.............: avg=1m1s     min=56.64s  med=1m0s     p(90)=1m4s     p(95)=1m4s     p(99)=1m5s     max=1m5s    
+     iterations.....................: 301    3.944858/s
+     vus............................: 1      min=1            max=301
+     vus_max........................: 301    min=301          max=301
+
+time="2026-11-10T12:22:26Z" level=error msg="thresholds on metrics 'http_req_duration{name:join}' have been crossed"

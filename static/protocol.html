@@ -39,6 +39,16 @@
   .timer { font-size:28px; font-weight:800; font-variant-numeric:tabular-nums; }
   .score { display:grid; grid-template-columns:1fr 90px; gap:8px; align-items:center; margin-top:8px; }
   .draft { border:1px dashed var(--warn); border-radius:12px; padding:12px; margin-top:12px; }
+  .scroll { overflow-x:auto; }
+  table.weak { width:100%; border-collapse:collapse; font-size:14px; }
+  table.weak th, table.weak td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  table.weak td.q { overflow-wrap:anywhere; min-width:160px; }
+  .bar { height:10px; min-width:80px; border-radius:6px; background:var(--border); overflow:hidden; }
+  .bar > span { display:block; height:100%; background:var(--accent); }
+  .bar.low > span { background:var(--bad); }
+  .bar.mid > span { background:var(--warn); }
+  .bar.high > span { background:var(--ok); }
+  .bins { display:grid; grid-template-columns:64px 1fr 28px; gap:4px 8px; align-items:center; font-size:13px; }
   pre { white-space:pre-wrap; overflow-wrap:anywhere; font-size:13px; margin:6px 0 0; }
 </style>
 </head>
@@ -145,6 +155,7 @@
         <div class="row"><button class="ghost" id="an-session">По этой сессии</button><button class="ghost" id="an-assignment">По всей работе</button></div>
         <div class="err" id="an-err"></div>
         <pre id="an-out"></pre>
+        <div id="an-weak"></div>
         <div class="hidden" id="audit-box"><h3>Журнал изменений</h3><pre id="audit"></pre></div>
       </div>
     </section>
@@ -641,13 +652,67 @@ function renderAnalytics(a) {
   lines.push("", a.note);
   return lines.join("\n");
 }
+function bar(value) {
+  const level = value < 50 ? "low" : value < 80 ? "mid" : "high";
+  const fill = el("span");
+  fill.style.width = Math.max(0, Math.min(100, value)) + "%";
+  return el("div", { class: "bar " + level, role: "img", "aria-label": String(value).replace(".", ",") + "%" }, fill);
+}
+function pct(value) { return String(value).replace(".", ",") + "%"; }
+function weakTable(head, rows) {
+  const table = el("table", { class: "weak" }, el("thead", {}, el("tr", {}, ...head.map((h) => el("th", {}, h)))));
+  const body = el("tbody");
+  for (const cells of rows) body.append(el("tr", {}, ...cells));
+  table.append(body);
+  return el("div", { class: "scroll" }, table);
+}
+function weakBlock(title, w) {
+  const box = el("div", {}, el("h3", {}, title));
+  if (!w) return box;
+  if (!w.sufficient) { box.append(el("div", { class: "muted" }, w.note)); return box; }
+  if (w.mean_percent != null) box.append(el("div", {}, "Сдач: " + w.submissions + ". Средний результат " + pct(w.mean_percent) + ", ниже половины баллов у " + pct(w.below_half_percent) + " сдач."));
+  if (w.criteria.length) {
+    box.append(el("h3", {}, "Критерии: средний процент от максимума и доля ниже 50%"));
+    box.append(weakTable(["Критерий", "Среднее", "", "Ниже 50%"], w.criteria.map((c) => [
+      el("td", {}, c.name), el("td", {}, pct(c.mean_percent)), el("td", {}, bar(c.mean_percent)), el("td", {}, pct(c.below_half_percent)),
+    ])));
+    box.append(el("div", { class: "muted" }, "Самые проблемные: " + w.weakest_criteria.join(", ")));
+  }
+  if (w.questions.length) {
+    box.append(el("h3", {}, "Вопросы с самым низким итогом сдач"));
+    box.append(weakTable(["Вопрос", "Выпадал", "Средний итог", "", "Ниже 50%"], w.questions.map((q) => [
+      el("td", { class: "q" }, q.text), el("td", {}, String(q.asked)), el("td", {}, pct(q.mean_percent)), el("td", {}, bar(q.mean_percent)), el("td", {}, pct(q.below_half_percent)),
+    ])));
+    if (w.hidden_questions) box.append(el("div", { class: "muted" }, "Ещё вопросов с достаточной выборкой: " + w.hidden_questions));
+  }
+  if (w.distribution.length) {
+    const max = Math.max(1, ...w.distribution.map((b) => b.count));
+    const grid = el("div", { class: "bins" });
+    for (const b of w.distribution) grid.append(el("span", {}, b.from_percent + "–" + b.to_percent + "%"), bar(100 * b.count / max), el("span", {}, String(b.count)));
+    box.append(el("h3", {}, "Распределение итоговых результатов"), grid);
+  }
+  box.append(el("div", { class: "muted" }, w.note));
+  return box;
+}
+function renderWeak(a) {
+  const out = $("an-weak");
+  out.replaceChildren(weakBlock("Слабые места", a.weak_spots));
+  if (a.first_attempts && a.retakes && (a.retakes.submissions > 0)) {
+    out.append(weakBlock("Только первые попытки", a.first_attempts), weakBlock("Только пересдачи", a.retakes));
+  }
+}
+async function loadAnalytics(path) {
+  const a = await request(path);
+  $("an-out").textContent = renderAnalytics(a);
+  renderWeak(a);
+}
 $("an-session").addEventListener("click", () => guarded("an-err", async () => {
-  $("an-out").textContent = renderAnalytics(await request("/sessions/" + sessionCode + "/analytics"));
+  await loadAnalytics("/sessions/" + sessionCode + "/analytics");
 }));
 $("an-assignment").addEventListener("click", () => guarded("an-err", async () => {
   const id = $("p-assignment").value;
   if (!id) throw new Error("К сессии не подключена работа");
-  $("an-out").textContent = renderAnalytics(await request("/assignments/" + id + "/analytics"));
+  await loadAnalytics("/assignments/" + id + "/analytics");
 }));
 
 async function start() {

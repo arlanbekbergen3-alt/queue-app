@@ -188,6 +188,19 @@ class ProtocolRepository:
                 by_submission[submission_id][criterion_id] = points
         return [(row[0], row[1], by_submission[row[0].id]) for row in rows]
 
+    async def question_texts(self, submission_ids: list[str]) -> dict[str, list[str]]:
+        result: dict[str, list[str]] = {i: [] for i in submission_ids}
+        if not submission_ids:
+            return result
+        stmt = (
+            select(SubmissionQuestionORM.submission_id, SubmissionQuestionORM.text)
+            .where(SubmissionQuestionORM.submission_id.in_(submission_ids))
+            .order_by(SubmissionQuestionORM.position)
+        )
+        for submission_id, text in await self.db.execute(stmt):
+            result[submission_id].append(text)
+        return result
+
     async def question_usage(self, student_id: str, assignment_id: str) -> dict[str, int]:
         stmt = (
             select(SubmissionQuestionORM.question_id, func.count())

@@ -200,7 +200,9 @@ def test_invalid_settings_stop_the_application_at_startup(overrides):
         build(**overrides)
 
 
-def test_missing_required_settings_are_reported():
+def test_missing_required_settings_are_reported(monkeypatch):
+    for name in ("DATABASE_URL", "JWT_SECRET_KEY", "TEACHER_INVITE_CODE"):
+        monkeypatch.delenv(name, raising=False)
     with pytest.raises(ValidationError) as caught:
         Settings(_env_file=None)  # type: ignore[call-arg]
     missing = {e["loc"][0] for e in caught.value.errors()}

@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 from enum import StrEnum
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Integer, String, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from db.base import Base
@@ -29,6 +29,9 @@ class QueueSessionORM(Base):
     )
     code: Mapped[str] = mapped_column(String(8), unique=True, nullable=False)
     status: Mapped[str] = mapped_column(String(16), default=SessionStatus.OPEN, nullable=False)
+    join_open: Mapped[bool] = mapped_column(
+        Boolean, default=True, server_default=text("true"), nullable=False
+    )
     next_ticket: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     avg_service_seconds: Mapped[int] = mapped_column(Integer, nullable=False)
     created_at: Mapped[datetime] = mapped_column(

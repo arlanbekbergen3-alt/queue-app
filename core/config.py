@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     NAME_MAX_LENGTH: int = Field(default=60, ge=1, le=60)
     SESSION_AUTO_CLOSE_HOURS: float = Field(default=6.0, ge=0)
     SESSION_REAPER_INTERVAL_SECONDS: int = Field(default=60, ge=1)
+    NOT_READY_MAX_PER_SESSION: int = Field(default=2, ge=0, le=10)
 
     RATE_LIMIT_ENABLED: bool = True
     RATE_LIMIT_IP_PER_MINUTE: int = Field(default=6000, ge=0)

@@ -30,7 +30,13 @@ _waiting_before = (
     .where(
         _waiting_alias.session_id == QueueSessionORM.id,
         _waiting_alias.status == EntryStatus.WAITING,
-        _waiting_alias.sort_order < EntryORM.sort_order,
+        or_(
+            _waiting_alias.not_ready < EntryORM.not_ready,
+            and_(
+                _waiting_alias.not_ready == EntryORM.not_ready,
+                _waiting_alias.sort_order < EntryORM.sort_order,
+            ),
+        ),
     )
     .correlate(QueueSessionORM, EntryORM)
     .scalar_subquery()
@@ -42,6 +48,8 @@ _STUDENT_VIEW = (
         EntryORM.ticket,
         EntryORM.name,
         EntryORM.status,
+        EntryORM.not_ready,
+        EntryORM.not_ready_count,
         QueueSessionORM.status.label("session_status"),
         QueueSessionORM.avg_service_seconds,
         _waiting_before.label("waiting_before"),
@@ -190,7 +198,7 @@ class QueueRepository:
         stmt = (
             select(EntryORM)
             .where(EntryORM.session_id == session_id, EntryORM.status == EntryStatus.WAITING)
-            .order_by(EntryORM.sort_order)
+            .order_by(EntryORM.not_ready, EntryORM.sort_order)
             .limit(1)
         )
         return (await self.db.execute(stmt)).scalar_one_or_none()
@@ -228,10 +236,17 @@ class QueueRepository:
                     (EntryORM.status == EntryStatus.WAITING, 1),
                     else_=2,
                 ),
+                EntryORM.not_ready,
                 EntryORM.sort_order,
             )
         )
         return list((await self.db.execute(stmt)).scalars())
+
+    async def min_waiting_sort_order(self, session_id: str) -> int | None:
+        stmt = select(func.min(EntryORM.sort_order)).where(
+            EntryORM.session_id == session_id, EntryORM.status == EntryStatus.WAITING
+        )
+        return (await self.db.execute(stmt)).scalar_one()
 
     async def set_average(self, session_id: str, value: int) -> None:
         stmt = (

@@ -41,6 +41,7 @@ class SessionOut(BaseModel):
     avg_service_seconds: int
     created_at: datetime
     assignment_id: str | None = None
+    join_open: bool = True
 
     model_config = {"from_attributes": True}
 
@@ -53,6 +54,11 @@ class SessionPublic(BaseModel):
     waiting_count: int
     now_serving: NowServing | None
     practice: bool = False
+    join_open: bool = True
+
+
+class RegistrationIn(BaseModel):
+    open: bool
 
 
 class JoinIn(BaseModel):
@@ -81,6 +87,9 @@ class MyEntryOut(BaseModel):
     eta_seconds: int | None
     session_status: str
     now_serving: NowServing | None
+    not_ready: bool = False
+    not_ready_count: int = 0
+    not_ready_left: int = 0
 
 
 class TeacherEntryOut(BaseModel):
@@ -90,6 +99,8 @@ class TeacherEntryOut(BaseModel):
     status: str
     joined_at: datetime
     called_at: datetime | None
+    not_ready: bool = False
+    not_ready_count: int = 0
 
     model_config = {"from_attributes": True}
 
@@ -102,3 +113,5 @@ class TeacherQueueOut(BaseModel):
     avg_service_seconds: int
     waiting_count: int
     entries: list[TeacherEntryOut]
+    join_open: bool = True
+    not_ready_max: int = 2

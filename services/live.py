@@ -28,6 +28,8 @@ class EntryInfo:
     status: str
     joined_at: datetime
     called_at: datetime | None
+    not_ready: bool = False
+    not_ready_count: int = 0
 
 
 @dataclass(frozen=True)
@@ -40,6 +42,7 @@ class Snapshot:
     entries: tuple[EntryInfo, ...]
     position: dict[str, int] = field(default_factory=dict)
     called: EntryInfo | None = None
+    join_open: bool = True
 
     @classmethod
     def build(
@@ -50,9 +53,20 @@ class Snapshot:
         status: str,
         avg_service_seconds: int,
         entries: list,
+        join_open: bool = True,
     ) -> "Snapshot":
         infos = tuple(
-            EntryInfo(e.id, e.ticket, e.name, e.status, e.joined_at, e.called_at) for e in entries
+            EntryInfo(
+                e.id,
+                e.ticket,
+                e.name,
+                e.status,
+                e.joined_at,
+                e.called_at,
+                e.not_ready,
+                e.not_ready_count,
+            )
+            for e in entries
         )
         waiting = [e for e in infos if e.status == EntryStatus.WAITING]
         called = next((e for e in infos if e.status == EntryStatus.CALLED), None)
@@ -65,6 +79,7 @@ class Snapshot:
             entries=infos,
             position={e.id: i + 1 for i, e in enumerate(waiting)},
             called=called,
+            join_open=join_open,
         )
 
     def student_view(self, entry_id: str) -> MyEntryOut | None:
@@ -81,6 +96,8 @@ class Snapshot:
             called_name=self.called.name if self.called else None,
             avg_service_seconds=self.avg_service_seconds,
             session_status=self.status,
+            not_ready=entry.not_ready,
+            not_ready_count=entry.not_ready_count,
         )
 
     def teacher_view(self) -> TeacherQueueOut:
@@ -99,9 +116,13 @@ class Snapshot:
                     status=e.status,
                     joined_at=e.joined_at,
                     called_at=e.called_at,
+                    not_ready=e.not_ready,
+                    not_ready_count=e.not_ready_count,
                 )
                 for e in self.entries
             ],
+            join_open=self.join_open,
+            not_ready_max=settings.NOT_READY_MAX_PER_SESSION,
         )
 
 
@@ -274,6 +295,7 @@ class LiveGateway:
                 session.status,
                 session.avg_service_seconds,
                 entries,
+                session.join_open,
             )
 
     async def student_view_by_entry(self, entry_id: str) -> MyEntryOut | None:
@@ -290,6 +312,8 @@ class LiveGateway:
             called_name=service_row.called_name,
             avg_service_seconds=service_row.avg_service_seconds,
             session_status=service_row.session_status,
+            not_ready=service_row.not_ready,
+            not_ready_count=service_row.not_ready_count,
         )
 
 

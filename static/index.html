@@ -34,6 +34,7 @@
   .alert.warn { background:color-mix(in srgb, var(--warn) 18%, transparent); color:var(--warn); }
   .err { color:var(--bad); min-height:1.4em; margin-top:10px; font-size:14px; }
   .hidden { display:none; }
+  .small { font-size:14px; margin-top:8px; }
   .row { display:flex; justify-content:space-between; gap:12px; margin-top:14px; }
 </style>
 </head>
@@ -64,6 +65,9 @@
     <div class="row"><span class="muted">Сейчас у преподавателя</span><strong id="now-serving">—</strong></div>
     <div class="row"><span class="muted">Примерное ожидание</span><strong id="eta">—</strong></div>
     <div class="row"><span class="muted">Ваш номер</span><strong id="ticket">—</strong></div>
+    <button class="ghost hidden" id="notready-btn">Не готов, пропустите меня</button>
+    <button class="hidden" id="ready-btn">Готов</button>
+    <div class="muted small hidden" id="notready-note"></div>
     <button class="ghost" id="leave-btn">Выйти из очереди</button>
     <button class="hidden" id="again-btn">Встать в очередь заново</button>
     <div class="err" id="queue-err"></div>
@@ -82,6 +86,9 @@ const LIVE_RETRY_MS = 5000;
 const LIVE_RETRY_MAX_MS = 60000;
 const MESSAGES = {
   session_closed: "Сессия закрыта",
+  registration_closed: "Запись закрыта",
+  not_ready_limit: "Лимит отметок «не готов» в этой сессии исчерпан",
+  not_waiting: "Это можно сделать, только пока вы ждёте в очереди",
   queue_full: "Очередь переполнена",
   session_full: "В этой сессии больше нет мест",
   session_not_found: "Сессия с таким кодом не найдена",
@@ -307,6 +314,15 @@ function render(entry) {
   };
 
   const active = entry.status === "waiting" || entry.status === "called";
+  const canDefer = entry.status === "waiting" && entry.session_status !== "closed";
+  $("notready-btn").classList.toggle("hidden", !(canDefer && !entry.not_ready && entry.not_ready_left > 0));
+  $("ready-btn").classList.toggle("hidden", !(entry.status === "waiting" && entry.not_ready));
+  const note = $("notready-note");
+  note.classList.toggle("hidden", entry.status !== "waiting");
+  note.textContent = entry.status !== "waiting" ? "" : entry.not_ready
+    ? "Нажмите «Готов», и вы вернётесь на место по своему номеру. Осталось отметок «не готов»: " + entry.not_ready_left
+    : entry.not_ready_left > 0 ? "Осталось отметок «не готов»: " + entry.not_ready_left
+    : "Отметки «не готов» в этой сессии закончились";
   const finished = entry.status === "done" || entry.status === "left";
   $("leave-btn").classList.toggle("hidden", !active);
   $("again-btn").classList.toggle("hidden", !finished);
@@ -314,7 +330,8 @@ function render(entry) {
   if (entry.status === "waiting") {
     $("position").textContent = entry.position;
     $("position-label").textContent = "ваше место в очереди";
-    if (entry.position === 1 && entry.people_ahead === 0) addMessage("Вы следующий — подходите к аудитории", "warn");
+    if (entry.not_ready) addMessage("Вы отметили «не готов»: вас вызовут после тех, кто готов", "warn");
+    else if (entry.position === 1 && entry.people_ahead === 0) addMessage("Вы следующий — подходите к аудитории", "warn");
     if (entry.session_status === "closed") addMessage("Сессия закрыта преподавателем", "warn");
   } else if (entry.status === "called") {
     $("position").textContent = "✓";
@@ -379,6 +396,27 @@ async function loadResult() {
       item.textContent = q.position + ". " + q.text;
       box.append(item);
     }
+  }
+}
+
+async function setReadiness(path) {
+  if (!state) return;
+  $("notready-btn").disabled = true;
+  $("ready-btn").disabled = true;
+  try {
+    const entry = await request("/" + encodeURIComponent(state.code) + path, {
+      method: "POST",
+      headers: { "X-Entry-Token": state.token },
+    });
+    $("queue-err").textContent = "";
+    render(entry);
+    schedule();
+  } catch (error) {
+    $("queue-err").textContent = error.message;
+    poll();
+  } finally {
+    $("notready-btn").disabled = false;
+    $("ready-btn").disabled = false;
   }
 }
 
@@ -461,6 +499,8 @@ function resetToJoin() {
 
 $("join-btn").addEventListener("click", join);
 $("leave-btn").addEventListener("click", leave);
+$("notready-btn").addEventListener("click", () => setReadiness("/not-ready"));
+$("ready-btn").addEventListener("click", () => setReadiness("/ready"));
 $("again-btn").addEventListener("click", resetToJoin);
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible" && state) poll();

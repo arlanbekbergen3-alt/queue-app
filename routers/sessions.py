@@ -5,6 +5,7 @@ from core.ratelimit import limit_join, limit_token
 from schemas.queue import (
     JoinIn,
     MyEntryOut,
+    RegistrationIn,
     SessionCreate,
     SessionOut,
     SessionPublic,
@@ -43,6 +44,23 @@ async def my_status(code: str, token: EntryToken, service: QueueServiceDep):
 @router.post("/{code}/leave", response_model=MyEntryOut, dependencies=[Depends(limit_token)])
 async def leave(code: str, token: EntryToken, service: QueueServiceDep):
     return await service.leave(code, token)
+
+
+@router.post("/{code}/not-ready", response_model=MyEntryOut, dependencies=[Depends(limit_token)])
+async def not_ready(code: str, token: EntryToken, service: QueueServiceDep):
+    return await service.mark_not_ready(code, token)
+
+
+@router.post("/{code}/ready", response_model=MyEntryOut, dependencies=[Depends(limit_token)])
+async def ready(code: str, token: EntryToken, service: QueueServiceDep):
+    return await service.mark_ready(code, token)
+
+
+@router.put("/{code}/registration", response_model=SessionOut)
+async def set_registration(
+    code: str, data: RegistrationIn, teacher: CurrentTeacher, service: QueueServiceDep
+):
+    return await service.set_registration(code, teacher.id, data.open)
 
 
 @router.get("/{code}/queue", response_model=TeacherQueueOut)

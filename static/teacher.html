@@ -36,6 +36,7 @@
   th { font-size:13px; color:var(--muted); font-weight:600; }
   tr.called td { background:color-mix(in srgb, var(--ok) 14%, transparent); }
   tr.skipped td { color:var(--muted); }
+  .tag { background:var(--warn); color:#fff; border-radius:99px; padding:2px 8px; font-size:12px; margin-left:6px; }
   td.btns { text-align:right; white-space:nowrap; }
   td.btns button { padding:6px 10px; font-size:14px; margin-left:4px; }
   .sessions button { display:block; width:100%; text-align:left; margin-top:8px; background:var(--bg); color:var(--text); border:1px solid var(--border); font-weight:500; }
@@ -93,6 +94,7 @@
         </div>
         <div class="actions">
           <button id="next-btn">Вызвать следующего</button>
+          <button class="ghost" id="registration-btn">Закрыть запись</button>
           <button class="ghost" id="close-btn">Закрыть сессию</button>
         </div>
       </div>
@@ -123,6 +125,7 @@ const MESSAGES = {
   not_skipped: "Вернуть в очередь можно только пропущенного",
   not_waiting: "Двигать вперёд можно только ждущего",
   session_closed: "Сессия закрыта",
+  registration_closed: "Запись закрыта",
   session_not_found: "Сессия не найдена",
   entry_not_found: "Запись не найдена",
   not_authenticated: "Войдите заново",
@@ -421,6 +424,11 @@ function renderQueue(queue) {
     "Ждут: " + queue.waiting_count + " · среднее время сдачи: " + Math.round(queue.avg_service_seconds / 60 * 10) / 10 + " мин";
   const closed = queue.status === "closed";
   $("close-btn").classList.toggle("hidden", closed);
+  const registration = $("registration-btn");
+  registration.classList.toggle("hidden", closed);
+  registration.textContent = queue.join_open ? "Закрыть запись" : "Открыть запись";
+  registration.dataset.open = queue.join_open ? "1" : "0";
+  $("queue-title").textContent += queue.join_open || closed ? "" : " · запись закрыта";
   const hasCalled = queue.entries.some((e) => e.status === "called");
   $("next-btn").disabled = hasCalled || queue.waiting_count === 0;
 
@@ -441,7 +449,9 @@ function renderQueue(queue) {
     tbody.append(el("tr", { class: entry.status },
       el("td", {}, "" + entry.ticket),
       el("td", {}, entry.name),
-      el("td", {}, labels[entry.status] || entry.status),
+      el("td", {}, labels[entry.status] || entry.status,
+        entry.not_ready ? el("span", { class: "tag" }, "не готов") : "",
+        entry.not_ready_count ? el("span", { class: "muted" }, " ×" + entry.not_ready_count) : ""),
       buttons));
   }
 }
@@ -466,6 +476,20 @@ async function callNext() {
   await refresh();
 }
 
+async function toggleRegistration() {
+  const open = $("registration-btn").dataset.open !== "1";
+  try {
+    await request("/sessions/" + current + "/registration", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ open }),
+    });
+  } catch (error) {
+    showActionError(error.message);
+  }
+  await refresh();
+}
+
 async function closeSession() {
   if (!confirm("Закрыть сессию? Новые студенты не смогут встать в очередь.")) return;
   try {
@@ -483,6 +507,7 @@ $("auth-btn").addEventListener("click", authenticate);
 $("create-btn").addEventListener("click", createSession);
 $("next-btn").addEventListener("click", callNext);
 $("close-btn").addEventListener("click", closeSession);
+$("registration-btn").addEventListener("click", toggleRegistration);
 $("logout-btn").addEventListener("click", () => { writeToken(null); showAuth(); });
 for (const id of ["username", "password", "invite"]) {
   $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") authenticate(); });

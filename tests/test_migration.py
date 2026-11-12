@@ -179,3 +179,54 @@ async def test_group_column_is_added_nullable_and_existing_sessions_keep_working
         )
     assert count == 1
     assert "group_name" not in columns
+
+
+@pytest.mark.asyncio
+async def test_not_ready_and_join_window_columns_default_safely_and_roll_back(migration_engine):
+    await alembic_async("upgrade", "e5f6a7b8c9d0")
+    async with migration_engine.begin() as conn:
+        await conn.execute(
+            text("INSERT INTO users (id, username, password_hash) VALUES ('u1', 't', 'x')")
+        )
+        await conn.execute(
+            text(
+                "INSERT INTO queue_sessions (id, teacher_id, title, code, status, next_ticket,"
+                " avg_service_seconds, created_at) VALUES ('s1', 'u1', 'Lab', 'ABC234', 'open',"
+                " 3, 300, now())"
+            )
+        )
+        for n in (1, 2):
+            await conn.execute(
+                text(
+                    "INSERT INTO entries (id, session_id, name, token_hash, ticket, sort_order,"
+                    " status, joined_at) VALUES (:id, 's1', 'N', :th, :n, :n, 'waiting', now())"
+                ),
+                {"id": f"e{n}", "th": f"{n}" * 16, "n": n},
+            )
+
+    await alembic_async("upgrade", "f6a7b8c9d0e1")
+
+    async with migration_engine.connect() as conn:
+        entries = (await conn.execute(text("SELECT not_ready, not_ready_count FROM entries"))).all()
+        join_open = (await conn.execute(text("SELECT join_open FROM queue_sessions"))).scalar_one()
+    assert {(e.not_ready, e.not_ready_count) for e in entries} == {(False, 0)}
+    assert join_open is True
+
+    await alembic_async("downgrade", "e5f6a7b8c9d0")
+    async with migration_engine.connect() as conn:
+        columns = (
+            (
+                await conn.execute(
+                    text(
+                        "SELECT column_name FROM information_schema.columns"
+                        " WHERE table_name IN ('entries', 'queue_sessions')"
+                    )
+                )
+            )
+            .scalars()
+            .all()
+        )
+        count = (await conn.execute(text("SELECT count(*) FROM entries"))).scalar_one()
+    assert not {"not_ready", "not_ready_count", "join_open"} & set(columns)
+    assert count == 2
+    await alembic_async("upgrade", "head")

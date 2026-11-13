@@ -13,6 +13,7 @@ from core.security import pwd_context
 from db.base import Base
 from db.database import get_db
 from main import app
+from services import presence
 from services.ai_drafts import runtime as ai_runtime
 from services.live import gateway
 
@@ -82,6 +83,7 @@ async def prepare_database():
 def reset_rate_limiter():
     limiter.reset()
     hourly_limiter.reset()
+    presence.guard.reset()
 
 
 @pytest_asyncio.fixture

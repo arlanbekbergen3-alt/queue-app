@@ -28,6 +28,12 @@ class QueueSessionORM(Base):
         ),
         CheckConstraint("quick_max_points BETWEEN 1 AND 100", name="ck_queue_sessions_quick_max"),
         CheckConstraint(
+            "presence_check IN ('off', 'rotating_code')", name="ck_queue_sessions_presence"
+        ),
+        CheckConstraint(
+            "presence_interval BETWEEN 30 AND 60", name="ck_queue_sessions_presence_interval"
+        ),
+        CheckConstraint(
             "questions_override IS NULL OR questions_override BETWEEN 1 AND 10",
             name="ck_queue_sessions_questions_override",
         ),
@@ -63,6 +69,12 @@ class QueueSessionORM(Base):
     )
     quick_max_points: Mapped[int] = mapped_column(
         Integer, default=10, server_default=text("10"), nullable=False
+    )
+    presence_check: Mapped[str] = mapped_column(
+        String(16), default="off", server_default=text("'off'"), nullable=False
+    )
+    presence_interval: Mapped[int] = mapped_column(
+        Integer, default=30, server_default=text("30"), nullable=False
     )
     deadline_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     questions_override: Mapped[int | None] = mapped_column(Integer, nullable=True)

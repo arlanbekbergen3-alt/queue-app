@@ -11,7 +11,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
 from core.events import notify_changed
-from core.exceptions import ConflictError, NotFoundError, UnprocessableError
+from core.exceptions import (
+    ConflictError,
+    ForbiddenError,
+    NotFoundError,
+    RateLimitError,
+    UnprocessableError,
+)
 from core.security import hash_token
 from models.entry import EntryORM, EntryStatus
 from models.protocol import AssignmentORM, SessionEventORM
@@ -21,12 +27,15 @@ from schemas.queue import (
     JoinIn,
     MyEntryOut,
     NowServing,
+    PresenceIn,
+    PresenceOut,
     SessionCreate,
     SessionPublic,
     SessionSettingsIn,
     TeacherEntryOut,
     TeacherQueueOut,
 )
+from services import presence
 from services.identity import find_or_create_student
 from services.ordering import (
     ORDER_PARK,
@@ -188,6 +197,8 @@ class QueueService:
                         ready_skip_questions=data.ready_skip_questions,
                         deadline_at=deadline,
                         session_mode=data.session_mode,
+                        presence_check=data.presence_check,
+                        presence_interval=data.presence_interval,
                         quick_max_points=data.quick_max_points,
                         assignment_id=assignment_id,
                     )
@@ -245,13 +256,37 @@ class QueueService:
             ready_skip_questions=session.ready_skip_questions,
             lottery_done=session.lottery_at is not None,
             session_mode=session.session_mode,
+            presence_check=session.presence_check,
         )
 
-    async def join(self, code: str, data: JoinIn) -> MyEntryOut:
+    async def join(self, code: str, data: JoinIn, client_ip: str = "-") -> MyEntryOut:
         async with join_gate(normalize_code(code)):
-            return await self._join(code, data)
+            return await self._join(code, data, client_ip)
 
-    async def _join(self, code: str, data: JoinIn) -> MyEntryOut:
+    def _check_presence(self, session: QueueSessionORM, code: str | None, client_ip: str) -> None:
+        wait = presence.guard.retry_after(session.code, client_ip)
+        if wait:
+            raise RateLimitError(
+                f"Слишком много неверных кодов. Подождите {wait} с и посмотрите на экран",
+                headers={"Retry-After": str(wait)},
+                code="presence_locked",
+            )
+        if not code or not code.strip():
+            raise ForbiddenError(
+                "Введите код с экрана преподавателя", code="presence_code_required"
+            )
+        digits = "".join(code.split()).replace("-", "")
+        if not presence.is_valid(
+            settings.JWT_SECRET_KEY,
+            session.id,
+            session.presence_interval,
+            presence.wall_clock(),
+            digits,
+        ):
+            presence.guard.failed(session.code, client_ip)
+            raise ForbiddenError("Неверный код, посмотрите на экран", code="presence_code_invalid")
+
+    async def _join(self, code: str, data: JoinIn, client_ip: str = "-") -> MyEntryOut:
         session = await self._get_session(code)
         token_hash = hash_token(data.token)
         existing = await self.repo.get_entry_by_token(session.id, token_hash)
@@ -259,6 +294,8 @@ class QueueService:
             return await self._view(existing.id)
         if session.status != SessionStatus.OPEN:
             raise ConflictError("Сессия закрыта", code="session_closed")
+        if session.presence_check == "rotating_code":
+            self._check_presence(session, data.presence_code, client_ip)
         session = await self._lock(code)
         self._check_registration(session)
         self._check_capacity(*await self.repo.queue_counts(session.id))
@@ -403,6 +440,33 @@ class QueueService:
             await self.db.commit()
             notify_changed(session.code)
         return await self._view(entry.id)
+
+    async def set_presence(self, code: str, teacher_id: str, data: PresenceIn) -> PresenceOut:
+        session = await self._owned(code, teacher_id, lock=True)
+        if session.status != SessionStatus.OPEN:
+            raise ConflictError("Сессия закрыта", code="session_closed")
+        session.presence_check = data.mode
+        if data.interval is not None:
+            session.presence_interval = data.interval
+        await self.db.commit()
+        return self._presence_view(session)
+
+    async def get_presence(self, code: str, teacher_id: str) -> PresenceOut:
+        return self._presence_view(await self._owned(code, teacher_id))
+
+    @staticmethod
+    def _presence_view(session: QueueSessionORM) -> PresenceOut:
+        if session.presence_check != "rotating_code":
+            return PresenceOut(enabled=False, interval=session.presence_interval)
+        moment = presence.wall_clock()
+        return PresenceOut(
+            enabled=True,
+            interval=session.presence_interval,
+            code=presence.current_code(
+                settings.JWT_SECRET_KEY, session.id, session.presence_interval, moment
+            ),
+            expires_in=presence.seconds_left(session.presence_interval, moment),
+        )
 
     async def set_registration(self, code: str, teacher_id: str, is_open: bool) -> QueueSessionORM:
         session = await self._owned(code, teacher_id, lock=True)

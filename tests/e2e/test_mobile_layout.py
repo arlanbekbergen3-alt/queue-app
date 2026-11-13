@@ -1,3 +1,5 @@
+import re
+
 import pytest
 from playwright.sync_api import Page, expect
 
@@ -210,5 +212,25 @@ def test_bulk_import_presets_and_quick_join_fit_a_phone(
     )
     student.goto(f"/?code={teacher['code']}")
     expect(student.locator("#quick-join")).to_be_visible(timeout=SLOW)
+    assert overflow(student) <= 0
+    other.close()
+
+
+def test_presence_code_and_field_fit_a_phone(page: Page, browser, live_server, open_session):
+    teacher = open_session("Телефон: присутствие", presence_check="rotating_code")
+    login_as(page, teacher)
+    page.set_viewport_size(PHONE)
+    page.goto("/teacher")
+    page.get_by_role("button", name=teacher["code"]).click()
+    expect(page.locator("#presence-digits")).to_have_text(
+        re.compile(r"^\d{3} \d{3}$"), timeout=SLOW
+    )
+    page.wait_for_function("document.getElementById('presence-qr').naturalWidth > 0")
+    assert overflow(page) <= 0
+    other = browser.new_context(base_url=live_server)
+    student = other.new_page()
+    student.set_viewport_size(PHONE)
+    student.goto(f"/?code={teacher['code']}")
+    expect(student.locator("#presence-box")).to_be_visible(timeout=SLOW)
     assert overflow(student) <= 0
     other.close()

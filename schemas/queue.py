@@ -13,6 +13,8 @@ class SessionCreate(BaseModel):
     order_mode: Literal["join", "lottery"] = "join"
     session_mode: Literal["queue_only", "quick", "protocol"] = "protocol"
     quick_max_points: int = Field(default=10, ge=1, le=100)
+    presence_check: Literal["off", "rotating_code"] = "off"
+    presence_interval: int = Field(default=30, ge=30, le=60)
     ready_priority: bool = False
     ready_bonus_points: int = Field(default=0, ge=0, le=5)
     ready_skip_questions: int = Field(default=0, ge=0, le=1)
@@ -79,6 +81,8 @@ class SessionOut(BaseModel):
     questions_override: int | None = None
     session_mode: str = "protocol"
     quick_max_points: int = 10
+    presence_check: str = "off"
+    presence_interval: int = 30
 
     model_config = {"from_attributes": True}
 
@@ -98,6 +102,19 @@ class SessionPublic(BaseModel):
     ready_skip_questions: int = 0
     lottery_done: bool = False
     session_mode: str = "protocol"
+    presence_check: str = "off"
+
+
+class PresenceIn(BaseModel):
+    mode: Literal["off", "rotating_code"]
+    interval: int | None = Field(default=None, ge=30, le=60)
+
+
+class PresenceOut(BaseModel):
+    enabled: bool
+    interval: int
+    code: str | None = None
+    expires_in: int | None = None
 
 
 class RegistrationIn(BaseModel):
@@ -109,6 +126,7 @@ class JoinIn(BaseModel):
     token: str = Field(min_length=16, max_length=128)
     device_key: str | None = Field(default=None, min_length=16, max_length=128)
     ready_now: bool = False
+    presence_code: str | None = Field(default=None, max_length=32)
 
     @field_validator("name")
     @classmethod

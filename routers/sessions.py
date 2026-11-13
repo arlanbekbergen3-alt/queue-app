@@ -1,11 +1,13 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Request, Response, status
 
 from core.dependencies import CurrentTeacher, EntryToken, QueueServiceDep
-from core.ratelimit import limit_join, limit_token
+from core.ratelimit import client_ip, limit_join, limit_token
 from schemas.history import SessionEventOut
 from schemas.queue import (
     JoinIn,
     MyEntryOut,
+    PresenceIn,
+    PresenceOut,
     ReadyNowIn,
     RegistrationIn,
     SessionCreate,
@@ -35,8 +37,8 @@ async def session_info(code: str, service: QueueServiceDep):
 
 
 @router.post("/{code}/join", response_model=MyEntryOut, dependencies=[Depends(limit_join)])
-async def join(code: str, data: JoinIn, service: QueueServiceDep):
-    return await service.join(code, data)
+async def join(code: str, data: JoinIn, request: Request, service: QueueServiceDep):
+    return await service.join(code, data, client_ip(request))
 
 
 @router.get("/{code}/me", response_model=MyEntryOut, dependencies=[Depends(limit_token)])
@@ -79,6 +81,21 @@ async def run_lottery(code: str, teacher: CurrentTeacher, service: QueueServiceD
 @router.get("/{code}/events-log", response_model=list[SessionEventOut])
 async def session_events(code: str, teacher: CurrentTeacher, service: QueueServiceDep):
     return await service.session_events(code, teacher.id)
+
+
+@router.put("/{code}/presence", response_model=PresenceOut)
+async def set_presence(
+    code: str, data: PresenceIn, teacher: CurrentTeacher, service: QueueServiceDep
+):
+    return await service.set_presence(code, teacher.id, data)
+
+
+@router.get("/{code}/presence", response_model=PresenceOut)
+async def get_presence(
+    code: str, response: Response, teacher: CurrentTeacher, service: QueueServiceDep
+):
+    response.headers["Cache-Control"] = "no-store"
+    return await service.get_presence(code, teacher.id)
 
 
 @router.put("/{code}/registration", response_model=SessionOut)

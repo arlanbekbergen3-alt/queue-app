@@ -160,6 +160,16 @@
           </div>
         </div>
         <div class="perk">Бонус записывается отдельной строкой и не входит в баллы по критериям; его можно снять с причиной.</div>
+        <div class="settings-row">
+          <div>
+            <label for="presence-mode">Проверка присутствия</label>
+            <select id="presence-mode"><option value="off">выключена</option><option value="rotating_code">код на экране</option></select>
+          </div>
+          <div>
+            <label for="presence-interval">Код меняется каждые</label>
+            <select id="presence-interval"><option value="30">30 секунд</option><option value="45">45 секунд</option><option value="60">60 секунд</option></select>
+          </div>
+        </div>
         <label for="title">Название (необязательно)</label>
         <input id="title" maxlength="120" placeholder="Например: Лабораторная №3">
       </details>
@@ -188,6 +198,21 @@
           <button id="next-btn">Вызвать следующего</button>
           <button class="ghost" id="registration-btn">Закрыть запись</button>
           <button class="ghost" id="close-btn">Закрыть сессию</button>
+        </div>
+      </div>
+      <div id="presence-panel" style="margin-top:12px">
+        <div class="line" style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">
+          <strong>Проверка присутствия</strong>
+          <div class="actions">
+            <select id="presence-interval-live" style="width:auto"><option value="30">30 с</option><option value="45">45 с</option><option value="60">60 с</option></select>
+            <button class="ghost" id="presence-toggle">Включить проверку присутствия</button>
+          </div>
+        </div>
+        <div class="hidden" id="presence-live" style="text-align:center">
+          <div class="muted">Студенты вводят этот код или наводят камеру на QR</div>
+          <div class="bigcode" id="presence-digits"></div>
+          <div class="muted" id="presence-left"></div>
+          <img class="qr" id="presence-qr" alt="QR-код с кодом присутствия" style="max-width:260px">
         </div>
       </div>
       <div class="hidden" id="start-panel">
@@ -252,6 +277,7 @@
 <div id="projector" class="hidden">
   <div style="font-size:24px">Войдите в очередь: введите код или наведите камеру</div>
   <div class="bigcode" id="projector-code"></div>
+  <div class="bigcode hidden" id="projector-presence"></div>
   <img class="qr" id="projector-qr" alt="QR-код для входа в очередь">
   <div id="projector-link" style="font-size:22px"></div>
   <div style="color:#555">Esc или щелчок: закрыть</div>
@@ -285,6 +311,7 @@ const MESSAGES = {
   not_waiting: "Двигать вперёд можно только ждущего",
   session_closed: "Сессия закрыта",
   registration_closed: "Запись закрыта",
+  presence_code_invalid: "Неверный код",
   mode_no_assignment: "В этом режиме работа не подключается",
   grades_incomplete: "Выставьте баллы по всем критериям",
   submission_open: "Завершите сдачу с оценками",
@@ -573,6 +600,8 @@ function prefillFromLast(sessions) {
   $("mode").value = last.session_mode || "protocol";
   $("quick-max").value = String(last.quick_max_points || 10);
   $("order-mode").value = last.order_mode || "join";
+  $("presence-mode").value = last.presence_check || "off";
+  $("presence-interval").value = String(last.presence_interval || 30);
   $("ready-priority").checked = !!last.ready_priority;
   $("ready-bonus").value = String(last.ready_bonus_points || 0);
   $("ready-skip").value = String(last.ready_skip_questions || 0);
@@ -612,6 +641,8 @@ async function createSession() {
       session_mode: mode,
       quick_max_points: Number($("quick-max").value) || 10,
       order_mode: $("order-mode").value,
+      presence_check: $("presence-mode").value,
+      presence_interval: Number($("presence-interval").value),
       ready_priority: $("ready-priority").checked,
       ready_bonus_points: Number($("ready-bonus").value),
       ready_skip_questions: Number($("ready-skip").value),
@@ -627,8 +658,60 @@ async function createSession() {
   }
 }
 
-function joinLink(code) { return location.origin + "/?code=" + code; }
+const presence = { enabled: false, code: null, interval: 30, expiresAt: 0, timer: null };
+function joinLink(code) { return location.origin + "/?code=" + code + (presence.enabled && presence.code ? "&p=" + presence.code : ""); }
 function qrSource(code) { return API + "/qr.svg?text=" + encodeURIComponent(joinLink(code)); }
+const spaced = (code) => code.slice(0, 3) + " " + code.slice(3);
+
+async function loadPresence() {
+  clearTimeout(presence.timer);
+  if (!current) return;
+  const code = current;
+  try {
+    const data = await request("/sessions/" + code + "/presence");
+    if (code !== current) return;
+    presence.enabled = data.enabled;
+    presence.code = data.code;
+    presence.interval = data.interval;
+    presence.expiresAt = data.enabled ? Date.now() + data.expires_in * 1000 : 0;
+    renderPresence();
+    if (data.enabled) presence.timer = setTimeout(loadPresence, data.expires_in * 1000 + 300);
+  } catch (error) {
+    if (error.status !== 401) presence.timer = setTimeout(loadPresence, 5000);
+  }
+}
+
+function renderPresence() {
+  $("presence-toggle").textContent = presence.enabled ? "Выключить проверку присутствия" : "Включить проверку присутствия";
+  $("presence-interval-live").value = String(presence.interval);
+  $("presence-live").classList.toggle("hidden", !presence.enabled);
+  if (presence.enabled && presence.code) {
+    $("presence-digits").textContent = spaced(presence.code);
+    $("presence-qr").src = qrSource(current);
+  }
+  $("projector-presence").classList.toggle("hidden", !presence.enabled);
+  if (presence.enabled && presence.code) $("projector-presence").textContent = spaced(presence.code);
+  if (!$("start-panel").classList.contains("hidden")) showStart(true);
+  if (!$("projector").classList.contains("hidden")) {
+    $("projector-qr").src = qrSource(current);
+    $("projector-link").textContent = joinLink(current);
+  }
+}
+
+async function togglePresence() {
+  try {
+    await request("/sessions/" + current + "/presence", { method: "PUT", body: JSON.stringify({
+      mode: presence.enabled ? "off" : "rotating_code", interval: Number($("presence-interval-live").value) }) });
+  } catch (error) {
+    showActionError(error.message);
+  }
+  await loadPresence();
+}
+
+setInterval(() => {
+  if (!presence.enabled) return;
+  $("presence-left").textContent = "Код обновится через " + Math.max(0, Math.ceil((presence.expiresAt - Date.now()) / 1000)) + " с";
+}, 1000);
 
 function showStart(show) {
   $("start-panel").classList.toggle("hidden", !show);
@@ -659,6 +742,9 @@ function openSession(code, announce) {
   $("queue-code").textContent = code;
   $("queue-link").textContent = joinLink(code);
   showStart(!!announce);
+  presence.enabled = false;
+  presence.code = null;
+  loadPresence();
   if (announce) $("queue-card").scrollIntoView({ block: "start" });
   $("protocol-session-link").href = "/protocol?code=" + encodeURIComponent(code);
   refresh();
@@ -1118,6 +1204,7 @@ $("create-btn").addEventListener("click", createSession);
 $("next-btn").addEventListener("click", callNext);
 $("close-btn").addEventListener("click", closeSession);
 $("registration-btn").addEventListener("click", toggleRegistration);
+$("presence-toggle").addEventListener("click", togglePresence);
 $("mode").addEventListener("change", syncMode);
 for (const type of ["input", "change"]) $("wizard").addEventListener(type, () => { formTouched = true; });
 $("start-show").addEventListener("click", () => showStart($("start-panel").classList.contains("hidden")));

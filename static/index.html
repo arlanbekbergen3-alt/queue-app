@@ -50,6 +50,11 @@
     <input id="code" maxlength="8" autocomplete="off" autocapitalize="characters" placeholder="ABC123">
     <label for="name">Ваше имя и фамилия</label>
     <input id="name" maxlength="60" autocomplete="name" placeholder="Анна Иванова">
+    <div id="presence-box" class="hidden">
+      <label for="presence-code">Код с экрана преподавателя</label>
+      <input id="presence-code" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="6 цифр">
+      <div class="muted small">Код на экране меняется каждые полминуты: смотрите на него, а не копируйте у друга.</div>
+    </div>
     <div id="ready-choice" class="hidden">
       <label class="check" for="ready-now"><input type="checkbox" id="ready-now"> Готов сдать сразу</label>
       <div class="muted small" id="perks-join"></div>
@@ -100,6 +105,9 @@ const MESSAGES = {
   session_closed: "Сессия закрыта",
   registration_closed: "Запись закрыта",
   lottery_pending: "Порядок ещё не определён",
+  presence_code_invalid: "Неверный код, посмотрите на экран",
+  presence_code_required: "Введите код с экрана преподавателя",
+  presence_locked: "Слишком много неверных кодов. Подождите пару минут и посмотрите на экран",
   ready_priority_off: "В этой сессии приоритет по готовности не включён",
   ready_locked: "Запись закрыта, готовность изменить уже нельзя",
   not_ready_limit: "Лимит отметок «не готов» в этой сессии исчерпан",
@@ -203,6 +211,7 @@ async function previewSession() {
   previewCode = code;
   const box = $("ready-choice");
   box.classList.add("hidden");
+  $("presence-box").classList.add("hidden");
   if (code.length < 6) return;
   try {
     const info = await request("/" + encodeURIComponent(code));
@@ -210,6 +219,7 @@ async function previewSession() {
     const offered = info.ready_priority && info.join_open && info.status === "open";
     box.classList.toggle("hidden", !offered);
     $("perks-join").textContent = offered ? perksText(info) : "";
+    $("presence-box").classList.toggle("hidden", !(info.presence_check === "rotating_code" && info.join_open && info.status === "open"));
   } catch {}
 }
 function formatEta(seconds) {
@@ -292,7 +302,7 @@ async function join() {
     const entry = await request("/" + encodeURIComponent(code) + "/join", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, token, device_key: deviceKey(), ready_now: !$("ready-choice").classList.contains("hidden") && $("ready-now").checked }),
+      body: JSON.stringify({ name, token, device_key: deviceKey(), ready_now: !$("ready-choice").classList.contains("hidden") && $("ready-now").checked, presence_code: $("presence-box").classList.contains("hidden") ? null : $("presence-code").value }),
     });
     try { localStorage.setItem("queue-name", name); } catch {}
     saveState({ code, token });
@@ -638,6 +648,8 @@ for (const id of ["code", "name"]) {
 const urlCode = new URLSearchParams(location.search).get("code");
 try { $("name").value = localStorage.getItem("queue-name") || ""; } catch {}
 if (urlCode) $("code").value = urlCode.toUpperCase();
+const urlPresence = new URLSearchParams(location.search).get("p");
+if (urlPresence) $("presence-code").value = urlPresence.replace(/[^0-9]/g, "").slice(0, 6);
 const resumable = state && state.code && state.token && (!urlCode || state.code === urlCode.toUpperCase());
 if (resumable) { show("queue"); poll(); } else { show("join"); previewSession(); offerQuickJoin(); }
 </script>

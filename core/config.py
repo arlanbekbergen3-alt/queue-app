@@ -20,6 +20,10 @@ class Settings(BaseSettings):
     SESSION_AUTO_CLOSE_HOURS: float = Field(default=6.0, ge=0)
     SESSION_REAPER_INTERVAL_SECONDS: int = Field(default=60, ge=1)
     NOT_READY_MAX_PER_SESSION: int = Field(default=2, ge=0, le=10)
+    PRESENCE_IP_FAILURES: int = Field(default=5, ge=1)
+    PRESENCE_SESSION_FAILURES: int = Field(default=30, ge=1)
+    PRESENCE_FAILURE_WINDOW_SECONDS: int = Field(default=60, ge=1)
+    PRESENCE_LOCK_SECONDS: int = Field(default=120, ge=1)
     BUDGET_RESERVE_PERCENT: int = Field(default=10, ge=0, le=50)
     BUDGET_MAX_DURATION_MINUTES: int = Field(default=720, ge=1)
 

@@ -611,3 +611,54 @@ async def test_session_modes_migration_keeps_existing_sessions_as_full_protocol(
     assert not {"session_mode", "quick_max_points", "is_system"} & set(columns)
     assert count == 1
     await alembic_async("upgrade", "head")
+
+
+@pytest.mark.asyncio
+async def test_presence_migration_keeps_sessions_unchecked_and_rolls_back(migration_engine):
+    await alembic_async("upgrade", "f2a3b4c5d6e7")
+    async with migration_engine.begin() as conn:
+        await conn.execute(
+            text("INSERT INTO users (id, username, password_hash) VALUES ('u1', 't', 'x')")
+        )
+        await conn.execute(
+            text(
+                "INSERT INTO queue_sessions (id, teacher_id, title, code, status, next_ticket,"
+                " avg_service_seconds, created_at) VALUES ('s1', 'u1', 'Lab', 'ABC234', 'open',"
+                " 3, 300, now())"
+            )
+        )
+
+    await alembic_async("upgrade", "a3b4c5d6e7f8")
+
+    async with migration_engine.connect() as conn:
+        row = (
+            await conn.execute(text("SELECT presence_check, presence_interval FROM queue_sessions"))
+        ).one()
+    assert tuple(row) == ("off", 30)
+    for statement in (
+        "UPDATE queue_sessions SET presence_check = 'sms'",
+        "UPDATE queue_sessions SET presence_interval = 10",
+        "UPDATE queue_sessions SET presence_interval = 90",
+    ):
+        with pytest.raises(IntegrityError):
+            async with migration_engine.begin() as conn:
+                await conn.execute(text(statement))
+
+    await alembic_async("downgrade", "f2a3b4c5d6e7")
+    async with migration_engine.connect() as conn:
+        columns = (
+            (
+                await conn.execute(
+                    text(
+                        "SELECT column_name FROM information_schema.columns"
+                        " WHERE table_name = 'queue_sessions'"
+                    )
+                )
+            )
+            .scalars()
+            .all()
+        )
+        count = (await conn.execute(text("SELECT count(*) FROM queue_sessions"))).scalar_one()
+    assert not {"presence_check", "presence_interval"} & set(columns)
+    assert count == 1
+    await alembic_async("upgrade", "head")

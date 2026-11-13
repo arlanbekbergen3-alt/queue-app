@@ -26,6 +26,7 @@ async def test_public_info_and_unknown_code(client, make_teacher, make_session):
         "ready_skip_questions": 0,
         "lottery_done": False,
         "session_mode": "protocol",
+        "presence_check": "off",
     }
     assert (await client.get(f"{API}/ZZZZZZ")).status_code == 404
 

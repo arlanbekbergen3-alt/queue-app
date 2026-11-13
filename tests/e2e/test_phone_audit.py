@@ -113,7 +113,7 @@ def test_queue_row_buttons_stay_whole_words_on_a_phone(page: Page, api, open_ses
     page.get_by_role("button", name=teacher["code"]).click()
     expect(page.locator("#entries tr", has_text="Студент 3")).to_be_visible(timeout=SLOW)
     skip = page.locator("#entries").get_by_role("button", name="Пропустить")
-    assert skip.count() == 4
+    expect(skip).to_have_count(4, timeout=SLOW)
     for index in range(4):
         box = skip.nth(index).bounding_box()
         assert box and box["width"] >= 90 and box["height"] <= 60, box

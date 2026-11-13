@@ -33,6 +33,7 @@ from routers.history import router as history_router
 from routers.live import router as live_router
 from routers.practice import router as practice_router
 from routers.protocol import router as protocol_router
+from routers.qr import router as qr_router
 from routers.sessions import router as sessions_router
 from routers.spaces import router as spaces_router
 from routers.templates import router as templates_router
@@ -97,6 +98,7 @@ app = FastAPI(
 app.include_router(auth_router, prefix=API_V1_PREFIX)
 app.include_router(sessions_router, prefix=API_V1_PREFIX)
 app.include_router(budget_router, prefix=API_V1_PREFIX)
+app.include_router(qr_router, prefix=API_V1_PREFIX)
 app.include_router(live_router, prefix=API_V1_PREFIX)
 app.include_router(protocol_router, prefix=API_V1_PREFIX)
 app.include_router(ai_router, prefix=API_V1_PREFIX)

@@ -26,7 +26,7 @@
   button.bad { background:var(--bad); }
   button:disabled { opacity:.6; cursor:default; }
   .muted { color:var(--muted); }
-  .hidden { display:none; }
+  .hidden { display:none !important; }
   .err { color:var(--bad); min-height:1.4em; margin-top:10px; font-size:14px; }
   .code { font-size:44px; font-weight:800; letter-spacing:.15em; }
   .head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
@@ -48,6 +48,31 @@
   .settings-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   .perk { color:var(--muted); font-size:14px; margin-top:6px; }
   .tag.ready { background:var(--ok); }
+  .qr { display:block; width:100%; max-width:min(90vw, 70vh); aspect-ratio:1; background:#fff; padding:8px; border-radius:10px; margin:12px auto; }
+  .bigcode { font-size:clamp(48px, 16vw, 120px); font-weight:800; letter-spacing:.12em; text-align:center; line-height:1.1; }
+  #start-panel { border:2px solid var(--accent); border-radius:14px; padding:14px; margin-top:12px; text-align:center; }
+  #projector { position:fixed; inset:0; background:#fff; color:#111; z-index:50; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:16px; text-align:center; }
+  #projector .qr { max-width:min(80vw, 62vh); padding:0; }
+  #projector .bigcode { color:#111; }
+  #help-overlay { position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:60; display:flex; align-items:center; justify-content:center; padding:16px; }
+  #help-overlay .card { max-width:420px; width:100%; margin:0; }
+  kbd { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:1px 7px; font:inherit; font-size:14px; font-weight:700; }
+  .work { border:2px solid var(--ok); border-radius:14px; padding:14px; margin:14px 0; }
+  .work .head { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .wtimer { font-size:28px; font-weight:800; font-variant-numeric:tabular-nums; }
+  .wtimer.warn { color:var(--warn); }
+  .wtimer.bad { color:var(--bad); }
+  .crit { border-top:1px solid var(--border); padding:10px 0; }
+  .crit.active { background:color-mix(in srgb, var(--accent) 10%, transparent); border-radius:10px; padding:10px; }
+  .crit .name { font-weight:600; margin-bottom:6px; display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+  .pts { display:flex; flex-wrap:wrap; gap:6px; }
+  .pts button { min-width:44px; min-height:44px; padding:6px 10px; background:var(--bg); color:var(--text); border:1px solid var(--border); }
+  .pts button.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
+  .chips button { background:var(--bg); color:var(--text); border:1px solid var(--border); font-weight:500; padding:6px 10px; font-size:14px; }
+  .chips button.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+  textarea { width:100%; font:inherit; padding:10px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); min-height:60px; }
+  .qlist { margin:8px 0; padding-left:20px; }
   .pill { display:inline-block; padding:3px 12px; border-radius:99px; font-weight:700; color:#fff; }
   .pill.ok { background:var(--ok); }
   .pill.tight { background:var(--warn); }
@@ -88,26 +113,23 @@
   </section>
 
   <div id="app-view" class="hidden">
-    <section class="card">
-      <h2>Новая сессия сдачи</h2>
-      <input id="title" maxlength="120" placeholder="Например: Лабораторная №3">
-      <label for="group">Группа (необязательно)</label>
+    <section class="card" id="wizard">
+      <h2>Начать занятие</h2>
+      <label for="group">Группа</label>
       <input id="group" maxlength="60" placeholder="Например: ИС-22">
-      <label for="order-mode">Порядок вызова</label>
-      <select id="order-mode">
-        <option value="join">По порядку записи</option>
-        <option value="lottery">Жеребьёвка после закрытия записи</option>
+      <label for="mode">Как проводим сдачу</label>
+      <select id="mode">
+        <option value="protocol">Полный протокол: критерии, вопросы, журнал</option>
+        <option value="quick">Быстрая оценка: одна оценка и заметка</option>
+        <option value="queue_only">Только очередь, без оценок</option>
       </select>
-      <label class="check" for="ready-priority"><input type="checkbox" id="ready-priority"> Сначала те, кто готов сдать сразу</label>
-      <div class="settings-row">
-        <div>
-          <label for="ready-bonus">Бонус за раннюю сдачу</label>
-          <select id="ready-bonus"><option value="0">нет</option><option value="1">+1</option><option value="2">+2</option><option value="3">+3</option><option value="4">+4</option><option value="5">+5</option></select>
-        </div>
-        <div>
-          <label for="ready-skip">Вопросов у готовых</label>
-          <select id="ready-skip"><option value="0">как у всех</option><option value="1">на один меньше</option></select>
-        </div>
+      <div id="w-protocol">
+        <label for="w-assignment">Работа с критериями и вопросами</label>
+        <select id="w-assignment"><option value="">выберу позже</option></select>
+      </div>
+      <div id="w-quick" class="hidden">
+        <label for="quick-max">Максимальная оценка</label>
+        <input id="quick-max" type="number" min="1" max="100" value="10">
       </div>
       <div class="settings-row">
         <div>
@@ -119,8 +141,29 @@
           <input type="number" id="limit-minutes" min="1" max="720" placeholder="например, 90">
         </div>
       </div>
-      <div class="perk">Бонус записывается отдельной строкой и не входит в баллы по критериям; его можно снять с причиной.</div>
-      <button class="full" id="create-btn">Открыть сессию</button>
+      <label for="order-mode">Порядок вызова</label>
+      <select id="order-mode">
+        <option value="join">По порядку записи</option>
+        <option value="lottery">Жеребьёвка после закрытия записи</option>
+      </select>
+      <details id="w-more" style="margin-top:10px">
+        <summary>Поощрения за раннюю сдачу и название</summary>
+        <label class="check" for="ready-priority"><input type="checkbox" id="ready-priority"> Сначала те, кто готов сдать сразу</label>
+        <div class="settings-row">
+          <div>
+            <label for="ready-bonus">Бонус за раннюю сдачу</label>
+            <select id="ready-bonus"><option value="0">нет</option><option value="1">+1</option><option value="2">+2</option><option value="3">+3</option><option value="4">+4</option><option value="5">+5</option></select>
+          </div>
+          <div>
+            <label for="ready-skip">Вопросов у готовых</label>
+            <select id="ready-skip"><option value="0">как у всех</option><option value="1">на один меньше</option></select>
+          </div>
+        </div>
+        <div class="perk">Бонус записывается отдельной строкой и не входит в баллы по критериям; его можно снять с причиной.</div>
+        <label for="title">Название (необязательно)</label>
+        <input id="title" maxlength="120" placeholder="Например: Лабораторная №3">
+      </details>
+      <button class="full" id="create-btn">Начать занятие</button>
       <div class="err" id="create-err"></div>
     </section>
 
@@ -135,12 +178,26 @@
           <div class="muted" id="queue-title"></div>
           <div class="code" id="queue-code"></div>
           <div class="muted" id="queue-link"></div>
-          <div><a id="protocol-session-link" href="/protocol">Оценки и вопросы этой сдачи</a></div>
+          <div><a id="protocol-session-link" href="/protocol">Журнал, правки и аналитика этой сдачи</a></div>
+          <div class="actions" style="margin-top:8px">
+            <button class="ghost" id="start-show">Код и QR</button>
+            <button class="ghost" id="help-btn" title="Горячие клавиши">?</button>
+          </div>
         </div>
         <div class="actions">
           <button id="next-btn">Вызвать следующего</button>
           <button class="ghost" id="registration-btn">Закрыть запись</button>
           <button class="ghost" id="close-btn">Закрыть сессию</button>
+        </div>
+      </div>
+      <div class="hidden" id="start-panel">
+        <div class="muted">Код для студентов</div>
+        <div class="bigcode" id="start-code"></div>
+        <div class="muted" id="start-link"></div>
+        <img class="qr" id="start-qr" alt="QR-код для входа в очередь">
+        <div class="actions" style="justify-content:center">
+          <button id="projector-btn">На проектор</button>
+          <button class="ghost" id="start-hide">Скрыть</button>
         </div>
       </div>
       <div class="muted" id="queue-meta" style="margin-top:10px"></div>
@@ -177,6 +234,11 @@
         <button class="full" id="settings-save">Сохранить настройки</button>
       </details>
       <pre class="hidden" id="lottery-log" style="white-space:pre-wrap"></pre>
+      <div class="work hidden" id="work-card">
+        <div class="head"><strong id="work-who"></strong><span class="wtimer" id="work-timer"></span></div>
+        <div id="work-body"></div>
+        <div class="err" id="work-err"></div>
+      </div>
       <table>
         <thead><tr><th>№</th><th>Студент</th><th>Статус</th><th></th></tr></thead>
         <tbody id="entries"></tbody>
@@ -187,6 +249,26 @@
   </div>
 </main>
 
+<div id="projector" class="hidden">
+  <div style="font-size:24px">Войдите в очередь: введите код или наведите камеру</div>
+  <div class="bigcode" id="projector-code"></div>
+  <img class="qr" id="projector-qr" alt="QR-код для входа в очередь">
+  <div id="projector-link" style="font-size:22px"></div>
+  <div style="color:#555">Esc или щелчок: закрыть</div>
+</div>
+
+<div id="help-overlay" class="hidden">
+  <div class="card">
+    <h2>Горячие клавиши</h2>
+    <p><kbd>N</kbd> вызвать следующего</p>
+    <p><kbd>0</kbd>…<kbd>9</kbd> поставить балл активному критерию и перейти к следующему</p>
+    <p><kbd>Enter</kbd> завершить сдачу</p>
+    <p><kbd>?</kbd> эта справка, <kbd>Esc</kbd> закрыть</p>
+    <p class="muted">Клавиши не работают, пока курсор в поле ввода.</p>
+    <button class="full" id="help-close">Понятно</button>
+  </div>
+</div>
+
 <script>
 const API = "/api/v1";
 const TOKEN_KEY = "queue-teacher-token";
@@ -195,7 +277,6 @@ const MESSAGES = {
   invalid_credentials: "Неверный логин или пароль",
   invalid_invite_code: "Неверный код приглашения",
   username_taken: "Этот логин уже занят",
-  submission_open: "Завершите сдачу с оценками на странице «Протокол сдачи»",
   already_serving: "Сначала завершите работу с текущим студентом",
   queue_empty: "В очереди никого нет",
   not_called: "Отметить «сдал» можно только вызванного студента",
@@ -204,6 +285,9 @@ const MESSAGES = {
   not_waiting: "Двигать вперёд можно только ждущего",
   session_closed: "Сессия закрыта",
   registration_closed: "Запись закрыта",
+  mode_no_assignment: "В этом режиме работа не подключается",
+  grades_incomplete: "Выставьте баллы по всем критериям",
+  submission_open: "Завершите сдачу с оценками",
   lottery_pending: "Порядок ещё не определён: закройте запись и перемешайте очередь",
   lottery_off: "Жеребьёвка в этой сессии не включена",
   settings_locked: "Настройки порядка можно менять только до закрытия записи",
@@ -441,6 +525,8 @@ async function showApp() {
 async function loadSessions() {
   try {
     const sessions = await request("/sessions");
+    await loadAssignmentChoices();
+    prefillFromLast(sessions);
     const box = $("sessions");
     box.replaceChildren();
     if (!sessions.length) box.append(el("div", { class: "muted" }, "Пока нет сессий"));
@@ -451,6 +537,51 @@ async function loadSessions() {
   } catch (error) {
     if (error.status === 401) { writeToken(null); showAuth(); }
   }
+}
+
+function lessonTitle(group) {
+  const d = new Date();
+  return (group ? group + ", " : "Сдача ") + pad2(d.getDate()) + "." + pad2(d.getMonth() + 1) + " " + pad2(d.getHours()) + ":" + pad2(d.getMinutes());
+}
+
+function syncMode() {
+  const mode = $("mode").value;
+  $("w-protocol").classList.toggle("hidden", mode !== "protocol");
+  $("w-quick").classList.toggle("hidden", mode !== "quick");
+}
+
+let prefilled = false;
+let formTouched = false;
+let lastAssignments = [];
+async function loadAssignmentChoices() {
+  try {
+    lastAssignments = await request("/assignments");
+  } catch { lastAssignments = []; }
+  const select = $("w-assignment");
+  const keep = select.value;
+  select.replaceChildren(el("option", { value: "" }, "выберу позже"));
+  for (const a of lastAssignments) select.append(el("option", { value: a.id }, a.title));
+  select.value = keep;
+}
+
+function prefillFromLast(sessions) {
+  if (prefilled || formTouched) return;
+  prefilled = true;
+  const last = sessions[0];
+  if (!last) return;
+  $("group").value = last.group || "";
+  $("mode").value = last.session_mode || "protocol";
+  $("quick-max").value = String(last.quick_max_points || 10);
+  $("order-mode").value = last.order_mode || "join";
+  $("ready-priority").checked = !!last.ready_priority;
+  $("ready-bonus").value = String(last.ready_bonus_points || 0);
+  $("ready-skip").value = String(last.ready_skip_questions || 0);
+  if (last.deadline_at) {
+    const minutes = Math.round((new Date(last.deadline_at) - new Date(last.created_at)) / 60000);
+    if (minutes > 0 && minutes <= 720) $("limit-minutes").value = String(minutes);
+  }
+  if (last.assignment_id && lastAssignments.some((a) => a.id === last.assignment_id)) $("w-assignment").value = last.assignment_id;
+  syncMode();
 }
 
 function timeLimit() {
@@ -470,34 +601,65 @@ function timeLimit() {
 
 async function createSession() {
   $("create-err").textContent = "";
-  const title = $("title").value.trim();
-  if (!title) { $("create-err").textContent = "Введите название"; return; }
+  const group = $("group").value.trim();
+  const title = $("title").value.trim() || lessonTitle(group);
+  const mode = $("mode").value;
   try {
-    const group = $("group").value.trim();
     const limit = timeLimit();
     if (limit === false) { $("create-err").textContent = "Укажите либо время окончания, либо число минут"; return; }
     const session = await request("/sessions", { method: "POST", body: JSON.stringify({
       ...limit, title, group: group || null,
+      session_mode: mode,
+      quick_max_points: Number($("quick-max").value) || 10,
       order_mode: $("order-mode").value,
       ready_priority: $("ready-priority").checked,
       ready_bonus_points: Number($("ready-bonus").value),
       ready_skip_questions: Number($("ready-skip").value),
     }) });
     $("title").value = "";
-    $("group").value = "";
+    if (mode === "protocol" && $("w-assignment").value) {
+      await request("/sessions/" + session.code + "/assignment", { method: "PUT", body: JSON.stringify({ assignment_id: $("w-assignment").value }) });
+    }
     await loadSessions();
-    openSession(session.code);
+    openSession(session.code, true);
   } catch (error) {
     $("create-err").textContent = error.message;
   }
 }
 
-function openSession(code) {
-  if (current !== code) stopLive();
+function joinLink(code) { return location.origin + "/?code=" + code; }
+function qrSource(code) { return API + "/qr.svg?text=" + encodeURIComponent(joinLink(code)); }
+
+function showStart(show) {
+  $("start-panel").classList.toggle("hidden", !show);
+  if (!show || !current) return;
+  $("start-code").textContent = current;
+  $("start-link").textContent = joinLink(current);
+  $("start-qr").src = qrSource(current);
+}
+
+function openProjector() {
+  if (!current) return;
+  $("projector-code").textContent = current;
+  $("projector-link").textContent = joinLink(current);
+  $("projector-qr").src = qrSource(current);
+  $("projector").classList.remove("hidden");
+  try { if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {}); } catch {}
+}
+
+function closeProjector() {
+  $("projector").classList.add("hidden");
+  try { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); } catch {}
+}
+
+function openSession(code, announce) {
+  if (current !== code) { stopLive(); workState.key = ""; }
   current = code;
   $("queue-card").classList.remove("hidden");
   $("queue-code").textContent = code;
-  $("queue-link").textContent = location.origin + "/?code=" + code;
+  $("queue-link").textContent = joinLink(code);
+  showStart(!!announce);
+  if (announce) $("queue-card").scrollIntoView({ block: "start" });
   $("protocol-session-link").href = "/protocol?code=" + encodeURIComponent(code);
   refresh();
 }
@@ -537,6 +699,7 @@ function renderQueue(queue) {
   $("queue-title").textContent += queue.join_open || closed ? "" : " · запись закрыта";
   renderModes(queue);
   loadBudget(false);
+  updateWork(queue);
   const pending = queue.order_mode === "lottery" && !queue.lottery_done;
   const hasCalled = queue.entries.some((e) => e.status === "called");
   $("next-btn").disabled = hasCalled || queue.waiting_count === 0 || pending;
@@ -545,7 +708,7 @@ function renderQueue(queue) {
   const tbody = $("entries");
   tbody.replaceChildren();
   if (!queue.entries.length) {
-    tbody.append(el("tr", {}, el("td", { colspan: "4", class: "muted" }, "Очередь пуста")));
+    tbody.append(el("tr", {}, el("td", { colspan: "4", class: "muted" }, "Очередь пуста. Покажите код студентам: кнопка «Код и QR» или «На проектор»")));
   }
   const ordered = [...queue.entries].sort((a, b) => (a.status === "called" ? -1 : 0) - (b.status === "called" ? -1 : 0));
   for (const entry of ordered) {
@@ -615,6 +778,230 @@ async function decideBudget(accept) {
     showActionError(error.message);
   }
 }
+
+const TAGS = ["Отлично", "Хорошо", "Есть ошибки", "Не знает теорию", "Не может объяснить", "Код не запускается", "Нужна пересдача"];
+const work = { key: "", seq: 0, submission: null, criteria: [], values: {}, active: 0, comment: null, timer: null, buffer: "", bufferAt: 0, advance: null, entry: null, budget: null };
+const workState = work;
+
+function workError(message) { $("work-err").textContent = message || ""; }
+
+function stopWorkTimer() { clearInterval(work.timer); work.timer = null; }
+
+function startWorkTimer(since) {
+  stopWorkTimer();
+  const started = new Date(since).getTime();
+  const tick = () => {
+    const seconds = Math.max(0, (Date.now() - started) / 1000);
+    const node = $("work-timer");
+    node.textContent = Math.floor(seconds / 60) + ":" + pad2(Math.floor(seconds % 60));
+    const budget = work.budget;
+    node.className = "wtimer" + (budget && seconds >= budget * 1.5 ? " bad" : budget && seconds >= budget ? " warn" : "");
+  };
+  tick();
+  work.timer = setInterval(tick, 1000);
+}
+
+function pointButtons(criterion) {
+  const box = el("div", { class: "pts" });
+  const max = criterion.max_points;
+  const marks = max <= 12 ? Array.from({ length: max + 1 }, (_, i) => i) : [...new Set([0, Math.round(max / 2), max])];
+  for (const value of marks) {
+    box.append(el("button", { type: "button", "data-points": String(value), onclick: () => setPoints(criterion.id, value, true) }, String(value)));
+  }
+  if (max > 12) {
+    const input = el("input", { type: "number", min: "0", max: String(max), placeholder: "0–" + max, "data-input": criterion.id });
+    input.addEventListener("input", () => { if (input.value !== "") setPoints(criterion.id, Math.min(max, Math.max(0, Number(input.value))), false); });
+    box.append(input);
+  }
+  return box;
+}
+
+function paintWork() {
+  work.criteria.forEach((criterion, index) => {
+    const row = $("crit-" + criterion.id);
+    if (!row) return;
+    row.classList.toggle("active", index === work.active);
+    for (const button of row.querySelectorAll("button[data-points]")) {
+      button.classList.toggle("on", work.values[criterion.id] === Number(button.dataset.points));
+    }
+    const input = row.querySelector("input[data-input]");
+    if (input && document.activeElement !== input) input.value = work.values[criterion.id] ?? "";
+  });
+  if (work.comment) {
+    const parts = work.comment.value.split(";").map((s) => s.trim());
+    for (const chip of document.querySelectorAll("#work-body .chips button")) chip.classList.toggle("on", parts.includes(chip.dataset.tag));
+  }
+}
+
+function setPoints(id, value, advance) {
+  work.values[id] = value;
+  const index = work.criteria.findIndex((c) => c.id === id);
+  if (index >= 0) work.active = index;
+  if (advance && work.active < work.criteria.length - 1) work.active += 1;
+  paintWork();
+}
+
+function maxAll() {
+  for (const criterion of work.criteria) work.values[criterion.id] = criterion.max_points;
+  work.active = work.criteria.length - 1;
+  paintWork();
+}
+
+function toggleTag(tag) {
+  if (!work.comment) return;
+  const parts = work.comment.value.split(";").map((s) => s.trim()).filter(Boolean);
+  const at = parts.indexOf(tag);
+  if (at >= 0) parts.splice(at, 1); else parts.push(tag);
+  work.comment.value = parts.join("; ");
+  paintWork();
+}
+
+function pressDigit(digit) {
+  const criterion = work.criteria[work.active];
+  if (!criterion) return;
+  const now = Date.now();
+  const joined = now - work.bufferAt < 700 ? work.buffer + digit : digit;
+  const value = Number(joined) <= criterion.max_points ? joined : digit;
+  if (Number(value) > criterion.max_points) return;
+  work.buffer = value;
+  work.bufferAt = now;
+  clearTimeout(work.advance);
+  work.values[criterion.id] = Number(value);
+  const last = work.active >= work.criteria.length - 1;
+  if (Number(value) * 10 > criterion.max_points) {
+    work.buffer = "";
+    if (!last) work.active += 1;
+  } else if (!last) {
+    const index = work.active;
+    work.advance = setTimeout(() => { if (work.active === index) { work.active = index + 1; work.buffer = ""; paintWork(); } }, 700);
+  }
+  paintWork();
+}
+
+async function finishWork() {
+  if (work.finishing || !work.entry) return;
+  workError("");
+  work.finishing = true;
+  try {
+    if (!work.submission) {
+      await request("/sessions/" + current + "/entries/" + work.entry.id + "/done", { method: "POST" });
+    } else {
+      const scores = work.criteria.filter((c) => work.values[c.id] !== undefined).map((c) => ({ criterion_id: c.id, points: work.values[c.id] }));
+      if (scores.length < work.criteria.length) { workError("Выставьте баллы по всем критериям"); return; }
+      await request("/submissions/" + work.submission.id + "/complete", { method: "POST", body: JSON.stringify({ scores, comment: work.comment ? work.comment.value.trim() : "" }) });
+    }
+    work.key = "";
+    await refresh();
+  } catch (error) {
+    workError(error.message);
+  } finally {
+    work.finishing = false;
+  }
+}
+
+async function skipWork() {
+  if (!work.entry) return;
+  try {
+    await request("/sessions/" + current + "/entries/" + work.entry.id + "/skip", { method: "POST" });
+    work.key = "";
+    await refresh();
+  } catch (error) {
+    workError(error.message);
+  }
+}
+
+async function updateWork(queue) {
+  const called = queue.entries.find((e) => e.status === "called");
+  const card = $("work-card");
+  if (!called) {
+    work.key = "";
+    work.seq += 1;
+    stopWorkTimer();
+    card.classList.add("hidden");
+    return;
+  }
+  const graded = queue.session_mode !== "queue_only" && queue.assignment_id;
+  const key = called.id + ":" + (graded ? queue.assignment_id : "-") + ":" + queue.session_mode;
+  if (work.key === key) return;
+  work.key = key;
+  const mine = ++work.seq;
+  card.classList.remove("hidden");
+  workError("");
+  work.entry = called;
+  work.submission = null;
+  work.criteria = [];
+  work.values = {};
+  work.active = 0;
+  work.comment = null;
+  work.buffer = "";
+  $("work-who").textContent = "Сейчас отвечает: №" + called.ticket + " " + called.name;
+  const body = $("work-body");
+  body.replaceChildren(el("div", { class: "muted" }, "Загрузка…"));
+  let submission = null;
+  let criteria = [];
+  work.budget = null;
+  if (graded) {
+    try {
+      [submission, criteria] = await Promise.all([
+        request("/sessions/" + current + "/submissions/current"),
+        request("/assignments/" + queue.assignment_id + "/criteria"),
+      ]);
+    } catch { submission = null; }
+    try {
+      const budget = await request("/sessions/" + current + "/budget");
+      if (budget.enabled && budget.budget_seconds) work.budget = budget.budget_seconds;
+    } catch {}
+  }
+  if (mine !== work.seq) return;
+  startWorkTimer(submission ? submission.started_at : called.called_at);
+  const buttons = el("div", { class: "actions", style: "margin-top:12px" });
+  if (!submission) {
+    buttons.append(el("button", { class: "ok", onclick: finishWork }, "Сдал (Enter)"), el("button", { class: "warn", onclick: skipWork }, "Пропустить"));
+    body.replaceChildren(
+      el("div", { class: "muted" }, queue.session_mode === "queue_only" ? "Режим без оценок: отметьте, когда студент сдал." : "К этой сессии не подключена работа с критериями: подключите её на странице «Журнал и аналитика»."),
+      buttons);
+    return;
+  }
+  work.submission = submission;
+  work.criteria = criteria.map((c) => ({ id: c.id, name: c.name, max_points: c.max_points }));
+  for (const score of submission.scores) work.values[score.criterion_id] = score.points;
+  const parts = [];
+  if (submission.questions.length) {
+    parts.push(el("div", { class: "muted" }, "Вопросы"));
+    parts.push(el("ol", { class: "qlist" }, ...submission.questions.map((q) => el("li", {}, q.text))));
+  }
+  for (const criterion of work.criteria) {
+    parts.push(el("div", { class: "crit", id: "crit-" + criterion.id },
+      el("div", { class: "name" }, el("span", {}, criterion.name), el("span", { class: "muted" }, "макс. " + criterion.max_points)),
+      pointButtons(criterion)));
+  }
+  const comment = el("textarea", { maxlength: "1000", placeholder: queue.session_mode === "quick" ? "Заметка (необязательно)" : "Комментарий к сдаче" });
+  comment.value = submission.comment || "";
+  comment.addEventListener("input", paintWork);
+  work.comment = comment;
+  const chips = el("div", { class: "chips" }, ...TAGS.map((tag) => el("button", { type: "button", "data-tag": tag, onclick: () => toggleTag(tag) }, tag)));
+  buttons.append(
+    el("button", { class: "ok", id: "work-finish", onclick: finishWork }, "Завершить сдачу (Enter)"),
+    el("button", { class: "ghost", id: "work-max", onclick: maxAll }, "Всё на максимум"),
+    el("button", { class: "warn", onclick: skipWork }, "Пропустить"));
+  body.replaceChildren(...parts, chips, comment, buttons);
+  paintWork();
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  const target = event.target;
+  const typing = target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.tagName === "SELECT" || target.isContentEditable);
+  if (event.key === "Escape") { closeProjector(); $("help-overlay").classList.add("hidden"); return; }
+  if (typing || !current || $("app-view").classList.contains("hidden")) return;
+  if (event.key === "?") { $("help-overlay").classList.toggle("hidden"); event.preventDefault(); return; }
+  if (event.code === "KeyN") {
+    if (!$("next-btn").disabled) { event.preventDefault(); callNext(); }
+    return;
+  }
+  if (event.key === "Enter" && !$("work-card").classList.contains("hidden")) { event.preventDefault(); finishWork(); return; }
+  if (/^[0-9]$/.test(event.key) && work.criteria.length && !$("work-card").classList.contains("hidden")) { event.preventDefault(); pressDigit(event.key); }
+});
 
 function renderModes(queue) {
   const parts = [queue.order_mode === "lottery" ? "жеребьёвка" + (queue.lottery_done ? " проведена" : " после закрытия записи") : "по порядку записи"];
@@ -731,6 +1118,14 @@ $("create-btn").addEventListener("click", createSession);
 $("next-btn").addEventListener("click", callNext);
 $("close-btn").addEventListener("click", closeSession);
 $("registration-btn").addEventListener("click", toggleRegistration);
+$("mode").addEventListener("change", syncMode);
+for (const type of ["input", "change"]) $("wizard").addEventListener(type, () => { formTouched = true; });
+$("start-show").addEventListener("click", () => showStart($("start-panel").classList.contains("hidden")));
+$("start-hide").addEventListener("click", () => showStart(false));
+$("projector-btn").addEventListener("click", openProjector);
+$("projector").addEventListener("click", closeProjector);
+$("help-btn").addEventListener("click", () => $("help-overlay").classList.remove("hidden"));
+$("help-close").addEventListener("click", () => $("help-overlay").classList.add("hidden"));
 $("lottery-btn").addEventListener("click", runLottery);
 $("lottery-log-btn").addEventListener("click", showLotteryLog);
 $("budget-accept").addEventListener("click", () => decideBudget(true));

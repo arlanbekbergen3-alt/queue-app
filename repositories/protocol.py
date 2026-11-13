@@ -45,9 +45,15 @@ class ProtocolRepository:
         stmt = (
             select(func.count())
             .select_from(AssignmentORM)
-            .where(AssignmentORM.teacher_id == teacher_id)
+            .where(AssignmentORM.teacher_id == teacher_id, AssignmentORM.is_system.is_(False))
         )
         return (await self.db.execute(stmt)).scalar_one()
+
+    async def assignment_by_title(self, teacher_id: str, title: str) -> AssignmentORM | None:
+        stmt = select(AssignmentORM).where(
+            AssignmentORM.teacher_id == teacher_id, AssignmentORM.title == title
+        )
+        return (await self.db.execute(stmt)).scalar_one_or_none()
 
     async def lock_teacher_assignments(self, teacher_id: str) -> None:
         await self.db.execute(
@@ -69,7 +75,7 @@ class ProtocolRepository:
     async def list_assignments(self, teacher_id: str) -> list[AssignmentORM]:
         stmt = (
             select(AssignmentORM)
-            .where(AssignmentORM.teacher_id == teacher_id)
+            .where(AssignmentORM.teacher_id == teacher_id, AssignmentORM.is_system.is_(False))
             .order_by(AssignmentORM.created_at.desc())
         )
         return list((await self.db.execute(stmt)).scalars())

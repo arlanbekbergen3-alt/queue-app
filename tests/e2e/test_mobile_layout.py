@@ -153,3 +153,29 @@ def test_budget_panel_and_time_fields_fit_a_phone(page: Page, api, open_session)
     page.get_by_role("button", name=teacher["code"]).click()
     expect(page.locator("#budget-offer")).to_be_visible(timeout=SLOW)
     assert overflow(page) <= 0
+
+
+def test_start_panel_and_work_panel_fit_a_phone(
+    page: Page, browser, live_server, api, open_session
+):
+    teacher, _ = prepare(api, open_session, questions=4)
+    other = browser.new_context(base_url=live_server)
+    other_page = other.new_page()
+    student_join(other_page, teacher["code"], "Студент с очень длинным именем и фамилией")
+    page.set_viewport_size(PHONE)
+    login_as(page, teacher)
+    page.goto("/teacher")
+    expect(page.locator("#mode")).to_be_visible(timeout=SLOW)
+    assert overflow(page) <= 0
+    page.click("#create-btn")
+    expect(page.locator("#start-panel")).to_be_visible(timeout=SLOW)
+    page.wait_for_function("document.getElementById('start-qr').naturalWidth > 0")
+    assert overflow(page) <= 0
+    page.click("#start-hide")
+    page.get_by_role("button", name=teacher["code"]).click()
+    expect(page.locator("#entries")).to_contain_text("Студент с очень", timeout=SLOW)
+    page.click("#next-btn")
+    expect(page.locator("#work-card")).to_be_visible(timeout=SLOW)
+    expect(page.locator("#work-body .crit")).to_have_count(2)
+    assert overflow(page) <= 0
+    other.close()

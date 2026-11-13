@@ -35,6 +35,8 @@ class AssignmentCopyService:
     ) -> AssignmentOut:
         await self.repo.lock_teacher_assignments(teacher_id)
         source = await self.repo.get_assignment(source_id, teacher_id, lock=True)
+        if source is not None and source.is_system:
+            source = None
         if source is None or (template_only and not source.is_template):
             raise NotFoundError("Работа не найдена", code="assignment_not_found")
         if await self.repo.count_assignments(teacher_id) >= settings.MAX_ASSIGNMENTS_PER_TEACHER:

@@ -58,6 +58,14 @@ class ProtocolService:
             raise NotFoundError("Assignment not found", code="assignment_not_found")
         return assignment
 
+    async def _mutable(self, assignment_id: str, teacher_id: str) -> AssignmentORM:
+        assignment = await self._assignment(assignment_id, teacher_id, lock=True)
+        if assignment.is_system:
+            raise ConflictError(
+                "Эта работа служебная (быстрая оценка) и не редактируется", code="system_assignment"
+            )
+        return assignment
+
     async def _assignment_out(self, assignment: AssignmentORM) -> AssignmentOut:
         questions, criteria, submissions = await self.repo.assignment_counts(assignment.id)
         out = AssignmentOut.model_validate(assignment)
@@ -96,7 +104,7 @@ class ProtocolService:
     async def update_assignment(
         self, teacher_id: str, assignment_id: str, data: AssignmentUpdate
     ) -> AssignmentOut:
-        assignment = await self._assignment(assignment_id, teacher_id, lock=True)
+        assignment = await self._mutable(assignment_id, teacher_id)
         for key, value in data.model_dump(exclude_unset=True).items():
             if value is not None:
                 setattr(assignment, key, value)
@@ -110,7 +118,7 @@ class ProtocolService:
         return await self._assignment_out(assignment)
 
     async def delete_assignment(self, teacher_id: str, assignment_id: str) -> None:
-        assignment = await self._assignment(assignment_id, teacher_id, lock=True)
+        assignment = await self._mutable(assignment_id, teacher_id)
         if (await self.repo.assignment_counts(assignment.id))[2] > 0:
             raise ConflictError(
                 "The assignment already has submissions and cannot be deleted",
@@ -128,7 +136,7 @@ class ProtocolService:
     async def add_question(
         self, teacher_id: str, assignment_id: str, data: QuestionCreate
     ) -> QuestionOut:
-        await self._assignment(assignment_id, teacher_id, lock=True)
+        await self._mutable(assignment_id, teacher_id)
         if (
             len(await self.repo.list_questions(assignment_id))
             >= settings.MAX_QUESTIONS_PER_ASSIGNMENT
@@ -146,7 +154,7 @@ class ProtocolService:
     async def update_question(
         self, teacher_id: str, assignment_id: str, question_id: str, data: QuestionUpdate
     ) -> QuestionOut:
-        await self._assignment(assignment_id, teacher_id, lock=True)
+        await self._mutable(assignment_id, teacher_id)
         question = await self.repo.get_question(assignment_id, question_id)
         if question is None:
             raise NotFoundError("Question not found", code="question_not_found")
@@ -157,7 +165,7 @@ class ProtocolService:
         return QuestionOut.model_validate(question)
 
     async def delete_question(self, teacher_id: str, assignment_id: str, question_id: str) -> None:
-        await self._assignment(assignment_id, teacher_id, lock=True)
+        await self._mutable(assignment_id, teacher_id)
         question = await self.repo.get_question(assignment_id, question_id)
         if question is None:
             raise NotFoundError("Question not found", code="question_not_found")
@@ -179,7 +187,7 @@ class ProtocolService:
     async def add_criterion(
         self, teacher_id: str, assignment_id: str, data: CriterionCreate
     ) -> CriterionOut:
-        await self._assignment(assignment_id, teacher_id, lock=True)
+        await self._mutable(assignment_id, teacher_id)
         await self._criteria_editable(assignment_id)
         if (
             len(await self.repo.list_criteria(assignment_id))
@@ -200,7 +208,7 @@ class ProtocolService:
     async def update_criterion(
         self, teacher_id: str, assignment_id: str, criterion_id: str, data: CriterionUpdate
     ) -> CriterionOut:
-        await self._assignment(assignment_id, teacher_id, lock=True)
+        await self._mutable(assignment_id, teacher_id)
         await self._criteria_editable(assignment_id)
         criterion = await self.repo.get_criterion(assignment_id, criterion_id)
         if criterion is None:
@@ -216,7 +224,7 @@ class ProtocolService:
     async def delete_criterion(
         self, teacher_id: str, assignment_id: str, criterion_id: str
     ) -> None:
-        await self._assignment(assignment_id, teacher_id, lock=True)
+        await self._mutable(assignment_id, teacher_id)
         await self._criteria_editable(assignment_id)
         criterion = await self.repo.get_criterion(assignment_id, criterion_id)
         if criterion is None:
@@ -243,8 +251,13 @@ class ProtocolService:
         self, code: str, teacher_id: str, assignment_id: str | None
     ) -> None:
         session = await self._owned_session(code, teacher_id, lock=True)
+        if session.session_mode != "protocol":
+            raise ConflictError(
+                "В этом режиме работа с критериями не подключается", code="mode_no_assignment"
+            )
         if assignment_id is not None:
-            await self._assignment(assignment_id, teacher_id)
+            if (await self._assignment(assignment_id, teacher_id)).is_system:
+                raise NotFoundError("Assignment not found", code="assignment_not_found")
         if await self.repo.session_submission_count(session.id) > 0:
             raise ConflictError(
                 "The session already has submissions", code="session_has_submissions"

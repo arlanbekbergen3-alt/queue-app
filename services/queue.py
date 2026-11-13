@@ -42,6 +42,7 @@ from services.protocol_calls import (
     has_open_submission,
     start_submission,
 )
+from services.quick import QuickAssignments
 from services.serving import (  # noqa: F401
     AVERAGE_SMOOTHING,
     MAX_SERVICE_SECONDS,
@@ -70,6 +71,9 @@ class QueueFlags:
     ready_skip_questions: int = 0
     join_open: bool = True
     waiting_count: int = 0
+    session_mode: str = "protocol"
+    quick_max_points: int = 10
+    assignment_id: str | None = None
 
     @property
     def in_pool(self) -> bool:
@@ -85,6 +89,9 @@ class QueueFlags:
             ready_skip_questions=session.ready_skip_questions,
             join_open=session.join_open,
             waiting_count=waiting_count,
+            session_mode=session.session_mode,
+            quick_max_points=session.quick_max_points,
+            assignment_id=session.assignment_id,
         )
 
 
@@ -161,6 +168,11 @@ class QueueService:
 
     async def create_session(self, teacher_id: str, data: SessionCreate) -> QueueSessionORM:
         deadline = self._deadline(data)
+        assignment_id = None
+        if data.session_mode == "quick":
+            assignment_id = await QuickAssignments(self.db).ensure(
+                teacher_id, data.quick_max_points
+            )
         for _ in range(10):
             try:
                 async with self.db.begin_nested():
@@ -175,6 +187,9 @@ class QueueService:
                         ready_bonus_points=data.ready_bonus_points,
                         ready_skip_questions=data.ready_skip_questions,
                         deadline_at=deadline,
+                        session_mode=data.session_mode,
+                        quick_max_points=data.quick_max_points,
+                        assignment_id=assignment_id,
                     )
                     await self.db.flush()
             except IntegrityError:
@@ -229,6 +244,7 @@ class QueueService:
             ready_bonus_points=session.ready_bonus_points,
             ready_skip_questions=session.ready_skip_questions,
             lottery_done=session.lottery_at is not None,
+            session_mode=session.session_mode,
         )
 
     async def join(self, code: str, data: JoinIn) -> MyEntryOut:
@@ -343,6 +359,9 @@ class QueueService:
             ready_bonus_points=session.ready_bonus_points,
             ready_skip_questions=session.ready_skip_questions,
             lottery_done=session.lottery_at is not None,
+            session_mode=session.session_mode,
+            quick_max_points=session.quick_max_points,
+            assignment_id=session.assignment_id,
         )
 
     async def _locked_entry(self, code: str, token: str) -> tuple[QueueSessionORM, EntryORM]:

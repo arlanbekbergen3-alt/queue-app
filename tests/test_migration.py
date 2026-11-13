@@ -552,3 +552,62 @@ async def test_time_budget_migration_keeps_sessions_without_a_limit_and_rolls_ba
     )
     assert count == 1
     await alembic_async("upgrade", "head")
+
+
+@pytest.mark.asyncio
+async def test_session_modes_migration_keeps_existing_sessions_as_full_protocol(
+    migration_engine,
+):
+    await alembic_async("upgrade", "e1f2a3b4c5d6")
+    async with migration_engine.begin() as conn:
+        await conn.execute(
+            text("INSERT INTO users (id, username, password_hash) VALUES ('u1', 't', 'x')")
+        )
+        await conn.execute(
+            text(
+                "INSERT INTO queue_sessions (id, teacher_id, title, code, status, next_ticket,"
+                " avg_service_seconds, created_at) VALUES ('s1', 'u1', 'Lab', 'ABC234', 'open',"
+                " 3, 300, now())"
+            )
+        )
+        await conn.execute(
+            text(
+                "INSERT INTO assignments (id, teacher_id, title, description,"
+                " questions_per_submission, practice_enabled, created_at)"
+                " VALUES ('a1', 'u1', 'Работа', '', 3, false, now())"
+            )
+        )
+
+    await alembic_async("upgrade", "f2a3b4c5d6e7")
+
+    async with migration_engine.connect() as conn:
+        session = (
+            await conn.execute(text("SELECT session_mode, quick_max_points FROM queue_sessions"))
+        ).one()
+        system = (await conn.execute(text("SELECT is_system FROM assignments"))).scalar_one()
+    assert tuple(session) == ("protocol", 10) and system is False
+    with pytest.raises(IntegrityError):
+        async with migration_engine.begin() as conn:
+            await conn.execute(text("UPDATE queue_sessions SET session_mode = 'other'"))
+    with pytest.raises(IntegrityError):
+        async with migration_engine.begin() as conn:
+            await conn.execute(text("UPDATE queue_sessions SET quick_max_points = 0"))
+
+    await alembic_async("downgrade", "e1f2a3b4c5d6")
+    async with migration_engine.connect() as conn:
+        columns = (
+            (
+                await conn.execute(
+                    text(
+                        "SELECT column_name FROM information_schema.columns"
+                        " WHERE table_name IN ('queue_sessions', 'assignments')"
+                    )
+                )
+            )
+            .scalars()
+            .all()
+        )
+        count = (await conn.execute(text("SELECT count(*) FROM assignments"))).scalar_one()
+    assert not {"session_mode", "quick_max_points", "is_system"} & set(columns)
+    assert count == 1
+    await alembic_async("upgrade", "head")

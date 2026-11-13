@@ -103,6 +103,7 @@ def test_creating_a_session_with_a_time_limit_from_the_form(page: Page, api, ope
     teacher = open_session("Для входа")
     login_as(page, teacher)
     page.goto("/teacher")
+    page.click("#w-more summary")
     page.fill("#title", "С лимитом из формы")
     page.fill("#limit-minutes", "45")
     page.click("#create-btn")

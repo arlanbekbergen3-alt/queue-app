@@ -177,6 +177,8 @@ class SpaceService:
     ) -> PublicationDetailOut:
         await self._space(user, space_id, lock=True)
         assignment = await self.protocol_repo.get_assignment(assignment_id, user.id)
+        if assignment is not None and assignment.is_system:
+            assignment = None
         if assignment is None:
             raise NotFoundError("Работа не найдена", code="assignment_not_found")
         criteria = await self.protocol_repo.list_criteria(assignment.id)

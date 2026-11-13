@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from collections.abc import AsyncIterator, Awaitable, Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
@@ -84,15 +84,7 @@ class Snapshot:
             position={e.id: i + 1 for i, e in enumerate(waiting)},
             called=called,
             join_open=flags.join_open if flags else join_open,
-            flags=QueueFlags(
-                order_mode=flags.order_mode,
-                lottery_done=flags.lottery_done,
-                ready_priority=flags.ready_priority,
-                ready_bonus_points=flags.ready_bonus_points,
-                ready_skip_questions=flags.ready_skip_questions,
-                join_open=flags.join_open,
-                waiting_count=len(waiting),
-            )
+            flags=replace(flags, waiting_count=len(waiting))
             if flags
             else QueueFlags(join_open=join_open, waiting_count=len(waiting)),
         )
@@ -146,6 +138,9 @@ class Snapshot:
             ready_bonus_points=self.flags.ready_bonus_points,
             ready_skip_questions=self.flags.ready_skip_questions,
             lottery_done=self.flags.lottery_done,
+            session_mode=self.flags.session_mode,
+            quick_max_points=self.flags.quick_max_points,
+            assignment_id=self.flags.assignment_id,
         )
 
 

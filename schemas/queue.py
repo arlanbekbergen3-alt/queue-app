@@ -11,6 +11,8 @@ class SessionCreate(BaseModel):
     title: str = Field(min_length=1, max_length=120)
     group: str | None = Field(default=None, max_length=60)
     order_mode: Literal["join", "lottery"] = "join"
+    session_mode: Literal["queue_only", "quick", "protocol"] = "protocol"
+    quick_max_points: int = Field(default=10, ge=1, le=100)
     ready_priority: bool = False
     ready_bonus_points: int = Field(default=0, ge=0, le=5)
     ready_skip_questions: int = Field(default=0, ge=0, le=1)
@@ -75,6 +77,8 @@ class SessionOut(BaseModel):
     lottery_at: datetime | None = None
     deadline_at: datetime | None = None
     questions_override: int | None = None
+    session_mode: str = "protocol"
+    quick_max_points: int = 10
 
     model_config = {"from_attributes": True}
 
@@ -93,6 +97,7 @@ class SessionPublic(BaseModel):
     ready_bonus_points: int = 0
     ready_skip_questions: int = 0
     lottery_done: bool = False
+    session_mode: str = "protocol"
 
 
 class RegistrationIn(BaseModel):
@@ -169,3 +174,6 @@ class TeacherQueueOut(BaseModel):
     ready_bonus_points: int = 0
     ready_skip_questions: int = 0
     lottery_done: bool = False
+    session_mode: str = "protocol"
+    quick_max_points: int = 10
+    assignment_id: str | None = None

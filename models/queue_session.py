@@ -23,6 +23,11 @@ class QueueSessionORM(Base):
             "ready_skip_questions BETWEEN 0 AND 1", name="ck_queue_sessions_ready_skip"
         ),
         CheckConstraint(
+            "session_mode IN ('queue_only', 'quick', 'protocol')",
+            name="ck_queue_sessions_session_mode",
+        ),
+        CheckConstraint("quick_max_points BETWEEN 1 AND 100", name="ck_queue_sessions_quick_max"),
+        CheckConstraint(
             "questions_override IS NULL OR questions_override BETWEEN 1 AND 10",
             name="ck_queue_sessions_questions_override",
         ),
@@ -52,6 +57,12 @@ class QueueSessionORM(Base):
     )
     ready_skip_questions: Mapped[int] = mapped_column(
         Integer, default=0, server_default=text("0"), nullable=False
+    )
+    session_mode: Mapped[str] = mapped_column(
+        String(12), default="protocol", server_default=text("'protocol'"), nullable=False
+    )
+    quick_max_points: Mapped[int] = mapped_column(
+        Integer, default=10, server_default=text("10"), nullable=False
     )
     deadline_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     questions_override: Mapped[int | None] = mapped_column(Integer, nullable=True)

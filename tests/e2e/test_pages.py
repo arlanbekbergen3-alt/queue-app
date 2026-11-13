@@ -62,6 +62,8 @@ def test_teacher_registers_creates_session_and_student_appears(
     page.click("#auth-btn")
     expect(page.locator("#app-view")).to_be_visible()
 
+    page.click("#w-more summary")
+
     page.fill("#title", "Практика 5, группа ИС-22")
     page.click("#create-btn")
     code = page.locator("#queue-code")
@@ -336,6 +338,7 @@ def test_group_is_shown_to_teacher_and_student(page: Page, browser, live_server,
 def test_teacher_creates_a_session_with_a_group_in_the_form(page: Page, open_session):
     session = open_session()
     teacher_login(page, session["username"], session["password"])
+    page.click("#w-more summary")
     page.fill("#title", "Практика")
     page.fill("#group", "ИС-23")
     page.click("#create-btn")

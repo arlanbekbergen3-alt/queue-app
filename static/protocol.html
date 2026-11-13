@@ -73,6 +73,13 @@
         <input id="a-count" type="number" min="1" max="10" value="3" style="width:90px" title="Вопросов на сдачу">
         <button id="a-create">Создать</button>
       </div>
+      <div class="hidden" id="tpl-row" style="margin-top:8px">
+        <div class="row">
+          <select class="grow" id="tpl-select" aria-label="Шаблон"></select>
+          <button class="ghost" id="tpl-create">Создать из шаблона</button>
+        </div>
+        <div class="muted">Название берётся из поля выше, если пусто, будет «название шаблона (копия)».</div>
+      </div>
       <div class="err" id="a-err"></div>
     </section>
 
@@ -81,9 +88,15 @@
       <div class="row">
         <label class="row" style="margin:0">Вопросов на сдачу <input id="s-count" type="number" min="1" max="10" style="width:80px"></label>
         <label class="row" style="margin:0"><input id="s-practice" type="checkbox" style="width:auto"> Включить тренировку для студентов</label>
+        <label class="row" style="margin:0"><input id="s-template" type="checkbox" style="width:auto"> Использовать как шаблон</label>
         <button id="s-save">Сохранить</button>
         <button class="bad" id="a-delete">Удалить работу</button>
       </div>
+      <div class="row" style="margin-top:8px">
+        <input class="grow" id="copy-title" maxlength="120" placeholder="Название копии (необязательно)">
+        <button class="ghost" id="a-copy">Скопировать работу</button>
+      </div>
+      <div class="muted">Копия берёт критерии и банк вопросов (текст, сложность, тема), без сдач, баллов и журнала.</div>
       <div class="muted" style="margin-top:6px">Тренировка показывает студентам вопросы банка, не включайте её, если банк используется на настоящей сдаче.</div>
       <div class="err" id="s-err"></div>
 
@@ -292,12 +305,18 @@ async function loadAssignments() {
       el("div", { class: "txt" }, a.title,
         el("span", { class: "badge" }, a.question_count + " вопр."),
         el("span", { class: "badge" }, a.criteria_count + " крит."),
-        el("span", { class: "badge" }, a.submissions_count + " сдач")),
+        el("span", { class: "badge" }, a.submissions_count + " сдач"),
+        a.is_template ? el("span", { class: "badge" }, "шаблон") : ""),
       el("button", { class: "ghost", onclick: () => openAssignment(a.id) }, "Открыть")));
   }
   const select = $("p-assignment");
   select.replaceChildren(el("option", { value: "" }, "— без работы —"));
   for (const a of assignments) select.append(el("option", { value: a.id }, a.title));
+  const templates = assignments.filter((a) => a.is_template);
+  const tpl = $("tpl-select");
+  tpl.replaceChildren();
+  for (const t of templates) tpl.append(el("option", { value: t.id }, t.title));
+  $("tpl-row").classList.toggle("hidden", !templates.length);
 }
 
 async function openAssignment(id) {
@@ -307,6 +326,8 @@ async function openAssignment(id) {
   $("a-name").textContent = a.title;
   $("s-count").value = a.questions_per_submission;
   $("s-practice").checked = a.practice_enabled;
+  $("s-template").checked = a.is_template;
+  $("copy-title").value = "";
   $("locked").classList.toggle("hidden", !a.criteria_locked);
   $("c-form").classList.toggle("hidden", a.criteria_locked);
   const [criteria, questions] = await Promise.all([
@@ -349,9 +370,25 @@ $("a-create").addEventListener("click", () => guarded("a-err", async () => {
 }));
 $("s-save").addEventListener("click", () => guarded("s-err", async () => {
   await request("/assignments/" + current.id, { method: "PATCH", body: JSON.stringify({
-    questions_per_submission: Number($("s-count").value), practice_enabled: $("s-practice").checked }) });
+    questions_per_submission: Number($("s-count").value), practice_enabled: $("s-practice").checked,
+    is_template: $("s-template").checked }) });
   show("s-err", "Сохранено", true);
   await loadAssignments();
+}));
+async function cloneFrom(path, title) {
+  const body = title.trim() ? { title: title.trim() } : {};
+  const made = await request(path, { method: "POST", body: JSON.stringify(body) });
+  await loadAssignments();
+  await openAssignment(made.id);
+}
+$("a-copy").addEventListener("click", () => guarded("s-err", async () => {
+  await cloneFrom("/assignments/" + current.id + "/copy", $("copy-title").value);
+}));
+$("tpl-create").addEventListener("click", () => guarded("a-err", async () => {
+  const id = $("tpl-select").value;
+  if (!id) throw new Error("Выберите шаблон");
+  await cloneFrom("/assignment-templates/" + id + "/create", $("a-title").value);
+  $("a-title").value = "";
 }));
 $("a-delete").addEventListener("click", () => guarded("s-err", async () => {
   if (!confirm("Удалить работу вместе с вопросами и критериями?")) return;

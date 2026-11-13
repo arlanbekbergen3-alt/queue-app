@@ -28,6 +28,7 @@ class AssignmentCreate(BaseModel):
     description: OptionalText = Field(default="", max_length=4000)
     questions_per_submission: int = Field(default=3, ge=1, le=10)
     practice_enabled: bool = False
+    is_template: bool = False
 
 
 class AssignmentUpdate(BaseModel):
@@ -35,6 +36,7 @@ class AssignmentUpdate(BaseModel):
     description: OptionalText | None = Field(default=None, max_length=4000)
     questions_per_submission: int | None = Field(default=None, ge=1, le=10)
     practice_enabled: bool | None = None
+    is_template: bool | None = None
 
 
 class AssignmentOut(BaseModel):
@@ -43,6 +45,7 @@ class AssignmentOut(BaseModel):
     description: str
     questions_per_submission: int
     practice_enabled: bool
+    is_template: bool = False
     created_at: datetime
     question_count: int = 0
     criteria_count: int = 0
@@ -91,6 +94,10 @@ class CriterionOut(BaseModel):
     position: int
 
     model_config = {"from_attributes": True}
+
+
+class AssignmentCopyIn(BaseModel):
+    title: Text | None = Field(default=None, min_length=1, max_length=120)
 
 
 class SessionAssignmentIn(BaseModel):

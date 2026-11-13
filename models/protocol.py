@@ -51,6 +51,9 @@ class AssignmentORM(Base):
     description: Mapped[str] = mapped_column(Text, default="", nullable=False)
     questions_per_submission: Mapped[int] = mapped_column(Integer, default=3, nullable=False)
     practice_enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_template: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false"), nullable=False
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_now, nullable=False
     )

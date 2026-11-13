@@ -33,6 +33,7 @@ from routers.live import router as live_router
 from routers.practice import router as practice_router
 from routers.protocol import router as protocol_router
 from routers.sessions import router as sessions_router
+from routers.templates import router as templates_router
 from services.ai_drafts import runtime as ai_runtime
 from services.live import hub
 from services.maintenance import reaper_loop
@@ -99,6 +100,7 @@ app.include_router(ai_router, prefix=API_V1_PREFIX)
 app.include_router(practice_router, prefix=API_V1_PREFIX)
 app.include_router(analytics_router, prefix=API_V1_PREFIX)
 app.include_router(history_router, prefix=API_V1_PREFIX)
+app.include_router(templates_router, prefix=API_V1_PREFIX)
 
 
 def _error(status: int, detail: str, code: str, headers: dict | None = None, **extra):

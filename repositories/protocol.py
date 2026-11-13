@@ -49,6 +49,23 @@ class ProtocolRepository:
         )
         return (await self.db.execute(stmt)).scalar_one()
 
+    async def lock_teacher_assignments(self, teacher_id: str) -> None:
+        await self.db.execute(
+            select(func.pg_advisory_xact_lock(func.hashtext("assignments:" + teacher_id)))
+        )
+
+    async def assignment_titles(self, teacher_id: str) -> set[str]:
+        stmt = select(AssignmentORM.title).where(AssignmentORM.teacher_id == teacher_id)
+        return set((await self.db.execute(stmt)).scalars())
+
+    async def list_templates(self, teacher_id: str) -> list[AssignmentORM]:
+        stmt = (
+            select(AssignmentORM)
+            .where(AssignmentORM.teacher_id == teacher_id, AssignmentORM.is_template.is_(True))
+            .order_by(AssignmentORM.title)
+        )
+        return list((await self.db.execute(stmt)).scalars())
+
     async def list_assignments(self, teacher_id: str) -> list[AssignmentORM]:
         stmt = (
             select(AssignmentORM)

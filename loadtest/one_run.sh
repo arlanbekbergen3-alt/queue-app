@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eu
 
-SCENARIO="${1:?scenario: peak|salvo|sse|ssesalvo}"
+SCENARIO="${1:?scenario: peak|salvo|sse|ssesalvo|lesson|ssemode}"
 VARIANT="${2:?variant: base|new}"
 LABEL="${3:?label}"
 DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -64,6 +64,36 @@ case "$SCENARIO" in
       grafana/k6:0.57.0 run --quiet \
       --summary-export "/scripts/results/series/$LABEL-summary.json" \
       /scripts/peak.js > "$RESULTS/$LABEL-k6.txt" 2>&1 || true
+    ;;
+  lesson)
+    SESSIONS="${SESSIONS:-1}"
+    pids=""
+    for index in $(seq 1 "$SESSIONS"); do
+      MSYS_NO_PATHCONV=1 docker run --rm -i --network "$NET" \
+        -e BASE_URL="$BASE_URL" -e TEACHER_INVITE_CODE="$TEACHER_INVITE_CODE" \
+        -e STUDENTS="${STUDENTS:-200}" -e ARRIVAL_SECONDS="${ARRIVAL_SECONDS:-30}" \
+        -e POLL_SECONDS="${POLL_SECONDS:-90}" -e ORDER_MODE="${ORDER_MODE:-join}" \
+        -e PRESENCE="${PRESENCE:-0}" -e GRADE_INTERVAL_SECONDS="${GRADE_INTERVAL_SECONDS:-15}" \
+        -v "$DIR:/scripts" \
+        grafana/k6:0.57.0 run --quiet \
+        --summary-export "/scripts/results/series/$LABEL-s$index-summary.json" \
+        /scripts/lesson.js > "$RESULTS/$LABEL-s$index-k6.txt" 2>&1 &
+      pids="$pids $!"
+    done
+    wait $pids || true
+    ;;
+  ssemode)
+    OPTS="${SESSION_OPTIONS-}"
+    [ -n "$OPTS" ] || OPTS='{}'
+    MSYS_NO_PATHCONV=1 docker run --rm -i --network "$NET" \
+      -e BASE_URL="$BASE_URL" -e TEACHER_INVITE_CODE="$TEACHER_INVITE_CODE" \
+      -e STUDENTS="${STUDENTS:-200}" -e ARRIVAL_SECONDS="${ARRIVAL_SECONDS:-30}" \
+      -e DURATION_SECONDS="${DURATION_SECONDS:-90}" -e PRESENCE="${PRESENCE:-0}" \
+      -e SESSION_OPTIONS="$OPTS" \
+      -e OUT="/scripts/results/series/$LABEL-sse.json" \
+      -v "$DIR:/scripts" \
+      python:3.12 sh -c "pip install -q httpx 2>/dev/null && python /scripts/sse_peak.py" \
+      > "$RESULTS/$LABEL-sse.txt" 2>&1 || true
     ;;
   sse|ssesalvo)
     if [ "$SCENARIO" = sse ]; then ARRIVAL=60; DURATION=240; else ARRIVAL=5; DURATION=55; fi

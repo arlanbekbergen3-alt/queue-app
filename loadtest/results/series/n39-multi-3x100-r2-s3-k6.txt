@@ -1,0 +1,29 @@
+
+     ✓ join 200
+     ✓ queue 200
+     ✓ me 200
+     ✓ grade 200
+
+     checks.........................: 100.00% 1841 out of 1841
+     data_received..................: 1.7 MB  14 kB/s
+     data_sent......................: 310 kB  2.5 kB/s
+     http_req_blocked...............: avg=325.74µs min=3.12µs  med=302.54µs p(90)=444.38µs p(95)=517.92µs p(99)=672.59µs max=19.32ms 
+     http_req_connecting............: avg=235.29µs min=0s      med=213.8µs  p(90)=319.82µs p(95)=374.7µs  p(99)=480.25µs max=19.26ms 
+     http_req_duration..............: avg=8.42ms   min=2.98ms  med=5.37ms   p(90)=12.36ms  p(95)=21.74ms  p(99)=55.89ms  max=544.9ms 
+       { expected_response:true }...: avg=8.42ms   min=2.98ms  med=5.37ms   p(90)=12.36ms  p(95)=21.74ms  p(99)=55.89ms  max=544.9ms 
+     ✓ { name:grade }...............: avg=39.95ms  min=25.9ms  med=38.03ms  p(90)=51.21ms  p(95)=54.77ms  p(99)=57.61ms  max=58.32ms 
+     ✓ { name:join }................: avg=33.73ms  min=12.25ms med=31.18ms  p(90)=52.96ms  p(95)=62.11ms  p(99)=73.02ms  max=93.2ms  
+     ✓ { name:lottery }.............: avg=0s       min=0s      med=0s       p(90)=0s       p(95)=0s       p(99)=0s       max=0s      
+     ✓ { name:me }..................: avg=6.24ms   min=2.98ms  med=5.19ms   p(90)=8.63ms   p(95)=11.13ms  p(99)=19ms     max=97.95ms 
+     ✓ { name:queue }...............: avg=9.88ms   min=6.4ms   med=8.85ms   p(90)=13.19ms  p(95)=14.22ms  p(99)=18.02ms  max=19.8ms  
+   ✓ http_req_failed................: 0.00%   0 out of 1895
+     http_req_receiving.............: avg=119.58µs min=51.51µs med=108.4µs  p(90)=161.94µs p(95)=196µs    p(99)=270.09µs max=2.61ms  
+     http_req_sending...............: avg=55.2µs   min=8.32µs  med=46.9µs   p(90)=89.18µs  p(95)=109.39µs p(99)=159.35µs max=1.02ms  
+     http_req_tls_handshaking.......: avg=0s       min=0s      med=0s       p(90)=0s       p(95)=0s       p(99)=0s       max=0s      
+     http_req_waiting...............: avg=8.25ms   min=2.86ms  med=5.2ms    p(90)=12.15ms  p(95)=21.58ms  p(99)=55.74ms  max=544.51ms
+     http_reqs......................: 1895    15.174337/s
+     iteration_duration.............: avg=1m42s    min=15.07s  med=1m46s    p(90)=2m0s     p(95)=2m2s     p(99)=2m3s     max=2m4s    
+     iterations.....................: 108     0.864817/s
+     vus............................: 3       min=3            max=101
+     vus_max........................: 101     min=101          max=101
+

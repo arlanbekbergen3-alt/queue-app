@@ -1,0 +1,69 @@
+{
+  "elapsed_seconds": 60.0,
+  "students": 300,
+  "timings_ms": {
+    "join": {
+      "count": 300,
+      "p50": 1253.6,
+      "p95": 2446.1,
+      "p99": 2507.2,
+      "max": 2525.3
+    },
+    "me": {
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    "next": {
+      "count": 1,
+      "p50": 30.3,
+      "p95": 30.3,
+      "p99": 30.3,
+      "max": 30.3
+    },
+    "done": {
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    "propagation": {
+      "count": 300,
+      "p50": 56.6,
+      "p95": 70.1,
+      "p99": 72.0,
+      "max": 72.1
+    },
+    "teacher_propagation": {
+      "count": 1,
+      "p50": 71.0,
+      "p95": 71.0,
+      "p99": 71.0,
+      "max": 71.0
+    }
+  },
+  "errors": {},
+  "counters": {
+    "events": 4369,
+    "heartbeats": 602,
+    "stream_drops": 0,
+    "stream_opened": 301,
+    "requests": 301
+  },
+  "http_requests_per_second": 5.02,
+  "server_metrics": {
+    "queue_http_requests_total{status=\"2xx\"}": "609",
+    "queue_http_request_duration_seconds_sum": "17371.946062",
+    "queue_http_request_duration_seconds_count": "609",
+    "queue_http_rejected_overload_total": "0",
+    "queue_http_rejected_rate_limit_total": "0",
+    "queue_sse_refreshes_total": "26",
+    "queue_sse_rejected_total": "0",
+    "queue_db_pool_checked_out": "0",
+    "queue_http_requests_in_flight": "0",
+    "queue_sse_connections": "0"
+  }
+}

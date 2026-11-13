@@ -56,7 +56,7 @@
 <main>
   <div class="top">
     <h1>Протокол сдачи</h1>
-    <div class="row"><a href="/teacher">&larr; Очередь</a><a href="/students">Студенты</a></div>
+    <div class="row"><a href="/teacher">&larr; Очередь</a><a href="/students">Студенты</a><a href="/spaces">Группы</a></div>
   </div>
 
   <section class="card hidden" id="need-login">
@@ -85,6 +85,7 @@
 
     <section class="card hidden" id="a-card">
       <h2 id="a-name"></h2>
+      <div class="muted hidden" id="a-origin"></div>
       <div class="row">
         <label class="row" style="margin:0">Вопросов на сдачу <input id="s-count" type="number" min="1" max="10" style="width:80px"></label>
         <label class="row" style="margin:0"><input id="s-practice" type="checkbox" style="width:auto"> Включить тренировку для студентов</label>
@@ -306,7 +307,8 @@ async function loadAssignments() {
         el("span", { class: "badge" }, a.question_count + " вопр."),
         el("span", { class: "badge" }, a.criteria_count + " крит."),
         el("span", { class: "badge" }, a.submissions_count + " сдач"),
-        a.is_template ? el("span", { class: "badge" }, "шаблон") : ""),
+        a.is_template ? el("span", { class: "badge" }, "шаблон") : "",
+        a.origin ? el("span", { class: "badge" }, "из группы: " + a.origin.space) : ""),
       el("button", { class: "ghost", onclick: () => openAssignment(a.id) }, "Открыть")));
   }
   const select = $("p-assignment");
@@ -327,6 +329,10 @@ async function openAssignment(id) {
   $("s-count").value = a.questions_per_submission;
   $("s-practice").checked = a.practice_enabled;
   $("s-template").checked = a.is_template;
+  $("a-origin").classList.toggle("hidden", !a.origin);
+  $("a-origin").textContent = a.origin
+    ? "Скопировано из группы «" + a.origin.space + "»: «" + a.origin.title + "», автор " + a.origin.author
+    : "";
   $("copy-title").value = "";
   $("locked").classList.toggle("hidden", !a.criteria_locked);
   $("c-form").classList.toggle("hidden", a.criteria_locked);

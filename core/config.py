@@ -41,6 +41,11 @@ class Settings(BaseSettings):
     MAX_ASSIGNMENTS_PER_TEACHER: int = Field(default=50, ge=1)
     MAX_QUESTIONS_PER_ASSIGNMENT: int = Field(default=200, ge=1)
     MAX_CRITERIA_PER_ASSIGNMENT: int = Field(default=20, ge=1)
+    MAX_SPACES_OWNED: int = Field(default=5, ge=1)
+    MAX_SPACES_JOINED: int = Field(default=10, ge=1)
+    MAX_SPACE_MEMBERS: int = Field(default=30, ge=2)
+    MAX_SPACE_PUBLICATIONS: int = Field(default=100, ge=1)
+    MAX_PUBLICATIONS_PER_AUTHOR: int = Field(default=20, ge=1)
 
     ANALYTICS_MIN_SUBMISSIONS: int = Field(default=5, ge=2)
     ANALYTICS_OUTLIER_FACTOR: float = Field(default=2.0, gt=1)

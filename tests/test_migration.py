@@ -359,3 +359,73 @@ async def test_template_flag_defaults_to_false_for_existing_works_and_rolls_back
         count = (await conn.execute(text("SELECT count(*) FROM assignments"))).scalar_one()
     assert "is_template" not in columns and count == 1
     await alembic_async("upgrade", "head")
+
+
+@pytest.mark.asyncio
+async def test_subject_spaces_migration_adds_tables_and_origin_columns_and_rolls_back(
+    migration_engine,
+):
+    await alembic_async("upgrade", "b8c9d0e1f2a3")
+    async with migration_engine.begin() as conn:
+        await conn.execute(
+            text("INSERT INTO users (id, username, password_hash) VALUES ('u1', 't', 'x')")
+        )
+        await conn.execute(
+            text(
+                "INSERT INTO assignments (id, teacher_id, title, description,"
+                " questions_per_submission, practice_enabled, is_template, created_at)"
+                " VALUES ('a1', 'u1', 'Lab', '', 3, false, false, now())"
+            )
+        )
+
+    await alembic_async("upgrade", "c9d0e1f2a3b4")
+    async with migration_engine.begin() as conn:
+        origin = (
+            await conn.execute(
+                text("SELECT origin_author, origin_space, origin_title FROM assignments")
+            )
+        ).one()
+        await conn.execute(
+            text(
+                "INSERT INTO subject_spaces (id, name, invite_code, owner_id, created_at)"
+                " VALUES ('s1', 'Группа', 'ABCDEFGH23', 'u1', now())"
+            )
+        )
+        await conn.execute(
+            text(
+                "INSERT INTO space_members (id, space_id, user_id, joined_at)"
+                " VALUES ('m1', 's1', 'u1', now())"
+            )
+        )
+    assert tuple(origin) == (None, None, None)
+
+    await alembic_async("downgrade", "b8c9d0e1f2a3")
+    async with migration_engine.connect() as conn:
+        tables = (
+            (
+                await conn.execute(
+                    text(
+                        "SELECT table_name FROM information_schema.tables"
+                        " WHERE table_name LIKE 'space%' OR table_name = 'subject_spaces'"
+                    )
+                )
+            )
+            .scalars()
+            .all()
+        )
+        columns = (
+            (
+                await conn.execute(
+                    text(
+                        "SELECT column_name FROM information_schema.columns"
+                        " WHERE table_name = 'assignments'"
+                    )
+                )
+            )
+            .scalars()
+            .all()
+        )
+        count = (await conn.execute(text("SELECT count(*) FROM assignments"))).scalar_one()
+    assert tables == [] and count == 1
+    assert not {"origin_author", "origin_space", "origin_title"} & set(columns)
+    await alembic_async("upgrade", "head")

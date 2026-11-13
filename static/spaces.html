@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Предметные группы</title>
+<style>
+  :root { --bg:#f5f6f8; --card:#fff; --text:#1c1f26; --muted:#6b7280; --accent:#2563eb; --ok:#16a34a; --warn:#d97706; --bad:#dc2626; --border:#e2e5ea; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#12141a; --card:#1b1e26; --text:#e8eaf0; --muted:#98a0b0; --accent:#5b8def; --ok:#34c26a; --warn:#f0a43a; --bad:#f0625d; --border:#2b2f3a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--text); }
+  main { max-width:820px; margin:0 auto; padding:20px 16px 60px; }
+  h1 { font-size:22px; margin:0; }
+  h2 { font-size:17px; margin:0 0 12px; }
+  h3 { font-size:15px; margin:16px 0 8px; }
+  a { color:var(--accent); }
+  .top { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; flex-wrap:wrap; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; margin-bottom:16px; }
+  label { display:block; font-size:14px; color:var(--muted); margin:10px 0 4px; }
+  input, select { width:100%; font:inherit; padding:9px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); }
+  button { font:inherit; font-weight:600; padding:8px 12px; border:0; border-radius:10px; cursor:pointer; background:var(--accent); color:#fff; }
+  button.ghost { background:transparent; color:var(--muted); border:1px solid var(--border); }
+  button.bad { background:var(--bad); }
+  button:disabled { opacity:.6; cursor:default; }
+  .muted { color:var(--muted); }
+  .hidden { display:none; }
+  .err { color:var(--bad); min-height:1.3em; margin-top:8px; font-size:14px; }
+  .note { color:var(--ok); min-height:1.3em; margin-top:8px; font-size:14px; }
+  .row { display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap; }
+  .row > .grow { flex:1 1 180px; }
+  .list > div { display:flex; justify-content:space-between; gap:10px; align-items:center; padding:9px 0; border-bottom:1px solid var(--border); flex-wrap:wrap; }
+  .list .txt { flex:1 1 200px; overflow-wrap:anywhere; }
+  .acts { display:flex; gap:6px; flex-wrap:wrap; }
+  .badge { display:inline-block; font-size:12px; padding:2px 8px; border-radius:999px; border:1px solid var(--border); color:var(--muted); margin-left:6px; }
+  .code { font:600 20px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; letter-spacing:.08em; overflow-wrap:anywhere; }
+  .preview { border:1px dashed var(--border); border-radius:12px; padding:12px; margin-top:12px; }
+  .preview ol, .preview ul { margin:6px 0; padding-left:22px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <h1>Предметные группы</h1>
+    <div class="row"><a href="/teacher">&larr; Очередь</a><a href="/protocol">Протокол сдачи</a><a href="/students">Студенты</a></div>
+  </div>
+
+  <section class="card hidden" id="need-login">
+    <p>Войдите на <a href="/teacher">странице преподавателя</a>, затем вернитесь сюда.</p>
+  </section>
+
+  <div id="app" class="hidden">
+    <section class="card">
+      <h2>Мои группы</h2>
+      <div class="muted">Группа объединяет преподавателей одного предмета. В ней видны только критерии и банки вопросов, которые участники публикуют сами: ни студентов, ни баллов, ни сдач, ни журнала, ни аналитики.</div>
+      <div class="list" id="spaces"></div>
+      <div class="row">
+        <div class="grow"><label for="s-name">Новая группа</label><input id="s-name" maxlength="80" placeholder="Например: Базы данных, 2 курс"></div>
+        <button id="s-create">Создать</button>
+      </div>
+      <div class="row">
+        <div class="grow"><label for="j-code">Присоединиться по коду</label><input id="j-code" maxlength="32" placeholder="Код приглашения" autocomplete="off"></div>
+        <button class="ghost" id="j-go">Войти в группу</button>
+      </div>
+      <div class="err" id="list-err"></div>
+    </section>
+
+    <section class="card hidden" id="card">
+      <h2 id="c-name"></h2>
+      <div class="muted" id="c-meta"></div>
+      <div class="hidden" id="invite-box">
+        <label for="c-invite">Код приглашения (виден только владельцу)</label>
+        <div class="row"><div class="code grow" id="c-invite"></div><button class="ghost" id="c-regen">Сменить код</button></div>
+      </div>
+      <h3>Участники</h3>
+      <div class="list" id="members"></div>
+      <div class="row" style="margin-top:8px">
+        <button class="ghost" id="c-leave">Выйти из группы</button>
+        <button class="bad hidden" id="c-delete">Удалить группу</button>
+      </div>
+      <div class="muted">При выходе или удалении участника его публикации исчезают из группы; уже скопированные работы остаются у тех, кто их скопировал.</div>
+      <div class="err" id="c-err"></div>
+
+      <h3>Опубликовать свою работу</h3>
+      <div class="row">
+        <div class="grow"><label for="p-assignment">Работа</label><select id="p-assignment"></select></div>
+        <div class="grow"><label for="p-title">Название (необязательно)</label><input id="p-title" maxlength="120"></div>
+        <button id="p-go">Опубликовать</button>
+      </div>
+      <div class="muted">Публикуется снимок критериев и банка вопросов (текст, сложность, тема). Дальнейшие правки вашей работы в группу не попадают.</div>
+      <div class="err" id="p-err"></div>
+
+      <h3>Материалы группы</h3>
+      <div class="list" id="pubs"></div>
+      <div class="preview hidden" id="preview"></div>
+    </section>
+  </div>
+</main>
+
+<script>
+const API = "/api/v1";
+const TOKEN_KEY = "queue-teacher-token";
+const MESSAGES = {
+  space_not_found: "Группа не найдена",
+  space_code_invalid: "Неверный код приглашения",
+  space_limit: "Достигнут предел числа групп",
+  space_full: "В группе нет свободных мест",
+  not_space_owner: "Это может только владелец группы",
+  owner_cannot_leave: "Владелец не может выйти: удалите группу",
+  member_not_found: "Участник не найден",
+  publication_not_found: "Материал не найден",
+  publication_empty: "Нечего публиковать: у работы нет критериев и вопросов",
+  publication_limit: "Достигнут предел числа материалов",
+  not_publication_author: "Снять с публикации может только автор",
+  assignment_not_found: "Работа не найдена",
+  assignment_limit: "Достигнут предел числа работ",
+  assignment_title_taken: "Работа с таким названием уже есть",
+  not_authenticated: "Войдите заново на странице преподавателя",
+  invalid_token: "Войдите заново на странице преподавателя",
+  rate_limited: "Слишком много запросов, подождите минуту",
+  validation_error: "Проверьте введённые данные",
+};
+const DIFFICULTY = { 1: "лёгкий", 2: "средний", 3: "сложный" };
+const $ = (id) => document.getElementById(id);
+let token = null;
+try { token = sessionStorage.getItem(TOKEN_KEY); } catch {}
+let currentSpace = null;
+
+async function request(path, options = {}) {
+  const headers = { Authorization: "Bearer " + token, ...(options.headers || {}) };
+  if (options.body) headers["Content-Type"] = "application/json";
+  let response;
+  try {
+    response = await fetch(API + path, { ...options, headers });
+  } catch {
+    throw new Error("Нет связи с сервером. Проверьте подключение и повторите");
+  }
+  let body = null;
+  try { body = await response.json(); } catch {}
+  if (!response.ok) {
+    const error = new Error(MESSAGES[body?.code] || "Ошибка " + response.status);
+    error.code = body?.code;
+    error.status = response.status;
+    throw error;
+  }
+  return body;
+}
+function el(tag, props = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [key, value] of Object.entries(props)) {
+    if (key === "onclick") node.addEventListener("click", value);
+    else if (key === "class") node.className = value;
+    else node.setAttribute(key, value);
+  }
+  for (const child of children) node.append(child);
+  return node;
+}
+async function guarded(errId, fn) {
+  $(errId).textContent = "";
+  $(errId).className = "err";
+  try { await fn(); } catch (e) { $(errId).textContent = e.message; }
+}
+function say(errId, message) {
+  $(errId).textContent = message;
+  $(errId).className = "note";
+}
+
+async function loadSpaces() {
+  const spaces = await request("/spaces");
+  const box = $("spaces");
+  box.replaceChildren();
+  if (!spaces.length) box.append(el("div", { class: "muted" }, "Вы пока не состоите ни в одной группе."));
+  for (const s of spaces) {
+    box.append(el("div", {},
+      el("div", { class: "txt" }, s.name,
+        el("span", { class: "badge" }, s.role === "owner" ? "владелец" : "участник"),
+        el("span", { class: "badge" }, s.members_count + " уч."),
+        el("span", { class: "badge" }, s.publications_count + " матер.")),
+      el("button", { class: "ghost", onclick: () => openSpace(s.id) }, "Открыть")));
+  }
+  return spaces;
+}
+
+async function openSpace(id) {
+  const space = await request("/spaces/" + id);
+  currentSpace = space;
+  $("card").classList.remove("hidden");
+  $("c-name").textContent = space.name;
+  $("c-meta").textContent = (space.role === "owner" ? "Вы владелец. " : "Вы участник. ") +
+    "Участников: " + space.members_count + ", материалов: " + space.publications_count + ".";
+  const owner = space.role === "owner";
+  $("invite-box").classList.toggle("hidden", !owner);
+  $("c-invite").textContent = space.invite_code || "";
+  $("c-delete").classList.toggle("hidden", !owner);
+  $("c-leave").classList.toggle("hidden", owner);
+  const members = $("members");
+  members.replaceChildren();
+  for (const m of space.members) {
+    const row = el("div", {}, el("div", { class: "txt" }, m.username, m.is_owner ? el("span", { class: "badge" }, "владелец") : ""));
+    if (owner && !m.is_owner) {
+      row.append(el("button", { class: "ghost", onclick: () => guarded("c-err", async () => {
+        if (!confirm("Удалить участника " + m.username + " из группы? Его публикации тоже исчезнут.")) return;
+        await request("/spaces/" + space.id + "/members/" + m.user_id, { method: "DELETE" });
+        await openSpace(space.id);
+        await loadSpaces();
+      }) }, "Удалить"));
+    }
+    members.append(row);
+  }
+  const mine = await request("/assignments");
+  const select = $("p-assignment");
+  select.replaceChildren();
+  for (const a of mine) select.append(el("option", { value: a.id }, a.title));
+  $("preview").classList.add("hidden");
+  await loadPublications();
+}
+
+async function loadPublications() {
+  const items = await request("/spaces/" + currentSpace.id + "/publications");
+  const box = $("pubs");
+  box.replaceChildren();
+  if (!items.length) box.append(el("div", { class: "muted" }, "Материалов пока нет."));
+  for (const p of items) {
+    const acts = el("div", { class: "acts" },
+      el("button", { class: "ghost", onclick: () => guarded("c-err", () => showPublication(p.id)) }, "Показать"),
+      el("button", { class: "ghost", onclick: () => guarded("c-err", async () => {
+        const made = await request("/spaces/" + currentSpace.id + "/publications/" + p.id + "/copy", { method: "POST", body: JSON.stringify({}) });
+        say("c-err", "Создана работа «" + made.title + "», она в разделе «Протокол сдачи»");
+      }) }, "Скопировать к себе"));
+    if (p.mine) {
+      acts.append(el("button", { class: "ghost", onclick: () => guarded("c-err", async () => {
+        if (!confirm("Снять материал с публикации? Уже сделанные копии останутся.")) return;
+        await request("/spaces/" + currentSpace.id + "/publications/" + p.id, { method: "DELETE" });
+        await openSpace(currentSpace.id);
+        await loadSpaces();
+      }) }, "Снять"));
+    }
+    box.append(el("div", {},
+      el("div", { class: "txt" }, p.title,
+        el("span", { class: "badge" }, "автор: " + p.author),
+        el("span", { class: "badge" }, p.criteria_count + " крит."),
+        el("span", { class: "badge" }, p.questions_count + " вопр.")),
+      acts));
+  }
+}
+
+async function showPublication(id) {
+  const p = await request("/spaces/" + currentSpace.id + "/publications/" + id);
+  const box = $("preview");
+  box.replaceChildren(el("strong", {}, p.title), el("div", { class: "muted" }, "Автор: " + p.author + " · группа «" + currentSpace.name + "»"));
+  const criteria = el("ul");
+  for (const c of p.criteria) criteria.append(el("li", {}, c.name + " (макс. " + c.max_points + ")"));
+  const questions = el("ol");
+  for (const q of p.questions) questions.append(el("li", {}, q.text + " [" + (DIFFICULTY[q.difficulty] || q.difficulty) + (q.topic ? ", " + q.topic : "") + "]"));
+  box.append(el("h3", {}, "Критерии"), p.criteria.length ? criteria : el("div", { class: "muted" }, "Нет критериев."),
+    el("h3", {}, "Банк вопросов"), p.questions.length ? questions : el("div", { class: "muted" }, "Нет вопросов."));
+  box.classList.remove("hidden");
+}
+
+$("s-create").addEventListener("click", () => guarded("list-err", async () => {
+  const space = await request("/spaces", { method: "POST", body: JSON.stringify({ name: $("s-name").value }) });
+  $("s-name").value = "";
+  await loadSpaces();
+  await openSpace(space.id);
+}));
+$("j-go").addEventListener("click", () => guarded("list-err", async () => {
+  const space = await request("/spaces/join", { method: "POST", body: JSON.stringify({ code: $("j-code").value }) });
+  $("j-code").value = "";
+  await loadSpaces();
+  await openSpace(space.id);
+}));
+$("c-regen").addEventListener("click", () => guarded("c-err", async () => {
+  if (!confirm("Старый код перестанет работать. Сменить?")) return;
+  await request("/spaces/" + currentSpace.id + "/invite", { method: "POST" });
+  await openSpace(currentSpace.id);
+}));
+$("c-leave").addEventListener("click", () => guarded("c-err", async () => {
+  if (!confirm("Выйти из группы? Ваши публикации в ней исчезнут.")) return;
+  await request("/spaces/" + currentSpace.id + "/members/me", { method: "DELETE" });
+  $("card").classList.add("hidden");
+  await loadSpaces();
+}));
+$("c-delete").addEventListener("click", () => guarded("c-err", async () => {
+  if (!confirm("Удалить группу вместе со всеми публикациями? Скопированные работы останутся.")) return;
+  await request("/spaces/" + currentSpace.id, { method: "DELETE" });
+  $("card").classList.add("hidden");
+  await loadSpaces();
+}));
+$("p-go").addEventListener("click", () => guarded("p-err", async () => {
+  const assignmentId = $("p-assignment").value;
+  if (!assignmentId) throw new Error("Сначала создайте работу в разделе «Протокол сдачи»");
+  const body = { assignment_id: assignmentId };
+  if ($("p-title").value.trim()) body.title = $("p-title").value.trim();
+  await request("/spaces/" + currentSpace.id + "/publications", { method: "POST", body: JSON.stringify(body) });
+  $("p-title").value = "";
+  say("p-err", "Опубликовано");
+  await openSpace(currentSpace.id);
+  await loadSpaces();
+}));
+
+async function start() {
+  if (!token) { $("need-login").classList.remove("hidden"); return; }
+  $("app").classList.remove("hidden");
+  try {
+    await loadSpaces();
+  } catch (error) {
+    $("app").classList.add("hidden");
+    $("need-login").classList.remove("hidden");
+  }
+}
+start();
+</script>
+</body>
+</html>

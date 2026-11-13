@@ -54,6 +54,9 @@ class AssignmentORM(Base):
     is_template: Mapped[bool] = mapped_column(
         Boolean, default=False, server_default=text("false"), nullable=False
     )
+    origin_author: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    origin_space: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    origin_title: Mapped[str | None] = mapped_column(String(120), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_now, nullable=False
     )

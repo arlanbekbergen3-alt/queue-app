@@ -33,6 +33,7 @@ from routers.live import router as live_router
 from routers.practice import router as practice_router
 from routers.protocol import router as protocol_router
 from routers.sessions import router as sessions_router
+from routers.spaces import router as spaces_router
 from routers.templates import router as templates_router
 from services.ai_drafts import runtime as ai_runtime
 from services.live import hub
@@ -101,6 +102,7 @@ app.include_router(practice_router, prefix=API_V1_PREFIX)
 app.include_router(analytics_router, prefix=API_V1_PREFIX)
 app.include_router(history_router, prefix=API_V1_PREFIX)
 app.include_router(templates_router, prefix=API_V1_PREFIX)
+app.include_router(spaces_router, prefix=API_V1_PREFIX)
 
 
 def _error(status: int, detail: str, code: str, headers: dict | None = None, **extra):
@@ -204,6 +206,11 @@ async def protocol_page():
 @app.get("/students", include_in_schema=False)
 async def students_page():
     return FileResponse(STATIC_DIR / "students.html")
+
+
+@app.get("/spaces", include_in_schema=False)
+async def spaces_page():
+    return FileResponse(STATIC_DIR / "spaces.html")
 
 
 @app.get("/practice", include_in_schema=False)

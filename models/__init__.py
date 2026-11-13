@@ -10,6 +10,13 @@ from models.protocol import (
     SubmissionQuestionORM,
 )
 from models.queue_session import QueueSessionORM
+from models.space import (
+    PublicationCriterionORM,
+    PublicationORM,
+    PublicationQuestionORM,
+    SpaceMemberORM,
+    SubjectSpaceORM,
+)
 from models.student import StudentORM
 from models.user import UserORM
 
@@ -19,6 +26,11 @@ __all__ = [
     "AuditLogORM",
     "CriterionORM",
     "EntryORM",
+    "PublicationCriterionORM",
+    "PublicationORM",
+    "PublicationQuestionORM",
+    "SpaceMemberORM",
+    "SubjectSpaceORM",
     "QueueSessionORM",
     "QuestionORM",
     "ScoreORM",

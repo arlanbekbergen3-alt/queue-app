@@ -30,6 +30,7 @@ from schemas.protocol import (
     CriterionUpdate,
     GradesIn,
     MySubmissionOut,
+    OriginOut,
     QuestionCreate,
     QuestionOut,
     QuestionUpdate,
@@ -63,6 +64,12 @@ class ProtocolService:
         out.criteria_count = criteria
         out.submissions_count = submissions
         out.criteria_locked = submissions > 0
+        if assignment.origin_author is not None:
+            out.origin = OriginOut(
+                author=assignment.origin_author,
+                space=assignment.origin_space or "",
+                title=assignment.origin_title or "",
+            )
         return out
 
     async def create_assignment(self, teacher_id: str, data: AssignmentCreate) -> AssignmentOut:

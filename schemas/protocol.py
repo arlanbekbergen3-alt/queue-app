@@ -39,6 +39,12 @@ class AssignmentUpdate(BaseModel):
     is_template: bool | None = None
 
 
+class OriginOut(BaseModel):
+    author: str
+    space: str
+    title: str
+
+
 class AssignmentOut(BaseModel):
     id: str
     title: str
@@ -51,6 +57,7 @@ class AssignmentOut(BaseModel):
     criteria_count: int = 0
     submissions_count: int = 0
     criteria_locked: bool = False
+    origin: OriginOut | None = None
 
     model_config = {"from_attributes": True}
 

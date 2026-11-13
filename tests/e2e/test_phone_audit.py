@@ -98,3 +98,23 @@ def test_every_control_is_at_least_40px_tall_on_a_phone(page: Page, api, open_se
     page.goto(f"/?code={teacher['code']}")
     small["student-join"] = page.evaluate(SMALL_TARGETS)
     assert {name: items for name, items in small.items() if items} == {}
+
+
+def test_queue_row_buttons_stay_whole_words_on_a_phone(page: Page, api, open_session):
+    teacher = open_session("Очередь на телефоне")
+    for n in range(4):
+        api.post(
+            f"/sessions/{teacher['code']}/join",
+            json={"name": f"Студент {n} с длинной фамилией", "token": f"phone-rows-{n:04d}-xxxxxx"},
+        )
+    page.set_viewport_size({"width": 360, "height": 740})
+    login_as(page, teacher)
+    page.goto("/teacher")
+    page.get_by_role("button", name=teacher["code"]).click()
+    expect(page.locator("#entries tr", has_text="Студент 3")).to_be_visible(timeout=SLOW)
+    skip = page.locator("#entries").get_by_role("button", name="Пропустить")
+    assert skip.count() == 4
+    for index in range(4):
+        box = skip.nth(index).bounding_box()
+        assert box and box["width"] >= 90 and box["height"] <= 60, box
+    assert_fits(page)

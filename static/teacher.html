@@ -40,7 +40,15 @@
   td.btns { text-align:right; white-space:nowrap; }
   td.btns button { padding:6px 10px; font-size:14px; margin-left:4px; }
   td { overflow-wrap:anywhere; }
-  @media (max-width: 520px) { td.btns { white-space:normal; } td.btns button { margin:4px 4px 0 0; } }
+  @media (max-width: 520px) {
+    .queue-table thead { display:none; }
+    .queue-table, .queue-table tbody { display:block; }
+    .queue-table tr { display:grid; grid-template-columns:2.4em 1fr auto; gap:2px 8px; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); }
+    .queue-table td { border:0; padding:2px 0; overflow-wrap:anywhere; }
+    .queue-table td[colspan] { grid-column:1 / -1; }
+    .queue-table td.btns { grid-column:1 / -1; display:flex; flex-wrap:wrap; gap:8px; text-align:left; white-space:normal; overflow-wrap:normal; }
+    .queue-table td.btns button { margin:0; word-break:keep-all; }
+  }
   .sessions button { display:block; width:100%; text-align:left; margin-top:8px; background:var(--bg); color:var(--text); border:1px solid var(--border); font-weight:500; }
   .check { display:flex; align-items:center; gap:10px; color:var(--text); font-size:15px; margin:10px 0 0; }
   .check input { width:auto; margin:0; }
@@ -269,7 +277,7 @@
         <div id="work-body"></div>
         <div class="err" id="work-err"></div>
       </div>
-      <table>
+      <table class="queue-table">
         <thead><tr><th>№</th><th>Студент</th><th>Статус</th><th></th></tr></thead>
         <tbody id="entries"></tbody>
       </table>

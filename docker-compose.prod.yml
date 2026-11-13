@@ -1,0 +1,112 @@
+name: queue-prod
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is not set}
+      POSTGRES_DB: queue_db
+    command:
+      - postgres
+      - -c
+      - shared_buffers=64MB
+      - -c
+      - effective_cache_size=256MB
+      - -c
+      - work_mem=2MB
+      - -c
+      - maintenance_work_mem=32MB
+      - -c
+      - max_connections=40
+      - -c
+      - wal_compression=on
+      - -c
+      - log_min_duration_statement=1000
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d queue_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    mem_limit: 320m
+    logging: *logging
+
+  web:
+    build: .
+    image: queue-app:prod
+    restart: unless-stopped
+    stop_grace_period: 15s
+    command: sh -c "alembic upgrade head && exec uvicorn main:app --host 0.0.0.0 --port 8000 --proxy-headers --timeout-graceful-shutdown 10"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:${DB_PASSWORD:?DB_PASSWORD is not set}@postgres:5432/queue_db
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:?JWT_SECRET_KEY is not set}
+      TEACHER_INVITE_CODE: ${TEACHER_INVITE_CODE:?TEACHER_INVITE_CODE is not set}
+      METRICS_TOKEN: ${METRICS_TOKEN:-}
+      CORS_ORIGINS: ${CORS_ORIGINS:-[]}
+      FORWARDED_ALLOW_IPS: "*"
+      LOG_FORMAT: json
+      AI_ENABLED: ${AI_ENABLED:-false}
+      DATA_RETENTION_DAYS: ${DATA_RETENTION_DAYS:-180}
+      DB_POOL_SIZE: ${DB_POOL_SIZE:-10}
+      MAX_CONCURRENT_REQUESTS: ${MAX_CONCURRENT_REQUESTS:-150}
+      SSE_MAX_PER_SESSION: ${SSE_MAX_PER_SESSION:-300}
+      RATE_LIMIT_IP_PER_MINUTE: ${RATE_LIMIT_IP_PER_MINUTE:-6000}
+      RATE_LIMIT_JOIN_PER_IP_PER_MINUTE: ${RATE_LIMIT_JOIN_PER_IP_PER_MINUTE:-600}
+      RATE_LIMIT_AUTH_PER_IP_PER_MINUTE: ${RATE_LIMIT_AUTH_PER_IP_PER_MINUTE:-20}
+    expose:
+      - "8000"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 384m
+    depends_on:
+      postgres:
+        condition: service_healthy
+    logging: *logging
+
+  caddy:
+    image: caddy:2.8-alpine
+    restart: unless-stopped
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:?SITE_ADDRESS is not set}
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:2019/config/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 96m
+    depends_on:
+      web:
+        condition: service_healthy
+    logging: *logging
+
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:

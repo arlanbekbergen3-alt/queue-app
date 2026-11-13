@@ -21,3 +21,4 @@ loadtest/results/series/*-system.csv
 *.gguf
 *.bin
 *.stackdump
+!.env.prod.example

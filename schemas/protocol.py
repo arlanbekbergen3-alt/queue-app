@@ -203,6 +203,44 @@ class BonusRemoveIn(BaseModel):
         return value
 
 
+class QuestionImportIn(BaseModel):
+    text: str = Field(min_length=1, max_length=50000)
+    difficulty: int = Field(default=2, ge=1, le=3)
+    topic: str = Field(default="", max_length=60)
+    dry_run: bool = True
+
+    @field_validator("topic")
+    @classmethod
+    def strip_topic(cls, value: str) -> str:
+        return " ".join(value.split())
+
+
+class ImportLineOut(BaseModel):
+    text: str
+    status: str
+
+
+class QuestionImportOut(BaseModel):
+    lines: list[ImportLineOut]
+    added: int
+    remaining_capacity: int
+
+
+class PresetCriterionOut(BaseModel):
+    name: str
+    max_points: int
+
+
+class PresetOut(BaseModel):
+    key: str
+    title: str
+    criteria: list[PresetCriterionOut]
+
+
+class PresetApplyIn(BaseModel):
+    preset: str = Field(min_length=1, max_length=40)
+
+
 class AuditOut(BaseModel):
     seq: int
     occurred_at: datetime

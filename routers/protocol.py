@@ -14,7 +14,11 @@ from schemas.protocol import (
     CriterionUpdate,
     GradesIn,
     MySubmissionOut,
+    PresetApplyIn,
+    PresetOut,
     QuestionCreate,
+    QuestionImportIn,
+    QuestionImportOut,
     QuestionOut,
     QuestionUpdate,
     SessionAssignmentIn,
@@ -76,6 +80,31 @@ async def add_question(
     service: ProtocolServiceDep,
 ):
     return await service.add_question(teacher.id, assignment_id, data)
+
+
+@router.post("/assignments/{assignment_id}/questions/import", response_model=QuestionImportOut)
+async def import_questions(
+    assignment_id: str,
+    data: QuestionImportIn,
+    teacher: CurrentTeacher,
+    service: ProtocolServiceDep,
+):
+    return await service.import_questions(teacher.id, assignment_id, data)
+
+
+@router.get("/criteria-presets", response_model=list[PresetOut])
+async def criteria_presets(teacher: CurrentTeacher, service: ProtocolServiceDep):
+    return service.presets()
+
+
+@router.post("/assignments/{assignment_id}/criteria/preset", response_model=list[CriterionOut])
+async def apply_preset(
+    assignment_id: str,
+    data: PresetApplyIn,
+    teacher: CurrentTeacher,
+    service: ProtocolServiceDep,
+):
+    return await service.apply_preset(teacher.id, assignment_id, data)
 
 
 @router.patch("/assignments/{assignment_id}/questions/{question_id}", response_model=QuestionOut)

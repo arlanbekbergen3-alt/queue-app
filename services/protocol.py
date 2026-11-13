@@ -30,16 +30,24 @@ from schemas.protocol import (
     CriterionOut,
     CriterionUpdate,
     GradesIn,
+    ImportLineOut,
     MySubmissionOut,
     OriginOut,
+    PresetApplyIn,
+    PresetCriterionOut,
+    PresetOut,
     QuestionCreate,
+    QuestionImportIn,
+    QuestionImportOut,
     QuestionOut,
     QuestionUpdate,
     ScoreOut,
     SubmissionOut,
     SubmissionQuestionOut,
 )
+from services.criteria_presets import PRESETS, find_preset
 from services.protocol_calls import start_submission
+from services.question_import import parse
 from services.queue import normalize_code
 from services.serving import mark_entry_done
 
@@ -150,6 +158,74 @@ class ProtocolService:
         self.db.add(question)
         await self._commit_unique("A question with this text already exists", "question_duplicate")
         return QuestionOut.model_validate(question)
+
+    async def import_questions(
+        self, teacher_id: str, assignment_id: str, data: QuestionImportIn
+    ) -> QuestionImportOut:
+        await self._mutable(assignment_id, teacher_id)
+        existing = [q.text for q in await self.repo.list_questions(assignment_id)]
+        capacity = max(0, settings.MAX_QUESTIONS_PER_ASSIGNMENT - len(existing))
+        parsed = parse(data.text, set(existing), capacity)
+        if not data.dry_run:
+            position = await self.repo.next_question_position(assignment_id)
+            for line in parsed:
+                if line.status == "ok":
+                    self.db.add(
+                        QuestionORM(
+                            assignment_id=assignment_id,
+                            text=line.text,
+                            difficulty=data.difficulty,
+                            topic=data.topic,
+                            position=position,
+                        )
+                    )
+                    position += 1
+            await self._commit_unique("Вопрос с таким текстом уже есть", "question_duplicate")
+        added = sum(1 for line in parsed if line.status == "ok") if not data.dry_run else 0
+        return QuestionImportOut(
+            lines=[ImportLineOut(text=line.text, status=line.status) for line in parsed],
+            added=added,
+            remaining_capacity=capacity - added,
+        )
+
+    @staticmethod
+    def presets() -> list[PresetOut]:
+        return [
+            PresetOut(
+                key=p.key,
+                title=p.title,
+                criteria=[PresetCriterionOut(name=n, max_points=m) for n, m in p.criteria],
+            )
+            for p in PRESETS
+        ]
+
+    async def apply_preset(
+        self, teacher_id: str, assignment_id: str, data: PresetApplyIn
+    ) -> list[CriterionOut]:
+        preset = find_preset(data.preset)
+        if preset is None:
+            raise NotFoundError("Набор критериев не найден", code="preset_not_found")
+        await self._mutable(assignment_id, teacher_id)
+        await self._criteria_editable(assignment_id)
+        present = await self.repo.list_criteria(assignment_id)
+        names = {c.name.casefold() for c in present}
+        fresh = [(n, m) for n, m in preset.criteria if n.casefold() not in names]
+        if len(present) + len(fresh) > settings.MAX_CRITERIA_PER_ASSIGNMENT:
+            raise ConflictError(
+                "Набор не помещается: превышен лимит критериев в работе", code="criteria_limit"
+            )
+        position = await self.repo.next_criterion_position(assignment_id)
+        for name, points in fresh:
+            self.db.add(
+                CriterionORM(
+                    assignment_id=assignment_id, name=name, max_points=points, position=position
+                )
+            )
+            position += 1
+        await self._commit_unique("Критерий с таким названием уже есть", "criterion_duplicate")
+        return [
+            CriterionOut.model_validate(c) for c in await self.repo.list_criteria(assignment_id)
+        ]
 
     async def update_question(
         self, teacher_id: str, assignment_id: str, question_id: str, data: QuestionUpdate

@@ -54,6 +54,7 @@
       <label class="check" for="ready-now"><input type="checkbox" id="ready-now"> Готов сдать сразу</label>
       <div class="muted small" id="perks-join"></div>
     </div>
+    <button class="hidden" id="quick-join">Войти</button>
     <button id="join-btn">Встать в очередь</button>
     <div class="err" id="join-err"></div>
   </section>
@@ -186,6 +187,14 @@ function perksText(info) {
   if (info.ready_bonus_points > 0) parts.push("бонус за раннюю сдачу: +" + info.ready_bonus_points + " (отдельной строкой, не в баллах по критериям)");
   if (info.ready_skip_questions > 0) parts.push("на " + (info.ready_skip_questions === 1 ? "один вопрос" : info.ready_skip_questions + " вопроса") + " меньше");
   return parts.length ? "Для тех, кто готов сразу: " + parts.join("; ") : "";
+}
+function offerQuickJoin() {
+  const code = $("code").value.trim();
+  const name = $("name").value.trim();
+  const quick = $("quick-join");
+  const offered = code.length >= 6 && !!name;
+  quick.classList.toggle("hidden", !offered);
+  if (offered) quick.textContent = "Войти как " + name;
 }
 let previewCode = "";
 async function previewSession() {
@@ -615,6 +624,9 @@ $("notready-btn").addEventListener("click", () => setReadiness("/not-ready"));
 $("ready-btn").addEventListener("click", () => setReadiness("/ready"));
 $("readynow-btn").addEventListener("click", setPriority);
 $("code").addEventListener("input", previewSession);
+$("code").addEventListener("input", offerQuickJoin);
+$("name").addEventListener("input", offerQuickJoin);
+$("quick-join").addEventListener("click", join);
 $("again-btn").addEventListener("click", resetToJoin);
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible" && state) poll();
@@ -627,7 +639,7 @@ const urlCode = new URLSearchParams(location.search).get("code");
 try { $("name").value = localStorage.getItem("queue-name") || ""; } catch {}
 if (urlCode) $("code").value = urlCode.toUpperCase();
 const resumable = state && state.code && state.token && (!urlCode || state.code === urlCode.toUpperCase());
-if (resumable) { show("queue"); poll(); } else { show("join"); previewSession(); }
+if (resumable) { show("queue"); poll(); } else { show("join"); previewSession(); offerQuickJoin(); }
 </script>
 </body>
 </html>

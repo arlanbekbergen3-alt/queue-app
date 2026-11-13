@@ -179,3 +179,36 @@ def test_start_panel_and_work_panel_fit_a_phone(
     expect(page.locator("#work-body .crit")).to_have_count(2)
     assert overflow(page) <= 0
     other.close()
+
+
+def test_bulk_import_presets_and_quick_join_fit_a_phone(
+    page: Page, browser, live_server, api, open_session
+):
+    teacher = open_session("Телефон: ввод")
+    api.post(
+        "/assignments",
+        headers=teacher["headers"],
+        json={"title": "Очень длинное название работы для проверки"},
+    )
+    page.set_viewport_size(PHONE)
+    login_as(page, teacher)
+    page.goto("/protocol")
+    page.locator("#assignments > div").first.get_by_role("button", name="Открыть").click()
+    expect(page.locator("#c-presets")).to_be_visible(timeout=SLOW)
+    page.click("#preset-coursework")
+    expect(page.locator("#criteria > div").first).to_be_visible(timeout=SLOW)
+    page.fill("#qb-text", "1. " + "очень длинный вопрос " * 12 + "\n2. Второй вопрос?")
+    page.click("#qb-preview")
+    expect(page.locator("#qb-list .bulk-row").first).to_be_visible(timeout=SLOW)
+    assert overflow(page) <= 0
+
+    other = browser.new_context(base_url=live_server)
+    student = other.new_page()
+    student.set_viewport_size(PHONE)
+    student.add_init_script(
+        "try { localStorage.setItem('queue-name', 'Студент с очень длинным именем и фамилией'); } catch (e) {}"
+    )
+    student.goto(f"/?code={teacher['code']}")
+    expect(student.locator("#quick-join")).to_be_visible(timeout=SLOW)
+    assert overflow(student) <= 0
+    other.close()

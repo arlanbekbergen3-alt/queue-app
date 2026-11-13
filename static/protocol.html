@@ -38,6 +38,12 @@
   .badge { display:inline-block; font-size:12px; padding:2px 8px; border-radius:999px; border:1px solid var(--border); color:var(--muted); margin-left:6px; }
   .timer { font-size:28px; font-weight:800; font-variant-numeric:tabular-nums; }
   .timer.warn { color:var(--warn); }
+  .pts { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .pts button { min-width:44px; min-height:44px; padding:6px 10px; background:var(--bg); color:var(--text); border:1px solid var(--border); }
+  .pts button.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .bulk-row { display:flex; gap:8px; align-items:flex-start; padding:4px 0; border-bottom:1px solid var(--border); }
+  .bulk-row input { width:auto; margin-top:4px; }
+  .bulk-row .txt { flex:1; overflow-wrap:anywhere; }
   .timer.bad { color:var(--bad); }
   .score { display:grid; grid-template-columns:1fr 90px; gap:8px; align-items:center; margin-top:8px; }
   .draft { border:1px dashed var(--warn); border-radius:12px; padding:12px; margin-top:12px; }
@@ -110,6 +116,7 @@
         <input id="c-max" type="number" min="1" max="100" value="5" style="width:90px" title="Максимум баллов">
         <button id="c-add">Добавить</button>
       </div>
+      <div class="row" id="c-presets"><span class="muted">Подставить готовый набор:</span></div>
       <div class="err" id="c-err"></div>
 
       <h3>Банк вопросов <span class="muted" id="q-count"></span></h3>
@@ -122,6 +129,23 @@
         <button id="q-add">Добавить</button>
       </div>
       <div class="err" id="q-err"></div>
+
+      <h3>Вставить список вопросов</h3>
+      <div class="muted">По одному вопросу в строке. Нумерация и маркеры, пустые строки и повторы убираются сами.</div>
+      <textarea id="qb-text" style="min-height:110px" placeholder="1. Что такое индекс?&#10;2. Чем отличается JOIN от UNION?"></textarea>
+      <div class="row" style="margin-top:6px">
+        <select id="qb-diff" style="width:150px"><option value="1">лёгкий</option><option value="2" selected>средний</option><option value="3">сложный</option></select>
+        <input class="grow" id="qb-topic" maxlength="60" placeholder="Тема (необязательно)">
+        <button class="ghost" id="qb-preview">Предпросмотр</button>
+      </div>
+      <div class="hidden" id="qb-box">
+        <div id="qb-list"></div>
+        <div class="row" style="margin-top:8px">
+          <button class="ok" id="qb-add">Добавить выбранные</button>
+          <span class="muted" id="qb-count"></span>
+        </div>
+      </div>
+      <div class="err" id="qb-err"></div>
 
       <h3>Черновик банка вопросов от модели <span class="badge" id="ai-badge"></span></h3>
       <div class="muted">Модель только предлагает: вы проверяете, правите и утверждаете. В модель уходит только вставленный ниже текст работы, без имён и оценок. Модель может ошибаться.</div>
@@ -204,6 +228,8 @@ const MESSAGES = {
   not_completed: "Править можно только завершённую сдачу",
   nothing_to_correct: "Ничего не изменилось",
   no_bonus: "У этой сдачи нет бонуса",
+  preset_not_found: "Набор критериев не найден",
+  system_assignment: "Эта работа служебная и не редактируется",
   not_authenticated: "Войдите заново на странице преподавателя",
   invalid_token: "Войдите заново на странице преподавателя",
   ai_disabled: "ИИ-помощник выключен в настройках сервера",
@@ -339,6 +365,7 @@ async function openAssignment(id) {
   $("copy-title").value = "";
   $("locked").classList.toggle("hidden", !a.criteria_locked);
   $("c-form").classList.toggle("hidden", a.criteria_locked);
+  $("c-presets").classList.toggle("hidden", a.criteria_locked);
   const [criteria, questions] = await Promise.all([
     request("/assignments/" + id + "/criteria"),
     request("/assignments/" + id + "/questions"),
@@ -417,6 +444,68 @@ $("q-add").addEventListener("click", () => guarded("q-err", async () => {
   $("q-text").value = "";
   await openAssignment(current.id);
 }));
+
+const BULK_STATUS = { ok: "новый", duplicate: "повтор, пропущен", too_long: "длиннее 1000 символов", over_limit: "сверх лимита банка" };
+let bulkLines = [];
+
+function renderBulk() {
+  const list = $("qb-list");
+  list.replaceChildren();
+  bulkLines.forEach((line, index) => {
+    const row = el("div", { class: "bulk-row" });
+    const box = el("input", { type: "checkbox" });
+    box.checked = line.keep;
+    box.disabled = line.status !== "ok";
+    box.addEventListener("change", () => { line.keep = box.checked; renderBulkCount(); });
+    row.append(box, el("div", { class: "txt" }, line.text), el("span", { class: "badge" }, BULK_STATUS[line.status] || line.status));
+    list.append(row);
+  });
+  $("qb-box").classList.toggle("hidden", !bulkLines.length);
+  renderBulkCount();
+}
+
+function renderBulkCount() {
+  const chosen = bulkLines.filter((l) => l.keep).length;
+  $("qb-count").textContent = "Будет добавлено: " + chosen + " из " + bulkLines.length;
+  $("qb-add").disabled = chosen === 0;
+}
+
+function bulkBody(dryRun, text) {
+  return JSON.stringify({ text, difficulty: Number($("qb-diff").value), topic: $("qb-topic").value, dry_run: dryRun });
+}
+
+async function loadPresets() {
+  let presets = [];
+  try { presets = await request("/criteria-presets"); } catch { return; }
+  const row = $("c-presets");
+  for (const preset of presets) {
+    row.append(el("button", { class: "ghost", id: "preset-" + preset.key, title: preset.criteria.map((c) => c.name + " (" + c.max_points + ")").join("; "),
+      onclick: () => guarded("c-err", async () => {
+        await request("/assignments/" + current.id + "/criteria/preset", { method: "POST", body: JSON.stringify({ preset: preset.key }) });
+        await openAssignment(current.id);
+      }) }, preset.title));
+  }
+}
+
+$("qb-preview").addEventListener("click", () => guarded("qb-err", async () => {
+  const text = $("qb-text").value;
+  if (!text.trim()) { show("qb-err", "Вставьте список вопросов"); return; }
+  const result = await request("/assignments/" + current.id + "/questions/import", { method: "POST", body: bulkBody(true, text) });
+  bulkLines = result.lines.map((l) => ({ ...l, keep: l.status === "ok" }));
+  if (!bulkLines.length) show("qb-err", "В тексте нет ни одной строки с вопросом");
+  renderBulk();
+}));
+$("qb-add").addEventListener("click", () => guarded("qb-err", async () => {
+  const text = bulkLines.filter((l) => l.keep).map((l) => l.text).join("\n");
+  if (!text) return;
+  const result = await request("/assignments/" + current.id + "/questions/import", { method: "POST", body: bulkBody(false, text) });
+  bulkLines = [];
+  $("qb-text").value = "";
+  renderBulk();
+  show("qb-err", "Добавлено вопросов: " + result.added, true);
+  await openAssignment(current.id);
+}));
+loadPresets();
 
 let aiJob = null;
 let aiTimer = null;
@@ -564,8 +653,24 @@ function scoreForm(submission, criteria, opts) {
   for (const c of criteria) {
     const input = el("input", { type: "number", min: "0", max: String(c.max_points), value: c.points ?? "" });
     inputs[c.criterion_id] = input;
-    form.append(el("div", { class: "score" }, el("div", {}, c.name + " (макс. " + c.max_points + ")"), input));
+    const marks = c.max_points <= 12 ? Array.from({ length: c.max_points + 1 }, (_, i) => i) : [0, Math.round(c.max_points / 2), c.max_points];
+    const buttons = el("div", { class: "pts" }, ...marks.map((value) => el("button", { type: "button", onclick: () => {
+      input.value = String(value);
+      paintPts();
+    } }, String(value))));
+    const paintPts = () => {
+      for (const button of buttons.children) button.classList.toggle("on", button.textContent === input.value);
+    };
+    input.addEventListener("input", paintPts);
+    paintPts();
+    form.append(el("div", { class: "score" }, el("div", {}, c.name + " (макс. " + c.max_points + ")"), input, buttons));
   }
+  form.append(el("button", { type: "button", class: "ghost", onclick: () => {
+    for (const c of criteria) {
+      inputs[c.criterion_id].value = String(c.max_points);
+      inputs[c.criterion_id].dispatchEvent(new Event("input"));
+    }
+  } }, "Всё на максимум"));
   const comment = el("textarea", { maxlength: "1000", placeholder: "Комментарий к сдаче" });
   comment.value = submission.comment || "";
   form.append(el("label", {}, "Комментарий"), comment);

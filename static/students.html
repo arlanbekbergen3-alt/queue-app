@@ -44,6 +44,13 @@
     a { display:inline-block; padding:10px 4px; }
     button, select, textarea, summary, input:not([type=checkbox]):not([type=radio]) { min-height:44px; }
     summary { display:flex; align-items:center; }
+    .scroll { overflow-x:visible; }
+    .attempts thead { display:none; }
+    .attempts, .attempts tbody, .attempts tr, .attempts td { display:block; width:100%; }
+    .attempts tr { border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:10px; }
+    .attempts td { border:0; padding:3px 0; overflow-wrap:anywhere; }
+    .attempts td::before { content:attr(data-label) ": "; color:var(--muted); font-size:13px; }
+    .attempts td select { margin:6px 0; }
   }
 </style>
 </head>
@@ -196,7 +203,7 @@ function attemptRow(attempt, assignmentId) {
   const scores = attempt.scores.map((s) => s.name + ": " + s.points + "/" + s.max_points).join("; ");
   const questions = attempt.questions.map((q) => q.text).join(" | ");
   const total = attempt.total_points == null ? "—" : attempt.total_points + "/" + attempt.max_points;
-  const move = el("td", {});
+  const move = el("td", { "data-label": "Перенос" });
   const select = targetSelect(currentId, true);
   move.append(select, el("button", {
     class: "ghost",
@@ -209,13 +216,13 @@ function attemptRow(attempt, assignmentId) {
     }),
   }, "Перенести"));
   return el("tr", {},
-    el("td", {}, attempt.attempt_number == null ? "—" : "" + attempt.attempt_number),
-    el("td", {}, dateText(attempt.started_at), el("div", { class: "muted" }, attempt.session_title + " (" + attempt.session_code + ")")),
-    el("td", {}, STATUS[attempt.status] || attempt.status),
-    el("td", {}, total, percentCell(attempt.percent)),
-    el("td", {}, delta(attempt.delta_percent)),
-    el("td", {}, scores || "—"),
-    el("td", {}, questions || "—"),
+    el("td", { "data-label": "№" }, attempt.attempt_number == null ? "—" : "" + attempt.attempt_number),
+    el("td", { "data-label": "Дата" }, dateText(attempt.started_at), el("div", { class: "muted" }, attempt.session_title + " (" + attempt.session_code + ")")),
+    el("td", { "data-label": "Статус" }, STATUS[attempt.status] || attempt.status),
+    el("td", { "data-label": "Итог" }, total, percentCell(attempt.percent)),
+    el("td", { "data-label": "Динамика" }, delta(attempt.delta_percent)),
+    el("td", { "data-label": "По критериям" }, scores || "—"),
+    el("td", { "data-label": "Вопросы" }, questions || "—"),
     move);
 }
 
@@ -232,7 +239,7 @@ async function openCard(id) {
   for (const a of card.assignments) {
     body.append(el("h3", {}, a.title));
     const head = el("tr", {}, ...["№", "Дата", "Статус", "Итог", "Динамика", "По критериям", "Вопросы", "Перенос"].map((t) => el("th", {}, t)));
-    const table = el("table", {}, el("thead", {}, head), el("tbody", {}, ...a.attempts.map((x) => attemptRow(x, a.assignment_id))));
+    const table = el("table", { class: "attempts" }, el("thead", {}, head), el("tbody", {}, ...a.attempts.map((x) => attemptRow(x, a.assignment_id))));
     body.append(el("div", { class: "scroll" }, table));
     if (a.seen_questions.length) {
       body.append(el("div", { class: "muted", style: "margin-top:8px" }, "Какие вопросы выпадали: " +

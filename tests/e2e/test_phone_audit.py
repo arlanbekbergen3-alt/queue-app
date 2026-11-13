@@ -118,3 +118,47 @@ def test_queue_row_buttons_stay_whole_words_on_a_phone(page: Page, api, open_ses
         box = skip.nth(index).bounding_box()
         assert box and box["width"] >= 90 and box["height"] <= 60, box
     assert_fits(page)
+
+
+def test_student_card_attempts_fit_the_screen_without_sideways_scrolling(
+    page: Page, api, open_session
+):
+    teacher = open_session("Карточка на телефоне")
+    headers = teacher["headers"]
+    for title in ("Первая", "Вторая"):
+        session = api.post(
+            "/sessions",
+            headers=headers,
+            json={"title": title, "group": "ИС-22", "session_mode": "quick"},
+        ).json()
+        code = session["code"]
+        criterion = api.get(
+            f"/assignments/{session['assignment_id']}/criteria", headers=headers
+        ).json()[0]["id"]
+        api.post(
+            f"/sessions/{code}/join",
+            json={"name": "Анна Иванова", "token": f"phone-card-{title}-token-0001"},
+        )
+        api.post(f"/sessions/{code}/next", headers=headers)
+        current = api.get(f"/sessions/{code}/submissions/current", headers=headers).json()
+        api.post(
+            f"/submissions/{current['id']}/complete",
+            headers=headers,
+            json={"scores": [{"criterion_id": criterion, "points": 6}], "comment": ""},
+        )
+    page.set_viewport_size(IPHONE_SE)
+    login_as(page, teacher)
+    page.goto("/students")
+    page.locator("#students > div", has_text="Анна Иванова").first.click()
+    expect(page.locator("#card")).to_be_visible(timeout=SLOW)
+    expect(page.locator("#c-body tbody tr")).to_have_count(2, timeout=SLOW)
+    outside = page.evaluate(
+        """() => [...document.querySelectorAll("#card *")]
+            .filter((n) => n.getBoundingClientRect().width > 0)
+            .filter((n) => n.getBoundingClientRect().right > document.documentElement.clientWidth + 0.5)
+            .map((n) => n.tagName.toLowerCase() + ":" + Math.round(n.getBoundingClientRect().right))"""
+    )
+    assert outside == []
+    assert_fits(page)
+    expect(page.locator('#c-body td[data-label="Динамика"]').first).to_be_visible()
+    expect(page.locator("#c-body").get_by_role("button", name="Перенести").first).to_be_visible()

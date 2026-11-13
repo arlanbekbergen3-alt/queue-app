@@ -41,6 +41,7 @@ from services.ai_drafts import runtime as ai_runtime
 from services.live import hub
 from services.maintenance import reaper_loop
 from services.practice import runtime as practice_runtime
+from services.retention import retention_loop
 
 setup_logging(settings.LOG_LEVEL, settings.LOG_FORMAT)
 logger = logging.getLogger(__name__)
@@ -61,6 +62,7 @@ metrics.counter_source("sse_rejected_total", lambda: hub.rejected)
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     reaper = None
+    retention = None
     try:
         await ai_runtime.sweep_interrupted()
     except Exception:
@@ -73,9 +75,21 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
                 settings.SESSION_REAPER_INTERVAL_SECONDS,
             )
         )
+    if settings.DATA_RETENTION_DAYS > 0:
+        retention = asyncio.create_task(
+            retention_loop(
+                AsyncSessionLocal,
+                settings.DATA_RETENTION_DAYS,
+                settings.RETENTION_INTERVAL_SECONDS,
+            )
+        )
     try:
         yield
     finally:
+        if retention is not None:
+            retention.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await retention
         if reaper is not None:
             reaper.cancel()
             with contextlib.suppress(asyncio.CancelledError):

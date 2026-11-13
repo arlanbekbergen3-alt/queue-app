@@ -24,6 +24,8 @@ class Settings(BaseSettings):
     PRESENCE_SESSION_FAILURES: int = Field(default=30, ge=1)
     PRESENCE_FAILURE_WINDOW_SECONDS: int = Field(default=60, ge=1)
     PRESENCE_LOCK_SECONDS: int = Field(default=120, ge=1)
+    DATA_RETENTION_DAYS: int = Field(default=180, ge=0)
+    RETENTION_INTERVAL_SECONDS: int = Field(default=3600, ge=60)
     BUDGET_RESERVE_PERCENT: int = Field(default=10, ge=0, le=50)
     BUDGET_MAX_DURATION_MINUTES: int = Field(default=720, ge=1)
 

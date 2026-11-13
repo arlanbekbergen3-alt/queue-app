@@ -186,3 +186,13 @@ def test_the_widest_session_code_fits_the_start_panel_and_the_projector_on_a_pho
         ".map((n) => n.getBoundingClientRect().right))"
     )
     assert widest <= IPHONE_SE["width"]
+
+
+def test_collapsible_sections_keep_their_disclosure_marker_on_a_phone(page: Page, open_session):
+    teacher = open_session("Маркер")
+    page.set_viewport_size({"width": 360, "height": 740})
+    login_as(page, teacher)
+    page.goto("/teacher")
+    expect(page.locator("#w-more summary")).to_be_visible(timeout=SLOW)
+    display = page.evaluate("getComputedStyle(document.querySelector('#w-more summary')).display")
+    assert display == "list-item"

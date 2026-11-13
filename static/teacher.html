@@ -57,7 +57,8 @@
   .perk { color:var(--muted); font-size:14px; margin-top:6px; }
   .tag.ready { background:var(--ok); }
   .qr { display:block; width:100%; max-width:min(90vw, 70vh); aspect-ratio:1; background:#fff; padding:8px; border-radius:10px; margin:12px auto; }
-  .bigcode { font-size:clamp(48px, 16vw, 120px); font-weight:800; letter-spacing:.12em; text-align:center; line-height:1.1; }
+  .bigcode { font-size:clamp(30px, 10.5vw, 120px); font-weight:800; letter-spacing:.06em; text-align:center; line-height:1.1; }
+  @media (min-width: 700px) { .bigcode { font-size:96px; letter-spacing:.12em; } }
   #start-panel { border:2px solid var(--accent); border-radius:14px; padding:14px; margin-top:12px; text-align:center; }
   #projector { position:fixed; inset:0; background:#fff; color:#111; z-index:50; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:16px; text-align:center; }
   #projector .qr { max-width:min(80vw, 62vh); padding:0; }

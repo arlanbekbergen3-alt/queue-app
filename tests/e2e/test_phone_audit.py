@@ -162,3 +162,27 @@ def test_student_card_attempts_fit_the_screen_without_sideways_scrolling(
     assert_fits(page)
     expect(page.locator('#c-body td[data-label="Динамика"]').first).to_be_visible()
     expect(page.locator("#c-body").get_by_role("button", name="Перенести").first).to_be_visible()
+
+
+def test_the_widest_session_code_fits_the_start_panel_and_the_projector_on_a_phone(
+    page: Page, open_session
+):
+    teacher = open_session("Широкий код")
+    page.set_viewport_size(IPHONE_SE)
+    login_as(page, teacher)
+    page.goto("/teacher")
+    page.get_by_role("button", name=teacher["code"]).click()
+    page.click("#start-show")
+    expect(page.locator("#start-panel")).to_be_visible(timeout=SLOW)
+    page.evaluate(
+        "document.getElementById('start-code').textContent = 'WWWWWW';"
+        "document.getElementById('projector-code').textContent = 'WWWWWW';"
+    )
+    assert_fits(page)
+    page.click("#projector-btn")
+    expect(page.locator("#projector")).to_be_visible()
+    widest = page.evaluate(
+        "Math.max(...[...document.querySelectorAll('#projector *')]"
+        ".map((n) => n.getBoundingClientRect().right))"
+    )
+    assert widest <= IPHONE_SE["width"]

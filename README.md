@@ -195,6 +195,7 @@ python loadtest/summarize.py                  # медиана и разброс
 ## Документы
 
 - [docs/PROTOCOL_DESIGN.md](docs/PROTOCOL_DESIGN.md): проект протокола сдачи.
+- [docs/HANDOFF.md](docs/HANDOFF.md): передача проекта (запуск, проверки, структура, как добавлять, типовые проблемы, чек-лист релиза).
 - [docs/PILOT.md](docs/PILOT.md): набор для пилота (инструкция, анкета, метрики, приватность).
 - [docs/DEPLOY.md](docs/DEPLOY.md): развёртывание на VPS с 1 ГБ, резервные копии, чек-лист безопасности.
 - [docs/LOADTEST.md](docs/LOADTEST.md): нагрузочные замеры и подготовленные сценарии новых функций.

@@ -337,3 +337,13 @@ async def test_existing_sessions_keep_working_with_a_protocol_assignment(client,
     assert len(current["questions"]) == 1
     queue = (await client.get(f"{S}/{code}/queue", headers=headers)).json()
     assert queue["session_mode"] == "protocol" and queue["assignment_id"] == assignment["id"]
+
+
+@pytest.mark.asyncio
+async def test_public_info_tells_whether_the_session_has_grades(client, room):
+    headers, plain = await room("sm_graded_plain", session_mode="queue_only")
+    _, quick = await room("sm_graded_quick", session_mode="quick")
+    _, protocol = await room("sm_graded_protocol")
+    assert (await client.get(f"{S}/{plain['code']}")).json()["graded"] is False
+    assert (await client.get(f"{S}/{quick['code']}")).json()["graded"] is True
+    assert (await client.get(f"{S}/{protocol['code']}")).json()["graded"] is False

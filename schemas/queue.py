@@ -103,6 +103,7 @@ class SessionPublic(BaseModel):
     lottery_done: bool = False
     session_mode: str = "protocol"
     presence_check: str = "off"
+    graded: bool = False
 
 
 class PresenceIn(BaseModel):

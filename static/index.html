@@ -430,10 +430,15 @@ let resultLoaded = false;
 async function loadResult() {
   if (resultLoaded || !state) return;
   resultLoaded = true;
+  await loadSessionInfo();
+  if (sessionInfo && sessionInfo.graded === false) return;
   let data = null;
   try {
     data = await request("/" + encodeURIComponent(state.code) + "/me/submission", { headers: { "X-Entry-Token": state.token } });
-  } catch { resultLoaded = false; return; }
+  } catch (error) {
+    if (error.status !== 404) resultLoaded = false;
+    return;
+  }
   const box = $("result");
   box.replaceChildren();
   if (!data || data.status !== "completed") return;

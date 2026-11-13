@@ -257,6 +257,7 @@ class QueueService:
             lottery_done=session.lottery_at is not None,
             session_mode=session.session_mode,
             presence_check=session.presence_check,
+            graded=session.assignment_id is not None,
         )
 
     async def join(self, code: str, data: JoinIn, client_ip: str = "-") -> MyEntryOut:

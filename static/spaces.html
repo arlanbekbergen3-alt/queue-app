@@ -37,6 +37,11 @@
   .code { font:600 20px/1.2 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; letter-spacing:.08em; overflow-wrap:anywhere; }
   .preview { border:1px dashed var(--border); border-radius:12px; padding:12px; margin-top:12px; }
   .preview ol, .preview ul { margin:6px 0; padding-left:22px; }
+  @media (max-width: 600px) {
+    a { display:inline-block; padding:10px 4px; }
+    button, select, textarea, summary, input:not([type=checkbox]):not([type=radio]) { min-height:44px; }
+    summary { display:flex; align-items:center; }
+  }
 </style>
 </head>
 <body>

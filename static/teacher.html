@@ -86,6 +86,11 @@
   .tabs { display:flex; gap:8px; margin-bottom:6px; }
   .tabs button { background:transparent; color:var(--muted); border:1px solid var(--border); }
   .tabs button.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+  @media (max-width: 600px) {
+    a { display:inline-block; padding:10px 4px; }
+    button, select, textarea, summary, input:not([type=checkbox]):not([type=radio]) { min-height:44px; }
+    summary { display:flex; align-items:center; }
+  }
 </style>
 </head>
 <body>

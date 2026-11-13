@@ -127,6 +127,7 @@ class SubmissionORM(Base):
     total_points: Mapped[int | None] = mapped_column(Integer, nullable=True)
     max_points: Mapped[int | None] = mapped_column(Integer, nullable=True)
     comment: Mapped[str] = mapped_column(String(1000), default="", nullable=False)
+    questions_target: Mapped[int | None] = mapped_column(Integer, nullable=True)
     bonus_points: Mapped[int] = mapped_column(
         Integer, default=0, server_default=text("0"), nullable=False
     )

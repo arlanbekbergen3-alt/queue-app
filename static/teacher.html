@@ -48,6 +48,16 @@
   .settings-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   .perk { color:var(--muted); font-size:14px; margin-top:6px; }
   .tag.ready { background:var(--ok); }
+  .pill { display:inline-block; padding:3px 12px; border-radius:99px; font-weight:700; color:#fff; }
+  .pill.ok { background:var(--ok); }
+  .pill.tight { background:var(--warn); }
+  .pill.over { background:var(--bad); }
+  .pill.idle { background:var(--muted); }
+  #budget-panel { border:1px solid var(--border); border-radius:12px; padding:12px; margin-top:12px; }
+  #budget-panel .line { display:flex; justify-content:space-between; gap:12px; margin-top:6px; flex-wrap:wrap; }
+  #budget-panel.ok { border-color:var(--ok); }
+  #budget-panel.tight { border-color:var(--warn); }
+  #budget-panel.over { border-color:var(--bad); }
   .tabs { display:flex; gap:8px; margin-bottom:6px; }
   .tabs button { background:transparent; color:var(--muted); border:1px solid var(--border); }
   .tabs button.active { background:var(--accent); color:#fff; border-color:var(--accent); }
@@ -99,6 +109,16 @@
           <select id="ready-skip"><option value="0">как у всех</option><option value="1">на один меньше</option></select>
         </div>
       </div>
+      <div class="settings-row">
+        <div>
+          <label for="limit-until">Закончить до (необязательно)</label>
+          <input type="time" id="limit-until">
+        </div>
+        <div>
+          <label for="limit-minutes">или за N минут</label>
+          <input type="number" id="limit-minutes" min="1" max="720" placeholder="например, 90">
+        </div>
+      </div>
       <div class="perk">Бонус записывается отдельной строкой и не входит в баллы по критериям; его можно снять с причиной.</div>
       <button class="full" id="create-btn">Открыть сессию</button>
       <div class="err" id="create-err"></div>
@@ -125,6 +145,20 @@
       </div>
       <div class="muted" id="queue-meta" style="margin-top:10px"></div>
       <div class="muted" id="queue-modes"></div>
+      <div class="hidden" id="budget-panel">
+        <div class="line"><strong>Время и прогноз</strong><span class="pill" id="budget-status"></span></div>
+        <div class="line"><span class="muted">Осталось времени</span><strong id="budget-left"></strong></div>
+        <div class="line"><span class="muted">Студентов осталось</span><strong id="budget-students"></strong></div>
+        <div class="line"><span class="muted">Бюджет на студента</span><strong id="budget-each"></strong></div>
+        <div class="line"><span class="muted">Прогноз окончания</span><strong id="budget-end"></strong></div>
+        <div class="hidden" id="budget-offer">
+          <div class="line"><strong id="budget-offer-text"></strong></div>
+          <div class="actions" style="margin-top:8px">
+            <button class="warn" id="budget-accept">Уменьшить число вопросов</button>
+            <button class="ghost" id="budget-decline">Оставить как есть</button>
+          </div>
+        </div>
+      </div>
       <div class="actions" style="margin-top:10px">
         <button class="warn hidden" id="lottery-btn">Закрыть запись и перемешать</button>
         <button class="ghost hidden" id="lottery-log-btn">Журнал жеребьёвки</button>
@@ -173,6 +207,8 @@ const MESSAGES = {
   lottery_pending: "Порядок ещё не определён: закройте запись и перемешайте очередь",
   lottery_off: "Жеребьёвка в этой сессии не включена",
   settings_locked: "Настройки порядка можно менять только до закрытия записи",
+  invalid_deadline: "Время окончания должно быть позже текущего и не дальше 12 часов",
+  questions_not_reducible: "Число вопросов можно только уменьшить",
   session_not_found: "Сессия не найдена",
   entry_not_found: "Запись не найдена",
   not_authenticated: "Войдите заново",
@@ -417,14 +453,31 @@ async function loadSessions() {
   }
 }
 
+function timeLimit() {
+  const until = $("limit-until").value;
+  const minutes = $("limit-minutes").value;
+  if (until && minutes) return false;
+  if (minutes) return { duration_minutes: Number(minutes) };
+  if (until) {
+    const [h, m] = until.split(":").map(Number);
+    const moment = new Date();
+    moment.setHours(h, m, 0, 0);
+    if (moment.getTime() <= Date.now() + 60000) moment.setDate(moment.getDate() + 1);
+    return { deadline_at: moment.toISOString() };
+  }
+  return {};
+}
+
 async function createSession() {
   $("create-err").textContent = "";
   const title = $("title").value.trim();
   if (!title) { $("create-err").textContent = "Введите название"; return; }
   try {
     const group = $("group").value.trim();
+    const limit = timeLimit();
+    if (limit === false) { $("create-err").textContent = "Укажите либо время окончания, либо число минут"; return; }
     const session = await request("/sessions", { method: "POST", body: JSON.stringify({
-      title, group: group || null,
+      ...limit, title, group: group || null,
       order_mode: $("order-mode").value,
       ready_priority: $("ready-priority").checked,
       ready_bonus_points: Number($("ready-bonus").value),
@@ -483,6 +536,7 @@ function renderQueue(queue) {
   registration.dataset.open = queue.join_open ? "1" : "0";
   $("queue-title").textContent += queue.join_open || closed ? "" : " · запись закрыта";
   renderModes(queue);
+  loadBudget(false);
   const pending = queue.order_mode === "lottery" && !queue.lottery_done;
   const hasCalled = queue.entries.some((e) => e.status === "called");
   $("next-btn").disabled = hasCalled || queue.waiting_count === 0 || pending;
@@ -509,6 +563,56 @@ function renderQueue(queue) {
         entry.not_ready ? el("span", { class: "tag" }, "не готов") : "",
         entry.not_ready_count ? el("span", { class: "muted" }, " ×" + entry.not_ready_count) : ""),
       buttons));
+  }
+}
+
+const pad2 = (n) => String(n).padStart(2, "0");
+const clockTime = (iso) => { const d = new Date(iso); return pad2(d.getHours()) + ":" + pad2(d.getMinutes()); };
+const minutesText = (s) => { const m = Math.floor(s / 60); return m >= 60 ? Math.floor(m / 60) + " ч " + pad2(m % 60) + " мин" : m + " мин"; };
+const mmss = (s) => Math.floor(s / 60) + ":" + pad2(Math.round(s % 60));
+function plural(n, forms) {
+  const a = n % 10, b = n % 100;
+  return b >= 11 && b <= 14 ? forms[2] : a === 1 ? forms[0] : a >= 2 && a <= 4 ? forms[1] : forms[2];
+}
+const STATUS_TEXT = { ok: "Успеваем", tight: "В обрез", over: "Не успеваем", idle: "Очередь пуста" };
+let budgetAt = 0;
+let budgetOffer = null;
+
+async function loadBudget(force) {
+  if (!current || (!force && Date.now() - budgetAt < 2500)) return;
+  budgetAt = Date.now();
+  try {
+    renderBudget(await request("/sessions/" + current + "/budget"));
+  } catch (error) {
+    if (error.status === 401) return;
+  }
+}
+
+function renderBudget(b) {
+  const panel = $("budget-panel");
+  panel.classList.toggle("hidden", !b.enabled);
+  if (!b.enabled) return;
+  panel.className = b.status;
+  $("budget-status").className = "pill " + b.status;
+  $("budget-status").textContent = STATUS_TEXT[b.status] || b.status;
+  $("budget-left").textContent = minutesText(b.remaining_seconds) + " (до " + clockTime(b.deadline_at) + ")";
+  $("budget-students").textContent = String(b.remaining_students);
+  $("budget-each").textContent = b.budget_seconds == null ? "—" : mmss(b.budget_seconds) + " (среднее сейчас " + mmss(b.avg_service_seconds) + ")";
+  $("budget-end").textContent = b.remaining_students ? clockTime(b.forecast_end_at) : "—";
+  budgetOffer = b.suggestion;
+  $("budget-offer").classList.toggle("hidden", !b.suggestion);
+  if (b.suggestion) {
+    const s = b.suggestion;
+    $("budget-offer-text").textContent = s.questions_from + " → " + s.questions_to + " " + plural(s.questions_to, ["вопрос", "вопроса", "вопросов"]) + ", закончим примерно в " + clockTime(s.forecast_end_at);
+  }
+}
+
+async function decideBudget(accept) {
+  if (!budgetOffer) return;
+  try {
+    renderBudget(await request("/sessions/" + current + "/budget/decision", { method: "POST", body: JSON.stringify({ accept, questions: budgetOffer.questions_to }) }));
+  } catch (error) {
+    showActionError(error.message);
   }
 }
 
@@ -564,9 +668,9 @@ async function showLotteryLog() {
     const queue = await request("/sessions/" + current + "/queue");
     const names = Object.fromEntries(queue.entries.map((e) => [e.id, e.name]));
     const labels = { all: "все", ready: "готовы сразу", rest: "остальные" };
-    box.textContent = events.map((ev) => {
+    box.textContent = events.filter((ev) => ev.kind === "lottery").map((ev) => {
       const d = ev.details;
-      const order = d.order.map((id, i) => (d.first_ticket + i) + ". " + (names[id] || "(уже обслужен)")).join("\n");
+      const order = (d.order || []).map((id, i) => (d.first_ticket + i) + ". " + (names[id] || "(уже обслужен)")).join("\n");
       return new Date(ev.occurred_at).toLocaleTimeString("ru-RU") + " · жеребьёвка (" + (labels[d.group] || d.group) + "), участников: " + d.participants + "\n" + order;
     }).join("\n\n") || "Записей нет.";
     box.classList.toggle("hidden");
@@ -629,6 +733,9 @@ $("close-btn").addEventListener("click", closeSession);
 $("registration-btn").addEventListener("click", toggleRegistration);
 $("lottery-btn").addEventListener("click", runLottery);
 $("lottery-log-btn").addEventListener("click", showLotteryLog);
+$("budget-accept").addEventListener("click", () => decideBudget(true));
+$("budget-decline").addEventListener("click", () => decideBudget(false));
+setInterval(() => loadBudget(true), 20000);
 $("settings-save").addEventListener("click", saveSettings);
 $("logout-btn").addEventListener("click", () => { writeToken(null); showAuth(); });
 for (const id of ["username", "password", "invite"]) {

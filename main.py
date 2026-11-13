@@ -28,6 +28,7 @@ from db.database import AsyncSessionLocal, engine
 from routers.ai import router as ai_router
 from routers.analytics import router as analytics_router
 from routers.auth import router as auth_router
+from routers.budget import router as budget_router
 from routers.history import router as history_router
 from routers.live import router as live_router
 from routers.practice import router as practice_router
@@ -95,6 +96,7 @@ app = FastAPI(
 
 app.include_router(auth_router, prefix=API_V1_PREFIX)
 app.include_router(sessions_router, prefix=API_V1_PREFIX)
+app.include_router(budget_router, prefix=API_V1_PREFIX)
 app.include_router(live_router, prefix=API_V1_PREFIX)
 app.include_router(protocol_router, prefix=API_V1_PREFIX)
 app.include_router(ai_router, prefix=API_V1_PREFIX)

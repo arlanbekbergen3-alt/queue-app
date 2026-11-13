@@ -120,3 +120,36 @@ def test_order_mode_controls_fit_a_phone(page: Page, browser, live_server, open_
     expect(page.locator("#s-ready-bonus")).to_be_visible()
     assert overflow(page) <= 0
     other.close()
+
+
+def test_budget_panel_and_time_fields_fit_a_phone(page: Page, api, open_session):
+    teacher = open_session("Лимит на телефоне", duration_minutes=30)
+    headers = teacher["headers"]
+    assignment = api.post(
+        "/assignments",
+        headers=headers,
+        json={"title": f"Работа {teacher['username']}", "questions_per_submission": 3},
+    ).json()
+    api.post(
+        f"/assignments/{assignment['id']}/questions",
+        headers=headers,
+        json={"text": "Вопрос", "difficulty": 2},
+    )
+    api.put(
+        f"/sessions/{teacher['code']}/assignment",
+        headers=headers,
+        json={"assignment_id": assignment["id"]},
+    )
+    for i in range(8):
+        api.post(
+            f"/sessions/{teacher['code']}/join",
+            json={"name": f"Студент с длинным именем {i}", "token": f"phone-{i:03d}-" + "x" * 10},
+        )
+    page.set_viewport_size(PHONE)
+    login_as(page, teacher)
+    page.goto("/teacher")
+    expect(page.locator("#limit-until")).to_be_visible(timeout=SLOW)
+    assert overflow(page) <= 0
+    page.get_by_role("button", name=teacher["code"]).click()
+    expect(page.locator("#budget-offer")).to_be_visible(timeout=SLOW)
+    assert overflow(page) <= 0

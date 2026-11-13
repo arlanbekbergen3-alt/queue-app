@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     SESSION_AUTO_CLOSE_HOURS: float = Field(default=6.0, ge=0)
     SESSION_REAPER_INTERVAL_SECONDS: int = Field(default=60, ge=1)
     NOT_READY_MAX_PER_SESSION: int = Field(default=2, ge=0, le=10)
+    BUDGET_RESERVE_PERCENT: int = Field(default=10, ge=0, le=50)
+    BUDGET_MAX_DURATION_MINUTES: int = Field(default=720, ge=1)
 
     RATE_LIMIT_ENABLED: bool = True
     RATE_LIMIT_IP_PER_MINUTE: int = Field(default=6000, ge=0)

@@ -500,3 +500,55 @@ async def test_order_mode_migration_defaults_existing_sessions_and_protects_the_
         count = (await conn.execute(text("SELECT count(*) FROM entries"))).scalar_one()
     assert tables == [] and count == 1
     await alembic_async("upgrade", "head")
+
+
+@pytest.mark.asyncio
+async def test_time_budget_migration_keeps_sessions_without_a_limit_and_rolls_back(
+    migration_engine,
+):
+    await alembic_async("upgrade", "d0e1f2a3b4c5")
+    async with migration_engine.begin() as conn:
+        await conn.execute(
+            text("INSERT INTO users (id, username, password_hash) VALUES ('u1', 't', 'x')")
+        )
+        await conn.execute(
+            text(
+                "INSERT INTO queue_sessions (id, teacher_id, title, code, status, next_ticket,"
+                " avg_service_seconds, created_at) VALUES ('s1', 'u1', 'Lab', 'ABC234', 'open',"
+                " 3, 300, now())"
+            )
+        )
+
+    await alembic_async("upgrade", "e1f2a3b4c5d6")
+
+    async with migration_engine.connect() as conn:
+        row = (
+            await conn.execute(
+                text("SELECT deadline_at, questions_override, budget_declined FROM queue_sessions")
+            )
+        ).one()
+    assert tuple(row) == (None, None, None)
+    with pytest.raises(IntegrityError):
+        async with migration_engine.begin() as conn:
+            await conn.execute(text("UPDATE queue_sessions SET questions_override = 11"))
+
+    await alembic_async("downgrade", "d0e1f2a3b4c5")
+    async with migration_engine.connect() as conn:
+        columns = (
+            (
+                await conn.execute(
+                    text(
+                        "SELECT column_name FROM information_schema.columns"
+                        " WHERE table_name IN ('queue_sessions', 'submissions')"
+                    )
+                )
+            )
+            .scalars()
+            .all()
+        )
+        count = (await conn.execute(text("SELECT count(*) FROM queue_sessions"))).scalar_one()
+    assert not {"deadline_at", "questions_override", "budget_declined", "questions_target"} & set(
+        columns
+    )
+    assert count == 1
+    await alembic_async("upgrade", "head")

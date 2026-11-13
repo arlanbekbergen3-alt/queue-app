@@ -3,7 +3,7 @@ import random
 import secrets
 import weakref
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import Row
 from sqlalchemy.exc import IntegrityError
@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
 from core.events import notify_changed
-from core.exceptions import ConflictError, NotFoundError
+from core.exceptions import ConflictError, NotFoundError, UnprocessableError
 from core.security import hash_token
 from models.entry import EntryORM, EntryStatus
 from models.protocol import AssignmentORM, SessionEventORM
@@ -160,6 +160,7 @@ class QueueService:
         self.repo = QueueRepository(db)
 
     async def create_session(self, teacher_id: str, data: SessionCreate) -> QueueSessionORM:
+        deadline = self._deadline(data)
         for _ in range(10):
             try:
                 async with self.db.begin_nested():
@@ -173,6 +174,7 @@ class QueueService:
                         ready_priority=data.ready_priority,
                         ready_bonus_points=data.ready_bonus_points,
                         ready_skip_questions=data.ready_skip_questions,
+                        deadline_at=deadline,
                     )
                     await self.db.flush()
             except IntegrityError:
@@ -182,6 +184,26 @@ class QueueService:
         raise ConflictError(
             "Could not allocate a session code, try again", code="code_allocation_failed"
         )
+
+    @staticmethod
+    def _deadline(data: SessionCreate) -> datetime | None:
+        now = datetime.now(UTC)
+        if data.duration_minutes is not None:
+            return now + timedelta(minutes=data.duration_minutes)
+        if data.deadline_at is None:
+            return None
+        limit = timedelta(minutes=settings.BUDGET_MAX_DURATION_MINUTES)
+        if data.deadline_at <= now + timedelta(minutes=1):
+            raise UnprocessableError(
+                "Время окончания должно быть позже текущего", code="invalid_deadline"
+            )
+        if data.deadline_at > now + limit:
+            raise UnprocessableError(
+                "Время окончания слишком далеко: не больше "
+                f"{settings.BUDGET_MAX_DURATION_MINUTES // 60} ч от текущего",
+                code="invalid_deadline",
+            )
+        return data.deadline_at
 
     async def list_sessions(self, teacher_id: str) -> list[QueueSessionORM]:
         return await self.repo.list_sessions(teacher_id)

@@ -64,6 +64,8 @@ async def start_submission(db: AsyncSession, session: QueueSessionORM, entry: En
         usage = await repo.question_usage(entry.student_id, assignment.id)
     usage = {qid: n for qid, n in usage.items() if qid in by_id}
     wanted = assignment.questions_per_submission
+    if session.questions_override:
+        wanted = min(wanted, session.questions_override)
     if session.ready_priority and entry.ready_now and session.ready_skip_questions:
         wanted = max(1, wanted - session.ready_skip_questions)
     chosen = choose_question_ids(seed, pool_ids, wanted, usage)
@@ -75,6 +77,7 @@ async def start_submission(db: AsyncSession, session: QueueSessionORM, entry: En
         selection_seed=seed,
         pool_question_ids=pool_ids,
         selection_usage=usage or None,
+        questions_target=wanted,
     )
     db.add(submission)
     await db.flush()

@@ -37,6 +37,8 @@
   .list .txt { flex:1; overflow-wrap:anywhere; }
   .badge { display:inline-block; font-size:12px; padding:2px 8px; border-radius:999px; border:1px solid var(--border); color:var(--muted); margin-left:6px; }
   .timer { font-size:28px; font-weight:800; font-variant-numeric:tabular-nums; }
+  .timer.warn { color:var(--warn); }
+  .timer.bad { color:var(--bad); }
   .score { display:grid; grid-template-columns:1fr 90px; gap:8px; align-items:center; margin-top:8px; }
   .draft { border:1px dashed var(--warn); border-radius:12px; padding:12px; margin-top:12px; }
   .scroll { overflow-x:auto; }
@@ -601,7 +603,16 @@ async function renderCurrent(submission) {
   const form = scoreForm(submission, criteria, {});
   const timer = el("div", { class: "timer" });
   const started = new Date(submission.started_at).getTime();
-  const tick = () => { timer.textContent = clock((Date.now() - started) / 1000); };
+  let budgetSeconds = null;
+  try {
+    const budget = await request("/sessions/" + sessionCode + "/budget");
+    if (budget.enabled && budget.budget_seconds) budgetSeconds = budget.budget_seconds;
+  } catch {}
+  const tick = () => {
+    const elapsed = (Date.now() - started) / 1000;
+    timer.textContent = clock(elapsed);
+    timer.className = "timer" + (budgetSeconds && elapsed >= budgetSeconds * 1.5 ? " bad" : budgetSeconds && elapsed >= budgetSeconds ? " warn" : "");
+  };
   tick();
   timerHandle = setInterval(tick, 1000);
   const err = el("div", { class: "err" });

@@ -22,6 +22,10 @@ class QueueSessionORM(Base):
         CheckConstraint(
             "ready_skip_questions BETWEEN 0 AND 1", name="ck_queue_sessions_ready_skip"
         ),
+        CheckConstraint(
+            "questions_override IS NULL OR questions_override BETWEEN 1 AND 10",
+            name="ck_queue_sessions_questions_override",
+        ),
     )
 
     teacher_id: Mapped[str] = mapped_column(
@@ -49,6 +53,9 @@ class QueueSessionORM(Base):
     ready_skip_questions: Mapped[int] = mapped_column(
         Integer, default=0, server_default=text("0"), nullable=False
     )
+    deadline_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    questions_override: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    budget_declined: Mapped[int | None] = mapped_column(Integer, nullable=True)
     lottery_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     next_ticket: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     avg_service_seconds: Mapped[int] = mapped_column(Integer, nullable=False)

@@ -2,7 +2,7 @@ import unicodedata
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from core.config import settings
 
@@ -14,6 +14,16 @@ class SessionCreate(BaseModel):
     ready_priority: bool = False
     ready_bonus_points: int = Field(default=0, ge=0, le=5)
     ready_skip_questions: int = Field(default=0, ge=0, le=1)
+    duration_minutes: int | None = Field(default=None, ge=1, le=720)
+    deadline_at: datetime | None = None
+
+    @model_validator(mode="after")
+    def one_time_limit(self) -> "SessionCreate":
+        if self.duration_minutes is not None and self.deadline_at is not None:
+            raise ValueError("set either duration_minutes or deadline_at")
+        if self.deadline_at is not None and self.deadline_at.tzinfo is None:
+            raise ValueError("deadline_at must include a time zone")
+        return self
 
     @field_validator("group")
     @classmethod
@@ -63,6 +73,8 @@ class SessionOut(BaseModel):
     ready_bonus_points: int = 0
     ready_skip_questions: int = 0
     lottery_at: datetime | None = None
+    deadline_at: datetime | None = None
+    questions_override: int | None = None
 
     model_config = {"from_attributes": True}
 

@@ -263,7 +263,11 @@ class ProtocolService:
         questions = await self.repo.submission_questions(submission.id)
         scores = await self.repo.scores(submission.id)
         pool = [str(x) for x in submission.pool_question_ids]
-        wanted = (await self._per_submission(submission.assignment_id)) or 0
+        wanted = (
+            submission.questions_target
+            or (await self._per_submission(submission.assignment_id))
+            or 0
+        )
         return SubmissionOut(
             id=submission.id,
             entry_id=submission.entry_id,

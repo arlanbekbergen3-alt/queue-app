@@ -31,7 +31,8 @@
   .err { color:var(--bad); min-height:1.3em; margin-top:8px; font-size:14px; }
   .note { color:var(--ok); min-height:1.3em; margin-top:8px; font-size:14px; }
   .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-  .row > * { flex:0 0 auto; }
+  .row > * { flex:0 0 auto; max-width:100%; }
+  .row > span { overflow-wrap:anywhere; }
   .row > .grow { flex:1 1 220px; }
   .list > div { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; padding:8px 0; border-bottom:1px solid var(--border); }
   .list .txt { flex:1; overflow-wrap:anywhere; }

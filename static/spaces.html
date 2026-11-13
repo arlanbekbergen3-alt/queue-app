@@ -189,6 +189,7 @@ async function loadSpaces() {
 
 async function openSpace(id) {
   const space = await request("/spaces/" + id);
+  const reveal = !currentSpace || currentSpace.id !== space.id || $("card").classList.contains("hidden");
   currentSpace = space;
   $("card").classList.remove("hidden");
   $("c-name").textContent = space.name;
@@ -219,6 +220,7 @@ async function openSpace(id) {
   for (const a of mine) select.append(el("option", { value: a.id }, a.title));
   $("preview").classList.add("hidden");
   await loadPublications();
+  if (reveal) $("card").scrollIntoView({ block: "start" });
 }
 
 async function loadPublications() {

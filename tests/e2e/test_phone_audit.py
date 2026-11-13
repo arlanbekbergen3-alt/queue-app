@@ -214,3 +214,44 @@ def test_a_pasted_question_row_toggles_when_its_text_is_tapped(page: Page, api, 
     rows.first.get_by_text("Первый вопрос?").click()
     expect(rows.first.locator("input")).not_to_be_checked()
     expect(page.locator("#qb-count")).to_have_text("Будет добавлено: 1 из 2")
+
+
+CARD_IN_VIEW = """(selector) => {
+    const top = document.querySelector(selector).getBoundingClientRect().top;
+    return top >= -2 && top < window.innerHeight * 0.5;
+}"""
+
+
+def test_opening_a_card_scrolls_it_into_view_on_a_phone(page: Page, api, open_session):
+    teacher = open_session("Прокрутка карточек")
+    headers = teacher["headers"]
+    for n in range(14):
+        api.post("/assignments", headers=headers, json={"title": f"Работа {n:02d}"})
+        api.post(
+            f"/sessions/{teacher['code']}/join",
+            json={"name": f"Студент {n:02d}", "token": f"phone-scroll-{n:04d}-xxxx"},
+        )
+    for n in range(4):
+        api.post("/spaces", headers=headers, json={"name": f"Группа {n}"})
+    page.set_viewport_size({"width": 360, "height": 740})
+    login_as(page, teacher)
+
+    page.goto("/protocol")
+    page.locator("#assignments > div").last.get_by_role("button", name="Открыть").click()
+    expect(page.locator("#a-card")).to_be_visible(timeout=SLOW)
+    page.wait_for_timeout(900)
+    assert page.evaluate(CARD_IN_VIEW, "#a-card")
+
+    page.goto("/students")
+    expect(page.locator("#students > div").first).to_be_visible(timeout=SLOW)
+    page.locator("#students > div").last.click()
+    expect(page.locator("#card")).to_be_visible(timeout=SLOW)
+    page.wait_for_timeout(900)
+    assert page.evaluate(CARD_IN_VIEW, "#card")
+
+    page.goto("/spaces")
+    expect(page.locator("#spaces > div").first).to_be_visible(timeout=SLOW)
+    page.locator("#spaces > div").last.get_by_role("button", name="Открыть").click()
+    expect(page.locator("#card")).to_be_visible(timeout=SLOW)
+    page.wait_for_timeout(900)
+    assert page.evaluate(CARD_IN_VIEW, "#card")

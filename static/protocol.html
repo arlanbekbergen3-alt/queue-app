@@ -360,6 +360,7 @@ async function loadAssignments() {
 async function openAssignment(id) {
   const a = await request("/assignments/" + id);
   current = a;
+  const reveal = $("a-card").classList.contains("hidden");
   $("a-card").classList.remove("hidden");
   $("a-name").textContent = a.title;
   $("s-count").value = a.questions_per_submission;
@@ -402,6 +403,7 @@ async function openAssignment(id) {
       }) }, "Удалить")));
   }
   if (window.onAssignmentOpened) window.onAssignmentOpened(a);
+  if (reveal) $("a-card").scrollIntoView({ block: "start" });
 }
 
 $("a-create").addEventListener("click", () => guarded("a-err", async () => {

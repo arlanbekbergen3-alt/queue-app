@@ -624,6 +624,7 @@ async def test_student_sees_only_their_own_history_on_their_own_device(world, cl
         "ended_at",
         "total_points",
         "max_points",
+        "bonus_points",
         "percent",
         "delta_percent",
         "comment",

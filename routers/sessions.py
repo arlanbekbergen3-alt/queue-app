@@ -2,13 +2,16 @@ from fastapi import APIRouter, Depends, status
 
 from core.dependencies import CurrentTeacher, EntryToken, QueueServiceDep
 from core.ratelimit import limit_join, limit_token
+from schemas.history import SessionEventOut
 from schemas.queue import (
     JoinIn,
     MyEntryOut,
+    ReadyNowIn,
     RegistrationIn,
     SessionCreate,
     SessionOut,
     SessionPublic,
+    SessionSettingsIn,
     TeacherEntryOut,
     TeacherQueueOut,
 )
@@ -54,6 +57,28 @@ async def not_ready(code: str, token: EntryToken, service: QueueServiceDep):
 @router.post("/{code}/ready", response_model=MyEntryOut, dependencies=[Depends(limit_token)])
 async def ready(code: str, token: EntryToken, service: QueueServiceDep):
     return await service.mark_ready(code, token)
+
+
+@router.put("/{code}/priority", response_model=MyEntryOut, dependencies=[Depends(limit_token)])
+async def set_priority(code: str, data: ReadyNowIn, token: EntryToken, service: QueueServiceDep):
+    return await service.set_ready_now(code, token, data.ready_now)
+
+
+@router.put("/{code}/settings", response_model=SessionOut)
+async def update_settings(
+    code: str, data: SessionSettingsIn, teacher: CurrentTeacher, service: QueueServiceDep
+):
+    return await service.update_settings(code, teacher.id, data)
+
+
+@router.post("/{code}/lottery", response_model=SessionOut)
+async def run_lottery(code: str, teacher: CurrentTeacher, service: QueueServiceDep):
+    return await service.run_lottery(code, teacher.id)
+
+
+@router.get("/{code}/events-log", response_model=list[SessionEventOut])
+async def session_events(code: str, teacher: CurrentTeacher, service: QueueServiceDep):
+    return await service.session_events(code, teacher.id)
 
 
 @router.put("/{code}/registration", response_model=SessionOut)

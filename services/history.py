@@ -104,6 +104,7 @@ class HistoryService:
                 ended_at=submission.ended_at,
                 total_points=submission.total_points if completed else None,
                 max_points=submission.max_points if completed else None,
+                bonus_points=submission.bonus_points if completed else 0,
                 percent=(
                     percent_of(submission.total_points, submission.max_points)
                     if completed
@@ -258,6 +259,7 @@ class HistoryService:
                         ended_at=out.ended_at,
                         total_points=out.total_points,
                         max_points=out.max_points,
+                        bonus_points=out.bonus_points,
                         percent=out.percent,
                         delta_percent=out.delta_percent,
                         comment=out.comment,

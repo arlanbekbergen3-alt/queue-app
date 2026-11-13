@@ -6,6 +6,7 @@ from models.protocol import (
     CriterionORM,
     QuestionORM,
     ScoreORM,
+    SessionEventORM,
     SubmissionORM,
     SubmissionQuestionORM,
 )
@@ -34,6 +35,7 @@ __all__ = [
     "QueueSessionORM",
     "QuestionORM",
     "ScoreORM",
+    "SessionEventORM",
     "SubmissionORM",
     "StudentORM",
     "SubmissionQuestionORM",

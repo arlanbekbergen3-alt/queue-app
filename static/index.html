@@ -36,6 +36,8 @@
   .hidden { display:none; }
   .small { font-size:14px; margin-top:8px; }
   .row { display:flex; justify-content:space-between; gap:12px; margin-top:14px; }
+  .check { display:flex; align-items:center; gap:10px; color:var(--text); font-size:16px; }
+  .check input { width:auto; margin:0; }
 </style>
 </head>
 <body>
@@ -48,6 +50,10 @@
     <input id="code" maxlength="8" autocomplete="off" autocapitalize="characters" placeholder="ABC123">
     <label for="name">Ваше имя и фамилия</label>
     <input id="name" maxlength="60" autocomplete="name" placeholder="Анна Иванова">
+    <div id="ready-choice" class="hidden">
+      <label class="check" for="ready-now"><input type="checkbox" id="ready-now"> Готов сдать сразу</label>
+      <div class="muted small" id="perks-join"></div>
+    </div>
     <button id="join-btn">Встать в очередь</button>
     <div class="err" id="join-err"></div>
   </section>
@@ -65,6 +71,11 @@
     <div class="row"><span class="muted">Сейчас у преподавателя</span><strong id="now-serving">—</strong></div>
     <div class="row"><span class="muted">Примерное ожидание</span><strong id="eta">—</strong></div>
     <div class="row"><span class="muted">Ваш номер</span><strong id="ticket">—</strong></div>
+    <div id="priority-box" class="hidden">
+      <div class="row"><span class="muted">Готовность</span><strong id="ready-state">Ещё готовлюсь</strong></div>
+      <button class="ghost hidden" id="readynow-btn">Готов сдать сразу</button>
+      <div class="muted small" id="perks-note"></div>
+    </div>
     <button class="ghost hidden" id="notready-btn">Не готов, пропустите меня</button>
     <button class="hidden" id="ready-btn">Готов</button>
     <div class="muted small hidden" id="notready-note"></div>
@@ -87,6 +98,9 @@ const LIVE_RETRY_MAX_MS = 60000;
 const MESSAGES = {
   session_closed: "Сессия закрыта",
   registration_closed: "Запись закрыта",
+  lottery_pending: "Порядок ещё не определён",
+  ready_priority_off: "В этой сессии приоритет по готовности не включён",
+  ready_locked: "Запись закрыта, готовность изменить уже нельзя",
   not_ready_limit: "Лимит отметок «не готов» в этой сессии исчерпан",
   not_waiting: "Это можно сделать, только пока вы ждёте в очереди",
   queue_full: "Очередь переполнена",
@@ -167,6 +181,28 @@ async function loadSessionInfo() {
     $("practice-link").classList.toggle("hidden", !sessionInfo.practice);
   } catch {}
 }
+function perksText(info) {
+  const parts = [];
+  if (info.ready_bonus_points > 0) parts.push("бонус за раннюю сдачу: +" + info.ready_bonus_points + " (отдельной строкой, не в баллах по критериям)");
+  if (info.ready_skip_questions > 0) parts.push("на " + (info.ready_skip_questions === 1 ? "один вопрос" : info.ready_skip_questions + " вопроса") + " меньше");
+  return parts.length ? "Для тех, кто готов сразу: " + parts.join("; ") : "";
+}
+let previewCode = "";
+async function previewSession() {
+  const code = $("code").value.trim().toUpperCase();
+  if (code === previewCode) return;
+  previewCode = code;
+  const box = $("ready-choice");
+  box.classList.add("hidden");
+  if (code.length < 6) return;
+  try {
+    const info = await request("/" + encodeURIComponent(code));
+    if (previewCode !== code) return;
+    const offered = info.ready_priority && info.join_open && info.status === "open";
+    box.classList.toggle("hidden", !offered);
+    $("perks-join").textContent = offered ? perksText(info) : "";
+  } catch {}
+}
 function formatEta(seconds) {
   if (seconds == null) return "—";
   if (seconds <= 0) return "сейчас";
@@ -245,7 +281,7 @@ async function join() {
     const entry = await request("/" + encodeURIComponent(code) + "/join", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, token, device_key: deviceKey() }),
+      body: JSON.stringify({ name, token, device_key: deviceKey(), ready_now: !$("ready-choice").classList.contains("hidden") && $("ready-now").checked }),
     });
     try { localStorage.setItem("queue-name", name); } catch {}
     saveState({ code, token });
@@ -305,7 +341,7 @@ function render(entry) {
   badge.dataset.status = entry.status;
   $("session-title").textContent = sessionLabel();
   loadSessionInfo();
-  $("ticket").textContent = "№ " + entry.ticket;
+  $("ticket").textContent = entry.ticket == null ? "—" : "№ " + entry.ticket;
   $("now-serving").textContent = entry.now_serving
     ? "№ " + entry.now_serving.ticket + " " + entry.now_serving.name
     : "—";
@@ -334,7 +370,18 @@ function render(entry) {
   $("leave-btn").classList.toggle("hidden", !active);
   $("again-btn").classList.toggle("hidden", !finished);
 
-  if (entry.status === "waiting") {
+  const waiting = entry.status === "waiting";
+  $("priority-box").classList.toggle("hidden", !(waiting && entry.ready_priority));
+  $("readynow-btn").classList.toggle("hidden", !(waiting && entry.ready_priority && entry.join_open && entry.session_status !== "closed"));
+  $("readynow-btn").textContent = entry.ready_now ? "Ещё готовлюсь" : "Готов сдать сразу";
+  $("ready-state").textContent = entry.ready_now ? "Готов сдать сразу" : "Ещё готовлюсь";
+  $("perks-note").textContent = perksText(entry);
+  if (entry.status === "waiting" && entry.in_pool) {
+    $("position").textContent = "…";
+    $("position-label").textContent = "порядок определится после закрытия записи";
+    addMessage("Вы в списке. Порядок определится после закрытия записи. Записалось: " + entry.pool_count, "warn");
+    if (entry.session_status === "closed") addMessage("Сессия закрыта преподавателем", "warn");
+  } else if (entry.status === "waiting") {
     $("position").textContent = entry.position;
     $("position-label").textContent = "ваше место в очереди";
     if (entry.not_ready) addMessage("Вы отметили «не готов»: вас вызовут после тех, кто готов", "warn");
@@ -388,6 +435,18 @@ async function loadResult() {
       note.textContent = s.comment;
       box.append(note);
     }
+  }
+  if (data.bonus_points > 0) {
+    const row = document.createElement("div");
+    row.className = "row";
+    const name = document.createElement("span");
+    name.className = "muted";
+    name.textContent = "Бонус за раннюю сдачу";
+    const points = document.createElement("strong");
+    points.id = "bonus-line";
+    points.textContent = "+" + data.bonus_points;
+    row.append(name, points);
+    box.append(row);
   }
   if (data.comment) {
     const note = document.createElement("div");
@@ -451,6 +510,26 @@ async function setReadiness(path) {
   }
 }
 
+async function setPriority() {
+  if (!state) return;
+  const wanted = $("ready-state").textContent !== "Готов сдать сразу";
+  $("readynow-btn").disabled = true;
+  try {
+    const entry = await request("/" + encodeURIComponent(state.code) + "/priority", {
+      method: "PUT",
+      headers: { "X-Entry-Token": state.token, "Content-Type": "application/json" },
+      body: JSON.stringify({ ready_now: wanted }),
+    });
+    $("queue-err").textContent = "";
+    render(entry);
+    schedule();
+  } catch (error) {
+    $("queue-err").textContent = error.message;
+    poll();
+  } finally {
+    $("readynow-btn").disabled = false;
+  }
+}
 async function leave() {
   if (!state) return;
   $("leave-btn").disabled = true;
@@ -532,6 +611,8 @@ $("join-btn").addEventListener("click", join);
 $("leave-btn").addEventListener("click", leave);
 $("notready-btn").addEventListener("click", () => setReadiness("/not-ready"));
 $("ready-btn").addEventListener("click", () => setReadiness("/ready"));
+$("readynow-btn").addEventListener("click", setPriority);
+$("code").addEventListener("input", previewSession);
 $("again-btn").addEventListener("click", resetToJoin);
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible" && state) poll();
@@ -544,7 +625,7 @@ const urlCode = new URLSearchParams(location.search).get("code");
 try { $("name").value = localStorage.getItem("queue-name") || ""; } catch {}
 if (urlCode) $("code").value = urlCode.toUpperCase();
 const resumable = state && state.code && state.token && (!urlCode || state.code === urlCode.toUpperCase());
-if (resumable) { show("queue"); poll(); } else { show("join"); }
+if (resumable) { show("queue"); poll(); } else { show("join"); previewSession(); }
 </script>
 </body>
 </html>

@@ -17,6 +17,11 @@ class QueueSessionORM(Base):
     __table_args__ = (
         CheckConstraint("status IN ('open', 'closed')", name="ck_queue_sessions_status"),
         CheckConstraint("avg_service_seconds > 0", name="ck_queue_sessions_avg_positive"),
+        CheckConstraint("order_mode IN ('join', 'lottery')", name="ck_queue_sessions_order_mode"),
+        CheckConstraint("ready_bonus_points BETWEEN 0 AND 5", name="ck_queue_sessions_ready_bonus"),
+        CheckConstraint(
+            "ready_skip_questions BETWEEN 0 AND 1", name="ck_queue_sessions_ready_skip"
+        ),
     )
 
     teacher_id: Mapped[str] = mapped_column(
@@ -32,6 +37,19 @@ class QueueSessionORM(Base):
     join_open: Mapped[bool] = mapped_column(
         Boolean, default=True, server_default=text("true"), nullable=False
     )
+    order_mode: Mapped[str] = mapped_column(
+        String(16), default="join", server_default=text("'join'"), nullable=False
+    )
+    ready_priority: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false"), nullable=False
+    )
+    ready_bonus_points: Mapped[int] = mapped_column(
+        Integer, default=0, server_default=text("0"), nullable=False
+    )
+    ready_skip_questions: Mapped[int] = mapped_column(
+        Integer, default=0, server_default=text("0"), nullable=False
+    )
+    lottery_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     next_ticket: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     avg_service_seconds: Mapped[int] = mapped_column(Integer, nullable=False)
     created_at: Mapped[datetime] = mapped_column(

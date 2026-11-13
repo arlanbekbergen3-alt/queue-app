@@ -201,6 +201,7 @@ const MESSAGES = {
   submission_not_editable: "Эту сдачу уже нельзя править как черновик",
   not_completed: "Править можно только завершённую сдачу",
   nothing_to_correct: "Ничего не изменилось",
+  no_bonus: "У этой сдачи нет бонуса",
   not_authenticated: "Войдите заново на странице преподавателя",
   invalid_token: "Войдите заново на странице преподавателя",
   ai_disabled: "ИИ-помощник выключен в настройках сервера",
@@ -630,7 +631,8 @@ function describeSubmission(s) {
   const status = { completed: "завершена", cancelled: "отменена", in_progress: "идёт" }[s.status] || s.status;
   const score = s.total_points != null ? " · " + s.total_points + "/" + s.max_points : "";
   const time = s.duration_seconds != null ? " · " + clock(s.duration_seconds) : "";
-  return "№" + s.ticket + " · " + status + score + time;
+  const bonus = s.bonus_points > 0 ? " · бонус +" + s.bonus_points : "";
+  return "№" + s.ticket + " · " + status + score + bonus + time;
 }
 
 async function refreshSubmissions() {
@@ -646,6 +648,7 @@ async function refreshSubmissions() {
       s.status === "completed" ? el("div", { class: "muted" }, s.scores.map((x) => x.name + ": " + x.points + "/" + x.max_points).join("; ")) : ""));
     const buttons = el("div", { class: "row" });
     if (s.status === "completed") buttons.append(el("button", { class: "ghost", onclick: () => correct(s, row) }, "Править"));
+    if (s.bonus_points > 0) buttons.append(el("button", { class: "ghost", onclick: () => removeBonus(s) }, "Снять бонус"));
     buttons.append(el("button", { class: "ghost", onclick: () => showAudit(s) }, "Журнал"));
     row.append(buttons);
     box.append(row);
@@ -666,6 +669,15 @@ async function correct(submission, row) {
       } catch (e) { err.textContent = e.message; }
     } }, "Сохранить правку"));
   row.after(holder);
+}
+
+async function removeBonus(submission) {
+  const reason = (prompt("Причина снятия бонуса за раннюю сдачу") || "").trim();
+  if (!reason) return;
+  try {
+    await request("/submissions/" + submission.id + "/bonus/remove", { method: "POST", body: JSON.stringify({ reason }) });
+    await refreshSubmissions();
+  } catch (e) { show("p-note", e.message, false); }
 }
 
 async function showAudit(submission) {

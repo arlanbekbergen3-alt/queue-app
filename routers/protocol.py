@@ -7,6 +7,7 @@ from schemas.protocol import (
     AssignmentOut,
     AssignmentUpdate,
     AuditOut,
+    BonusRemoveIn,
     CorrectionIn,
     CriterionCreate,
     CriterionOut,
@@ -197,6 +198,13 @@ async def correct_submission(
     submission_id: str, data: CorrectionIn, teacher: CurrentTeacher, service: ProtocolServiceDep
 ):
     return await service.correct(teacher.id, submission_id, data)
+
+
+@router.post("/submissions/{submission_id}/bonus/remove", response_model=SubmissionOut)
+async def remove_bonus(
+    submission_id: str, data: BonusRemoveIn, teacher: CurrentTeacher, service: ProtocolServiceDep
+):
+    return await service.remove_bonus(teacher.id, submission_id, data)
 
 
 @router.get("/submissions/{submission_id}/audit", response_model=list[AuditOut])

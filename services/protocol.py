@@ -24,6 +24,7 @@ from schemas.protocol import (
     AssignmentOut,
     AssignmentUpdate,
     AuditOut,
+    BonusRemoveIn,
     CorrectionIn,
     CriterionCreate,
     CriterionOut,
@@ -278,6 +279,7 @@ class ProtocolService:
             scores=[self._score_out(s, c) for s, c in scores],
             questions_short=len(questions) < wanted,
             attempt_number=submission.attempt_number,
+            bonus_points=submission.bonus_points,
             selection_seed=submission.selection_seed if audit_view else None,
             pool_question_ids=pool if audit_view else None,
             selection_usage=(submission.selection_usage or None) if audit_view else None,
@@ -424,6 +426,22 @@ class ProtocolService:
             occurred_at=now,
         )
         entry = await self.queue_repo.get_entry(session.id, submission.entry_id)
+        if (
+            entry is not None
+            and session.ready_priority
+            and entry.ready_now
+            and session.ready_bonus_points
+        ):
+            submission.bonus_points = session.ready_bonus_points
+            self.repo.add_audit(
+                submission_id=submission.id,
+                actor_id=teacher_id,
+                action="bonus",
+                field="bonus_points",
+                old_value="0",
+                new_value=str(submission.bonus_points),
+                occurred_at=now,
+            )
         if entry is not None and entry.status == EntryStatus.CALLED:
             await mark_entry_done(self.queue_repo, session, entry)
         await self.db.commit()
@@ -473,6 +491,27 @@ class ProtocolService:
         notify_changed(session.code)
         return await self._submission_out(submission, await self.repo.submission_ticket(submission))
 
+    async def remove_bonus(
+        self, teacher_id: str, submission_id: str, data: BonusRemoveIn
+    ) -> SubmissionOut:
+        submission, session = await self._locked(teacher_id, submission_id)
+        if submission.bonus_points <= 0:
+            raise ConflictError("У этой сдачи нет бонуса", code="no_bonus")
+        old = submission.bonus_points
+        submission.bonus_points = 0
+        self.repo.add_audit(
+            submission_id=submission.id,
+            actor_id=teacher_id,
+            action="bonus_remove",
+            field="bonus_points",
+            old_value=str(old),
+            new_value="0",
+            reason=data.reason,
+        )
+        await self.db.commit()
+        notify_changed(session.code)
+        return await self._submission_out(submission, await self.repo.submission_ticket(submission))
+
     async def audit(self, teacher_id: str, submission_id: str) -> list[AuditOut]:
         found = await self.repo.owned_submission(submission_id, teacher_id)
         if found is None:
@@ -503,4 +542,5 @@ class ProtocolService:
             total_points=submission.total_points,
             max_points=submission.max_points,
             comment=submission.comment,
+            bonus_points=submission.bonus_points,
         )

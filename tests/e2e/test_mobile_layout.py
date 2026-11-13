@@ -88,3 +88,35 @@ def test_student_page_with_the_not_ready_controls_fits_a_phone(
     expect(page.locator("#ready-btn")).to_be_visible(timeout=SLOW)
     assert overflow(page) <= 0
     other.close()
+
+
+def test_order_mode_controls_fit_a_phone(page: Page, browser, live_server, open_session):
+    session = open_session(
+        order_mode="lottery", ready_priority=True, ready_bonus_points=5, ready_skip_questions=1
+    )
+    code = session["code"]
+    other = browser.new_context(base_url=live_server)
+    other_page = other.new_page()
+    other_page.set_viewport_size(PHONE)
+    other_page.goto("/")
+    other_page.fill("#code", code)
+    other_page.fill("#name", "Студент с очень длинным именем и фамилией")
+    expect(other_page.locator("#ready-choice")).to_be_visible(timeout=SLOW)
+    assert overflow(other_page) <= 0
+    other_page.check("#ready-now")
+    other_page.click("#join-btn")
+    expect(other_page.locator("#message")).to_contain_text("Вы в списке", timeout=SLOW)
+    expect(other_page.locator("#readynow-btn")).to_be_visible()
+    assert overflow(other_page) <= 0
+
+    page.set_viewport_size(PHONE)
+    login_as(page, session)
+    page.goto("/teacher")
+    expect(page.locator("#order-mode")).to_be_visible(timeout=SLOW)
+    assert overflow(page) <= 0
+    page.get_by_role("button", name=code).click()
+    expect(page.locator("#lottery-btn")).to_be_visible(timeout=SLOW)
+    page.click("#settings-box summary")
+    expect(page.locator("#s-ready-bonus")).to_be_visible()
+    assert overflow(page) <= 0
+    other.close()

@@ -2,7 +2,7 @@ import unicodedata
 from datetime import datetime
 from typing import Annotated
 
-from pydantic import AfterValidator, BaseModel, Field, model_validator
+from pydantic import AfterValidator, BaseModel, Field, field_validator, model_validator
 
 
 def _clean(value: str) -> str:
@@ -174,6 +174,7 @@ class SubmissionOut(BaseModel):
     scores: list[ScoreOut]
     questions_short: bool = False
     attempt_number: int = 1
+    bonus_points: int = 0
     selection_seed: str | None = None
     pool_question_ids: list[str] | None = None
     selection_usage: dict[str, int] | None = None
@@ -187,6 +188,19 @@ class MySubmissionOut(BaseModel):
     total_points: int | None = None
     max_points: int | None = None
     comment: str = ""
+    bonus_points: int = 0
+
+
+class BonusRemoveIn(BaseModel):
+    reason: str = Field(min_length=1, max_length=300)
+
+    @field_validator("reason")
+    @classmethod
+    def strip_reason(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("reason must not be blank")
+        return value
 
 
 class AuditOut(BaseModel):

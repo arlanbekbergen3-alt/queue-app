@@ -63,7 +63,10 @@ async def start_submission(db: AsyncSession, session: QueueSessionORM, entry: En
     if entry.student_id is not None:
         usage = await repo.question_usage(entry.student_id, assignment.id)
     usage = {qid: n for qid, n in usage.items() if qid in by_id}
-    chosen = choose_question_ids(seed, pool_ids, assignment.questions_per_submission, usage)
+    wanted = assignment.questions_per_submission
+    if session.ready_priority and entry.ready_now and session.ready_skip_questions:
+        wanted = max(1, wanted - session.ready_skip_questions)
+    chosen = choose_question_ids(seed, pool_ids, wanted, usage)
     submission = SubmissionORM(
         entry_id=entry.id,
         session_id=session.id,

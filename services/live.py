@@ -13,7 +13,7 @@ from db.database import AsyncSessionLocal
 from models.entry import EntryStatus
 from repositories.queue import QueueRepository
 from schemas.queue import MyEntryOut, TeacherEntryOut, TeacherQueueOut
-from services.queue import build_student_view
+from services.queue import QueueFlags, build_student_view
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +30,7 @@ class EntryInfo:
     called_at: datetime | None
     not_ready: bool = False
     not_ready_count: int = 0
+    ready_now: bool = False
 
 
 @dataclass(frozen=True)
@@ -43,6 +44,7 @@ class Snapshot:
     position: dict[str, int] = field(default_factory=dict)
     called: EntryInfo | None = None
     join_open: bool = True
+    flags: QueueFlags = field(default_factory=QueueFlags)
 
     @classmethod
     def build(
@@ -54,6 +56,7 @@ class Snapshot:
         avg_service_seconds: int,
         entries: list,
         join_open: bool = True,
+        flags: QueueFlags | None = None,
     ) -> "Snapshot":
         infos = tuple(
             EntryInfo(
@@ -65,6 +68,7 @@ class Snapshot:
                 e.called_at,
                 e.not_ready,
                 e.not_ready_count,
+                e.ready_now,
             )
             for e in entries
         )
@@ -79,7 +83,18 @@ class Snapshot:
             entries=infos,
             position={e.id: i + 1 for i, e in enumerate(waiting)},
             called=called,
-            join_open=join_open,
+            join_open=flags.join_open if flags else join_open,
+            flags=QueueFlags(
+                order_mode=flags.order_mode,
+                lottery_done=flags.lottery_done,
+                ready_priority=flags.ready_priority,
+                ready_bonus_points=flags.ready_bonus_points,
+                ready_skip_questions=flags.ready_skip_questions,
+                join_open=flags.join_open,
+                waiting_count=len(waiting),
+            )
+            if flags
+            else QueueFlags(join_open=join_open, waiting_count=len(waiting)),
         )
 
     def student_view(self, entry_id: str) -> MyEntryOut | None:
@@ -98,6 +113,8 @@ class Snapshot:
             session_status=self.status,
             not_ready=entry.not_ready,
             not_ready_count=entry.not_ready_count,
+            ready_now=entry.ready_now,
+            flags=self.flags,
         )
 
     def teacher_view(self) -> TeacherQueueOut:
@@ -118,11 +135,17 @@ class Snapshot:
                     called_at=e.called_at,
                     not_ready=e.not_ready,
                     not_ready_count=e.not_ready_count,
+                    ready_now=e.ready_now,
                 )
                 for e in self.entries
             ],
             join_open=self.join_open,
             not_ready_max=settings.NOT_READY_MAX_PER_SESSION,
+            order_mode=self.flags.order_mode,
+            ready_priority=self.flags.ready_priority,
+            ready_bonus_points=self.flags.ready_bonus_points,
+            ready_skip_questions=self.flags.ready_skip_questions,
+            lottery_done=self.flags.lottery_done,
         )
 
 
@@ -296,6 +319,7 @@ class LiveGateway:
                 session.avg_service_seconds,
                 entries,
                 session.join_open,
+                QueueFlags.of(session),
             )
 
     async def student_view_by_entry(self, entry_id: str) -> MyEntryOut | None:
@@ -314,6 +338,16 @@ class LiveGateway:
             session_status=service_row.session_status,
             not_ready=service_row.not_ready,
             not_ready_count=service_row.not_ready_count,
+            ready_now=service_row.ready_now,
+            flags=QueueFlags(
+                order_mode=service_row.order_mode,
+                lottery_done=service_row.lottery_at is not None,
+                ready_priority=service_row.ready_priority,
+                ready_bonus_points=service_row.ready_bonus_points,
+                ready_skip_questions=service_row.ready_skip_questions,
+                join_open=service_row.join_open,
+                waiting_count=service_row.waiting_total,
+            ),
         )
 
 

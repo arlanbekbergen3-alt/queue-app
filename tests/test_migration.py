@@ -429,3 +429,74 @@ async def test_subject_spaces_migration_adds_tables_and_origin_columns_and_rolls
     assert tables == [] and count == 1
     assert not {"origin_author", "origin_space", "origin_title"} & set(columns)
     await alembic_async("upgrade", "head")
+
+
+@pytest.mark.asyncio
+async def test_order_mode_migration_defaults_existing_sessions_and_protects_the_journal(
+    migration_engine,
+):
+    await alembic_async("upgrade", "c9d0e1f2a3b4")
+    async with migration_engine.begin() as conn:
+        await conn.execute(
+            text("INSERT INTO users (id, username, password_hash) VALUES ('u1', 't', 'x')")
+        )
+        await conn.execute(
+            text(
+                "INSERT INTO queue_sessions (id, teacher_id, title, code, status, next_ticket,"
+                " avg_service_seconds, created_at) VALUES ('s1', 'u1', 'Lab', 'ABC234', 'open',"
+                " 3, 300, now())"
+            )
+        )
+        await conn.execute(
+            text(
+                "INSERT INTO entries (id, session_id, name, token_hash, ticket, sort_order,"
+                " status, joined_at) VALUES ('e1', 's1', 'N', :th, 1, 1, 'waiting', now())"
+            ),
+            {"th": "1" * 16},
+        )
+
+    await alembic_async("upgrade", "d0e1f2a3b4c5")
+
+    async with migration_engine.connect() as conn:
+        session = (
+            await conn.execute(
+                text(
+                    "SELECT order_mode, ready_priority, ready_bonus_points, ready_skip_questions,"
+                    " lottery_at FROM queue_sessions"
+                )
+            )
+        ).one()
+        ready = (await conn.execute(text("SELECT ready_now FROM entries"))).scalar_one()
+    assert tuple(session) == ("join", False, 0, 0, None)
+    assert ready is False
+
+    async with migration_engine.begin() as conn:
+        await conn.execute(
+            text(
+                "INSERT INTO session_events (id, occurred_at, session_id, actor_id, kind, details)"
+                " VALUES ('x1', now(), 's1', 'u1', 'lottery', '{}')"
+            )
+        )
+    with pytest.raises(Exception, match="append-only"):
+        async with migration_engine.begin() as conn:
+            await conn.execute(text("UPDATE session_events SET kind = 'y'"))
+    with pytest.raises(IntegrityError):
+        async with migration_engine.begin() as conn:
+            await conn.execute(text("UPDATE queue_sessions SET ready_bonus_points = 6"))
+
+    await alembic_async("downgrade", "c9d0e1f2a3b4")
+    async with migration_engine.connect() as conn:
+        tables = (
+            (
+                await conn.execute(
+                    text(
+                        "SELECT table_name FROM information_schema.tables WHERE table_name = 'session_events'"
+                    )
+                )
+            )
+            .scalars()
+            .all()
+        )
+        count = (await conn.execute(text("SELECT count(*) FROM entries"))).scalar_one()
+    assert tables == [] and count == 1
+    await alembic_async("upgrade", "head")

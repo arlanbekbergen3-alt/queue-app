@@ -1,5 +1,6 @@
 import unicodedata
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -9,6 +10,10 @@ from core.config import settings
 class SessionCreate(BaseModel):
     title: str = Field(min_length=1, max_length=120)
     group: str | None = Field(default=None, max_length=60)
+    order_mode: Literal["join", "lottery"] = "join"
+    ready_priority: bool = False
+    ready_bonus_points: int = Field(default=0, ge=0, le=5)
+    ready_skip_questions: int = Field(default=0, ge=0, le=1)
 
     @field_validator("group")
     @classmethod
@@ -28,6 +33,17 @@ class SessionCreate(BaseModel):
         return value
 
 
+class SessionSettingsIn(BaseModel):
+    order_mode: Literal["join", "lottery"] | None = None
+    ready_priority: bool | None = None
+    ready_bonus_points: int | None = Field(default=None, ge=0, le=5)
+    ready_skip_questions: int | None = Field(default=None, ge=0, le=1)
+
+
+class ReadyNowIn(BaseModel):
+    ready_now: bool
+
+
 class NowServing(BaseModel):
     ticket: int
     name: str
@@ -42,6 +58,11 @@ class SessionOut(BaseModel):
     created_at: datetime
     assignment_id: str | None = None
     join_open: bool = True
+    order_mode: str = "join"
+    ready_priority: bool = False
+    ready_bonus_points: int = 0
+    ready_skip_questions: int = 0
+    lottery_at: datetime | None = None
 
     model_config = {"from_attributes": True}
 
@@ -55,6 +76,11 @@ class SessionPublic(BaseModel):
     now_serving: NowServing | None
     practice: bool = False
     join_open: bool = True
+    order_mode: str = "join"
+    ready_priority: bool = False
+    ready_bonus_points: int = 0
+    ready_skip_questions: int = 0
+    lottery_done: bool = False
 
 
 class RegistrationIn(BaseModel):
@@ -65,6 +91,7 @@ class JoinIn(BaseModel):
     name: str = Field(min_length=1, max_length=60)
     token: str = Field(min_length=16, max_length=128)
     device_key: str | None = Field(default=None, min_length=16, max_length=128)
+    ready_now: bool = False
 
     @field_validator("name")
     @classmethod
@@ -80,7 +107,7 @@ class JoinIn(BaseModel):
 
 
 class MyEntryOut(BaseModel):
-    ticket: int
+    ticket: int | None
     name: str
     status: str
     position: int | None
@@ -91,6 +118,14 @@ class MyEntryOut(BaseModel):
     not_ready: bool = False
     not_ready_count: int = 0
     not_ready_left: int = 0
+    ready_now: bool = False
+    in_pool: bool = False
+    pool_count: int = 0
+    join_open: bool = True
+    order_mode: str = "join"
+    ready_priority: bool = False
+    ready_bonus_points: int = 0
+    ready_skip_questions: int = 0
 
 
 class TeacherEntryOut(BaseModel):
@@ -102,6 +137,7 @@ class TeacherEntryOut(BaseModel):
     called_at: datetime | None
     not_ready: bool = False
     not_ready_count: int = 0
+    ready_now: bool = False
 
     model_config = {"from_attributes": True}
 
@@ -116,3 +152,8 @@ class TeacherQueueOut(BaseModel):
     entries: list[TeacherEntryOut]
     join_open: bool = True
     not_ready_max: int = 2
+    order_mode: str = "join"
+    ready_priority: bool = False
+    ready_bonus_points: int = 0
+    ready_skip_questions: int = 0
+    lottery_done: bool = False

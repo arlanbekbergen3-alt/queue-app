@@ -322,6 +322,7 @@ async def test_student_sees_only_own_breakdown_after_completion(client, setup):
         "total_points": None,
         "max_points": None,
         "comment": "",
+        "bonus_points": 0,
     }
     r = await client.get(mine, headers={"X-Entry-Token": second["token"]})
     assert (r.status_code, r.json()["code"]) == (404, "submission_not_found")

@@ -39,7 +39,15 @@
   .tag { background:var(--warn); color:#fff; border-radius:99px; padding:2px 8px; font-size:12px; margin-left:6px; }
   td.btns { text-align:right; white-space:nowrap; }
   td.btns button { padding:6px 10px; font-size:14px; margin-left:4px; }
+  td { overflow-wrap:anywhere; }
+  @media (max-width: 520px) { td.btns { white-space:normal; } td.btns button { margin:4px 4px 0 0; } }
   .sessions button { display:block; width:100%; text-align:left; margin-top:8px; background:var(--bg); color:var(--text); border:1px solid var(--border); font-weight:500; }
+  .check { display:flex; align-items:center; gap:10px; color:var(--text); font-size:15px; margin:10px 0 0; }
+  .check input { width:auto; margin:0; }
+  select { width:100%; font:inherit; padding:11px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); }
+  .settings-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .perk { color:var(--muted); font-size:14px; margin-top:6px; }
+  .tag.ready { background:var(--ok); }
   .tabs { display:flex; gap:8px; margin-bottom:6px; }
   .tabs button { background:transparent; color:var(--muted); border:1px solid var(--border); }
   .tabs button.active { background:var(--accent); color:#fff; border-color:var(--accent); }
@@ -75,6 +83,23 @@
       <input id="title" maxlength="120" placeholder="Например: Лабораторная №3">
       <label for="group">Группа (необязательно)</label>
       <input id="group" maxlength="60" placeholder="Например: ИС-22">
+      <label for="order-mode">Порядок вызова</label>
+      <select id="order-mode">
+        <option value="join">По порядку записи</option>
+        <option value="lottery">Жеребьёвка после закрытия записи</option>
+      </select>
+      <label class="check" for="ready-priority"><input type="checkbox" id="ready-priority"> Сначала те, кто готов сдать сразу</label>
+      <div class="settings-row">
+        <div>
+          <label for="ready-bonus">Бонус за раннюю сдачу</label>
+          <select id="ready-bonus"><option value="0">нет</option><option value="1">+1</option><option value="2">+2</option><option value="3">+3</option><option value="4">+4</option><option value="5">+5</option></select>
+        </div>
+        <div>
+          <label for="ready-skip">Вопросов у готовых</label>
+          <select id="ready-skip"><option value="0">как у всех</option><option value="1">на один меньше</option></select>
+        </div>
+      </div>
+      <div class="perk">Бонус записывается отдельной строкой и не входит в баллы по критериям; его можно снять с причиной.</div>
       <button class="full" id="create-btn">Открыть сессию</button>
       <div class="err" id="create-err"></div>
     </section>
@@ -99,6 +124,25 @@
         </div>
       </div>
       <div class="muted" id="queue-meta" style="margin-top:10px"></div>
+      <div class="muted" id="queue-modes"></div>
+      <div class="actions" style="margin-top:10px">
+        <button class="warn hidden" id="lottery-btn">Закрыть запись и перемешать</button>
+        <button class="ghost hidden" id="lottery-log-btn">Журнал жеребьёвки</button>
+      </div>
+      <details id="settings-box" class="hidden" style="margin-top:10px">
+        <summary>Настройки порядка</summary>
+        <label for="s-order-mode">Порядок вызова</label>
+        <select id="s-order-mode"><option value="join">По порядку записи</option><option value="lottery">Жеребьёвка после закрытия записи</option></select>
+        <label class="check" for="s-ready-priority"><input type="checkbox" id="s-ready-priority"> Сначала те, кто готов сдать сразу</label>
+        <div class="settings-row">
+          <div><label for="s-ready-bonus">Бонус за раннюю сдачу</label>
+          <select id="s-ready-bonus"><option value="0">нет</option><option value="1">+1</option><option value="2">+2</option><option value="3">+3</option><option value="4">+4</option><option value="5">+5</option></select></div>
+          <div><label for="s-ready-skip">Вопросов у готовых</label>
+          <select id="s-ready-skip"><option value="0">как у всех</option><option value="1">на один меньше</option></select></div>
+        </div>
+        <button class="full" id="settings-save">Сохранить настройки</button>
+      </details>
+      <pre class="hidden" id="lottery-log" style="white-space:pre-wrap"></pre>
       <table>
         <thead><tr><th>№</th><th>Студент</th><th>Статус</th><th></th></tr></thead>
         <tbody id="entries"></tbody>
@@ -126,6 +170,9 @@ const MESSAGES = {
   not_waiting: "Двигать вперёд можно только ждущего",
   session_closed: "Сессия закрыта",
   registration_closed: "Запись закрыта",
+  lottery_pending: "Порядок ещё не определён: закройте запись и перемешайте очередь",
+  lottery_off: "Жеребьёвка в этой сессии не включена",
+  settings_locked: "Настройки порядка можно менять только до закрытия записи",
   session_not_found: "Сессия не найдена",
   entry_not_found: "Запись не найдена",
   not_authenticated: "Войдите заново",
@@ -376,7 +423,13 @@ async function createSession() {
   if (!title) { $("create-err").textContent = "Введите название"; return; }
   try {
     const group = $("group").value.trim();
-    const session = await request("/sessions", { method: "POST", body: JSON.stringify({ title, group: group || null }) });
+    const session = await request("/sessions", { method: "POST", body: JSON.stringify({
+      title, group: group || null,
+      order_mode: $("order-mode").value,
+      ready_priority: $("ready-priority").checked,
+      ready_bonus_points: Number($("ready-bonus").value),
+      ready_skip_questions: Number($("ready-skip").value),
+    }) });
     $("title").value = "";
     $("group").value = "";
     await loadSessions();
@@ -429,8 +482,10 @@ function renderQueue(queue) {
   registration.textContent = queue.join_open ? "Закрыть запись" : "Открыть запись";
   registration.dataset.open = queue.join_open ? "1" : "0";
   $("queue-title").textContent += queue.join_open || closed ? "" : " · запись закрыта";
+  renderModes(queue);
+  const pending = queue.order_mode === "lottery" && !queue.lottery_done;
   const hasCalled = queue.entries.some((e) => e.status === "called");
-  $("next-btn").disabled = hasCalled || queue.waiting_count === 0;
+  $("next-btn").disabled = hasCalled || queue.waiting_count === 0 || pending;
 
   const labels = { waiting: "ждёт", called: "вызван", skipped: "пропущен" };
   const tbody = $("entries");
@@ -447,12 +502,76 @@ function renderQueue(queue) {
     if (entry.status === "waiting") { act("Вперёд", "promote", "ghost"); act("Пропустить", "skip", "ghost"); }
     if (entry.status === "skipped" && !closed) act("Вернуть", "requeue", "ghost");
     tbody.append(el("tr", { class: entry.status },
-      el("td", {}, "" + entry.ticket),
+      el("td", {}, pending && entry.status === "waiting" ? "—" : "" + entry.ticket),
       el("td", {}, entry.name),
       el("td", {}, labels[entry.status] || entry.status,
+        entry.ready_now && entry.status === "waiting" ? el("span", { class: "tag ready" }, "готов сразу") : "",
         entry.not_ready ? el("span", { class: "tag" }, "не готов") : "",
         entry.not_ready_count ? el("span", { class: "muted" }, " ×" + entry.not_ready_count) : ""),
       buttons));
+  }
+}
+
+function renderModes(queue) {
+  const parts = [queue.order_mode === "lottery" ? "жеребьёвка" + (queue.lottery_done ? " проведена" : " после закрытия записи") : "по порядку записи"];
+  if (queue.ready_priority) parts.push("сначала готовые");
+  if (queue.ready_bonus_points > 0) parts.push("бонус +" + queue.ready_bonus_points);
+  if (queue.ready_skip_questions > 0) parts.push("на один вопрос меньше");
+  $("queue-modes").textContent = "Порядок: " + parts.join(" · ");
+  const open = queue.status !== "closed";
+  const editable = open && queue.join_open && !queue.lottery_done;
+  $("lottery-btn").classList.toggle("hidden", !(open && queue.order_mode === "lottery" && !queue.lottery_done));
+  $("lottery-log-btn").classList.toggle("hidden", !queue.lottery_done);
+  if (!queue.lottery_done) $("lottery-log").classList.add("hidden");
+  $("settings-box").classList.toggle("hidden", !editable);
+  if (!$("settings-box").open) {
+    $("s-order-mode").value = queue.order_mode;
+    $("s-ready-priority").checked = queue.ready_priority;
+    $("s-ready-bonus").value = String(queue.ready_bonus_points);
+    $("s-ready-skip").value = String(queue.ready_skip_questions);
+  }
+}
+
+async function saveSettings() {
+  try {
+    await request("/sessions/" + current + "/settings", { method: "PUT", body: JSON.stringify({
+      order_mode: $("s-order-mode").value,
+      ready_priority: $("s-ready-priority").checked,
+      ready_bonus_points: Number($("s-ready-bonus").value),
+      ready_skip_questions: Number($("s-ready-skip").value),
+    }) });
+    $("settings-box").open = false;
+  } catch (error) {
+    showActionError(error.message);
+  }
+  await refresh();
+}
+
+async function runLottery() {
+  if (!confirm("Закрыть запись и перемешать очередь? Это можно сделать только один раз.")) return;
+  try {
+    await request("/sessions/" + current + "/lottery", { method: "POST" });
+  } catch (error) {
+    showActionError(error.message);
+  }
+  await refresh();
+}
+
+async function showLotteryLog() {
+  const box = $("lottery-log");
+  try {
+    const events = await request("/sessions/" + current + "/events-log");
+    const queue = await request("/sessions/" + current + "/queue");
+    const names = Object.fromEntries(queue.entries.map((e) => [e.id, e.name]));
+    const labels = { all: "все", ready: "готовы сразу", rest: "остальные" };
+    box.textContent = events.map((ev) => {
+      const d = ev.details;
+      const order = d.order.map((id, i) => (d.first_ticket + i) + ". " + (names[id] || "(уже обслужен)")).join("\n");
+      return new Date(ev.occurred_at).toLocaleTimeString("ru-RU") + " · жеребьёвка (" + (labels[d.group] || d.group) + "), участников: " + d.participants + "\n" + order;
+    }).join("\n\n") || "Записей нет.";
+    box.classList.toggle("hidden");
+  } catch (error) {
+    showActionError(error.message);
   }
 }
 
@@ -508,6 +627,9 @@ $("create-btn").addEventListener("click", createSession);
 $("next-btn").addEventListener("click", callNext);
 $("close-btn").addEventListener("click", closeSession);
 $("registration-btn").addEventListener("click", toggleRegistration);
+$("lottery-btn").addEventListener("click", runLottery);
+$("lottery-log-btn").addEventListener("click", showLotteryLog);
+$("settings-save").addEventListener("click", saveSettings);
 $("logout-btn").addEventListener("click", () => { writeToken(null); showAuth(); });
 for (const id of ["username", "password", "invite"]) {
   $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") authenticate(); });

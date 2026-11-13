@@ -1,7 +1,9 @@
 import uuid
 from datetime import UTC, datetime
+from typing import Any
 
 from sqlalchemy import (
+    Boolean,
     DateTime,
     Integer,
     Row,
@@ -20,6 +22,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 
 from models.entry import EntryORM, EntryStatus
+from models.protocol import SessionEventORM
 from models.queue_session import QueueSessionORM
 
 _waiting_alias = aliased(EntryORM)
@@ -42,6 +45,17 @@ _waiting_before = (
     .scalar_subquery()
 )
 
+_waiting_all = aliased(EntryORM)
+
+_waiting_total = (
+    select(func.count())
+    .where(
+        _waiting_all.session_id == QueueSessionORM.id, _waiting_all.status == EntryStatus.WAITING
+    )
+    .correlate(QueueSessionORM)
+    .scalar_subquery()
+)
+
 _STUDENT_VIEW = (
     select(
         EntryORM.id,
@@ -50,7 +64,15 @@ _STUDENT_VIEW = (
         EntryORM.status,
         EntryORM.not_ready,
         EntryORM.not_ready_count,
+        EntryORM.ready_now,
         QueueSessionORM.status.label("session_status"),
+        QueueSessionORM.join_open,
+        QueueSessionORM.order_mode,
+        QueueSessionORM.ready_priority,
+        QueueSessionORM.ready_bonus_points,
+        QueueSessionORM.ready_skip_questions,
+        QueueSessionORM.lottery_at,
+        _waiting_total.label("waiting_total"),
         QueueSessionORM.avg_service_seconds,
         _waiting_before.label("waiting_before"),
         _called_alias.ticket.label("called_ticket"),
@@ -84,6 +106,7 @@ class QueueRepository:
         group_name: str | None,
         code: str,
         avg_service_seconds: int,
+        **options: Any,
     ) -> QueueSessionORM:
         session = QueueSessionORM(
             teacher_id=teacher_id,
@@ -91,6 +114,7 @@ class QueueRepository:
             group_name=group_name,
             code=code,
             avg_service_seconds=avg_service_seconds,
+            **options,
         )
         self.db.add(session)
         return session
@@ -140,6 +164,8 @@ class QueueRepository:
         max_total: int,
         student_id: str | None = None,
         device_hash: str | None = None,
+        sort_order: int | None = None,
+        ready_now: bool = False,
     ) -> str | None:
         in_session = EntryORM.session_id == session_id
         waiting = (
@@ -153,11 +179,12 @@ class QueueRepository:
             literal(name, String),
             literal(token_hash, String),
             literal(ticket, Integer),
-            literal(ticket, Integer),
+            literal(ticket if sort_order is None else sort_order, Integer),
             literal(str(EntryStatus.WAITING), String),
             literal(datetime.now(UTC), DateTime(timezone=True)),
             literal(student_id, String),
             literal(device_hash, String),
+            literal(ready_now, Boolean),
         ).where(waiting < max_waiting, total < max_total)
         stmt = (
             insert(EntryORM)
@@ -173,6 +200,7 @@ class QueueRepository:
                     "joined_at",
                     "student_id",
                     "device_hash",
+                    "ready_now",
                 ],
                 source,
             )
@@ -292,6 +320,71 @@ class QueueRepository:
     async def close_session(self, session: QueueSessionORM, at: datetime) -> None:
         session.status = "closed"
         session.closed_at = at
+
+    async def session_entries(self, session_id: str) -> list[EntryORM]:
+        stmt = (
+            select(EntryORM)
+            .where(EntryORM.session_id == session_id)
+            .order_by(EntryORM.joined_at, EntryORM.id)
+            .execution_options(populate_existing=True)
+        )
+        return list((await self.db.execute(stmt)).scalars())
+
+    async def apply_numbers(
+        self,
+        session_id: str,
+        numbers: dict[str, tuple[int, int]],
+        park_tickets: int,
+        park_order: int,
+    ) -> None:
+        await self.db.execute(
+            update(EntryORM)
+            .where(EntryORM.session_id == session_id)
+            .values(
+                ticket=EntryORM.ticket + park_tickets, sort_order=EntryORM.sort_order - park_order
+            )
+            .execution_options(synchronize_session=False)
+        )
+        await self.db.execute(
+            update(EntryORM),
+            [
+                {"id": entry_id, "ticket": ticket, "sort_order": order}
+                for entry_id, (ticket, order) in numbers.items()
+            ],
+            execution_options={"synchronize_session": False},
+        )
+
+    async def shift_ready_band(self, session_id: str, band: int, *, on: bool) -> None:
+        if on:
+            stmt = (
+                update(EntryORM)
+                .where(
+                    EntryORM.session_id == session_id,
+                    EntryORM.status == EntryStatus.WAITING,
+                    EntryORM.ready_now.is_(True),
+                    EntryORM.sort_order >= -band // 2,
+                )
+                .values(sort_order=EntryORM.sort_order - band)
+            )
+        else:
+            stmt = (
+                update(EntryORM)
+                .where(
+                    EntryORM.session_id == session_id,
+                    EntryORM.status == EntryStatus.WAITING,
+                    EntryORM.sort_order < -band // 2,
+                )
+                .values(sort_order=EntryORM.sort_order + band)
+            )
+        await self.db.execute(stmt.execution_options(synchronize_session=False))
+
+    async def list_events(self, session_id: str) -> list[SessionEventORM]:
+        stmt = (
+            select(SessionEventORM)
+            .where(SessionEventORM.session_id == session_id)
+            .order_by(SessionEventORM.seq)
+        )
+        return list((await self.db.execute(stmt)).scalars())
 
     async def student_view_by_token(self, code: str, token_hash: str) -> Row | None:
         result = await self.db.execute(

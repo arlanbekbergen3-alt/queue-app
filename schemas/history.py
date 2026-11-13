@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -25,6 +26,7 @@ class AttemptOut(BaseModel):
     ended_at: datetime | None
     total_points: int | None
     max_points: int | None
+    bonus_points: int = 0
     percent: float | None
     delta_percent: float | None
     comment: str
@@ -74,6 +76,7 @@ class MyAttemptOut(BaseModel):
     ended_at: datetime | None
     total_points: int | None
     max_points: int | None
+    bonus_points: int = 0
     percent: float | None
     delta_percent: float | None
     comment: str
@@ -83,3 +86,12 @@ class MyAttemptOut(BaseModel):
 
 class MyHistoryOut(BaseModel):
     attempts: list[MyAttemptOut]
+
+
+class SessionEventOut(BaseModel):
+    seq: int
+    occurred_at: datetime
+    kind: str
+    details: dict[str, Any]
+
+    model_config = {"from_attributes": True}

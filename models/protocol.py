@@ -127,6 +127,9 @@ class SubmissionORM(Base):
     total_points: Mapped[int | None] = mapped_column(Integer, nullable=True)
     max_points: Mapped[int | None] = mapped_column(Integer, nullable=True)
     comment: Mapped[str] = mapped_column(String(1000), default="", nullable=False)
+    bonus_points: Mapped[int] = mapped_column(
+        Integer, default=0, server_default=text("0"), nullable=False
+    )
     attempt_number: Mapped[int] = mapped_column(
         Integer, default=1, server_default=text("1"), nullable=False
     )
@@ -206,6 +209,22 @@ class AuditLogORM(Base):
     reason: Mapped[str] = mapped_column(String(300), default="", nullable=False)
 
 
+class SessionEventORM(Base):
+    __tablename__ = "session_events"
+    __table_args__ = (Index("ix_session_events_session_seq", "session_id", "seq"),)
+
+    seq: Mapped[int] = mapped_column(BigInteger, Identity(always=True), nullable=False)
+    occurred_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_now, nullable=False
+    )
+    session_id: Mapped[str] = mapped_column(String(36), nullable=False)
+    actor_id: Mapped[str] = mapped_column(String(36), nullable=False)
+    kind: Mapped[str] = mapped_column(String(24), nullable=False)
+    details: Mapped[dict[str, Any]] = mapped_column(
+        JSON().with_variant(JSONB(), "postgresql"), nullable=False
+    )
+
+
 AUDIT_FUNCTION_SQL = """
 CREATE OR REPLACE FUNCTION audit_log_immutable() RETURNS trigger AS $$
 BEGIN
@@ -218,5 +237,12 @@ CREATE TRIGGER audit_log_no_change BEFORE UPDATE OR DELETE ON audit_log
 FOR EACH ROW EXECUTE FUNCTION audit_log_immutable()
 """
 
+SESSION_EVENT_TRIGGER_SQL = """
+CREATE TRIGGER session_events_no_change BEFORE UPDATE OR DELETE ON session_events
+FOR EACH ROW EXECUTE FUNCTION audit_log_immutable()
+"""
+
 event.listen(AuditLogORM.__table__, "after_create", DDL(AUDIT_FUNCTION_SQL))
 event.listen(AuditLogORM.__table__, "after_create", DDL(AUDIT_TRIGGER_SQL))
+event.listen(SessionEventORM.__table__, "after_create", DDL(AUDIT_FUNCTION_SQL))
+event.listen(SessionEventORM.__table__, "after_create", DDL(SESSION_EVENT_TRIGGER_SQL))

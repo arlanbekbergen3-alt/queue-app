@@ -1,10 +1,12 @@
 import asyncio
 import json
+import time
 
 import pytest
 import pytest_asyncio
 
 from core.config import settings
+from core.events import notify_changed
 from core.exceptions import OverloadedError
 from services import live
 from services.live import hub, student_stream, teacher_stream
@@ -178,22 +180,64 @@ async def test_connection_limit_per_session(client, room, monkeypatch):
         await stream.aclose()
 
 
+def count_reads(monkeypatch, code):
+    reads = []
+    original = hub._loader
+
+    async def counting(requested):
+        if requested == code:
+            reads.append(requested)
+        return await original(requested)
+
+    monkeypatch.setattr(hub, "_loader", counting)
+    return reads
+
+
 @pytest.mark.asyncio
-async def test_burst_of_changes_is_coalesced_into_few_database_reads(client, room, join):
+async def test_burst_of_changes_is_coalesced_into_few_database_reads(client, room, monkeypatch):
     headers, code, students = await room("live_burst", ("A",))
+    reads = count_reads(monkeypatch, code)
+    monkeypatch.setattr(hub, "_coalesce", 0.5)
     stream = student_stream(code, await entry_id(client, headers, code, "A"))
     await event(stream)
-    before = hub.refreshes
+    reads.clear()
 
+    for _ in range(200):
+        notify_changed(code)
+    await asyncio.sleep(1.5)
+    assert len(reads) == 1
+
+    for _ in range(200):
+        notify_changed(code)
+    await asyncio.sleep(1.5)
+    assert len(reads) == 2
+    await stream.aclose()
+
+
+@pytest.mark.asyncio
+async def test_a_burst_of_real_joins_ends_with_a_fresh_snapshot_and_bounded_reads(
+    client, room, join, monkeypatch
+):
+    headers, code, students = await room("live_burst_joins", ("A",))
+    reads = count_reads(monkeypatch, code)
+    stream = student_stream(code, await entry_id(client, headers, code, "A"))
+    await event(stream)
+    reads.clear()
+
+    started = time.monotonic()
     for i in range(20):
         await join(code, f"late{i}")
-    for _ in range(100):
-        if hub.refreshes > before:
+    fresh = False
+    for _ in range(400):
+        snapshot = hub.snapshot(code)
+        if snapshot is not None and any(e.name == "late19" for e in snapshot.entries):
+            fresh = True
             break
         await asyncio.sleep(0.05)
-    await asyncio.sleep(settings.SSE_COALESCE_SECONDS * 3)
+    elapsed = time.monotonic() - started
 
-    assert 1 <= hub.refreshes - before <= 5
+    assert fresh
+    assert 1 <= len(reads) <= elapsed / settings.SSE_COALESCE_SECONDS + 2
     assert (await entries(client, headers, code))[-1]["name"] == "late19"
     await stream.aclose()
 
@@ -220,6 +264,41 @@ async def test_300_subscribers_cost_one_database_read_per_change(client, room, j
     assert updates[299][1]["position"] == 299
     for stream in streams:
         await stream.aclose()
+
+
+@pytest.mark.asyncio
+async def test_stream_of_a_student_missing_from_a_stale_snapshot_stays_open(
+    client, room, join, monkeypatch
+):
+    headers, code, students = await room("live_stale", ("A",))
+    watcher = teacher_stream(code)
+    await event(watcher)
+    stale = hub.snapshot(code)
+    fresh_loader = hub._loader
+
+    async def stale_loader(requested):
+        return stale
+
+    monkeypatch.setattr(hub, "_loader", stale_loader)
+    late = await join(code, "Late")
+    eid = await entry_id(client, headers, code, "Late")
+
+    stream = student_stream(code, eid)
+    name, data = await event(stream)
+    assert (name, data["status"]) == ("entry", "waiting")
+    pending = asyncio.ensure_future(stream.__anext__())
+    done, _ = await asyncio.wait({pending}, timeout=0.6)
+    assert not done
+
+    monkeypatch.setattr(hub, "_loader", fresh_loader)
+    await client.post(f"{API}/{code}/leave", headers={"X-Entry-Token": students["A"]["token"]})
+    chunk = await asyncio.wait_for(pending, 3.0)
+    head, body = chunk.strip().splitlines()[:2]
+    assert head == "event: entry"
+    assert json.loads(body.removeprefix("data: "))["position"] == 1
+    assert late["status"] == "waiting"
+    await stream.aclose()
+    await watcher.aclose()
 
 
 @pytest.mark.asyncio

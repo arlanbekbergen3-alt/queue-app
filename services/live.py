@@ -273,10 +273,11 @@ async def _stream(
             rendered = render(snapshot) if snapshot is not None else None
             if rendered is None:
                 rendered = await on_missing()
-                if rendered is not None:
-                    yield _sse("entry", rendered[0])
-                yield _sse("end", "{}")
-                return
+                if rendered is None or rendered[1]:
+                    if rendered is not None:
+                        yield _sse("entry", rendered[0])
+                    yield _sse("end", "{}")
+                    return
             payload, finished = rendered
             if payload != last:
                 last = payload

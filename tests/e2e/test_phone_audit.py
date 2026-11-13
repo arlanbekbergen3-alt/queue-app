@@ -196,3 +196,21 @@ def test_collapsible_sections_keep_their_disclosure_marker_on_a_phone(page: Page
     expect(page.locator("#w-more summary")).to_be_visible(timeout=SLOW)
     display = page.evaluate("getComputedStyle(document.querySelector('#w-more summary')).display")
     assert display == "list-item"
+
+
+def test_a_pasted_question_row_toggles_when_its_text_is_tapped(page: Page, api, open_session):
+    teacher = open_session("Строки списка")
+    api.post("/assignments", headers=teacher["headers"], json={"title": "Банк для касаний"})
+    page.set_viewport_size({"width": 360, "height": 740})
+    login_as(page, teacher)
+    page.goto("/protocol")
+    page.locator("#assignments > div").first.get_by_role("button", name="Открыть").click()
+    page.fill("#qb-text", "Первый вопрос?" + chr(10) + "Второй вопрос?")
+    page.click("#qb-preview")
+    rows = page.locator("#qb-list .bulk-row")
+    expect(rows).to_have_count(2, timeout=SLOW)
+    box = rows.first.locator("input").bounding_box()
+    assert box and box["width"] >= 20 and box["height"] >= 20
+    rows.first.get_by_text("Первый вопрос?").click()
+    expect(rows.first.locator("input")).not_to_be_checked()
+    expect(page.locator("#qb-count")).to_have_text("Будет добавлено: 1 из 2")

@@ -43,7 +43,8 @@
   .pts button { min-width:44px; min-height:44px; padding:6px 10px; background:var(--bg); color:var(--text); border:1px solid var(--border); }
   .pts button.on { background:var(--accent); color:#fff; border-color:var(--accent); }
   .bulk-row { display:flex; gap:8px; align-items:flex-start; padding:4px 0; border-bottom:1px solid var(--border); }
-  .bulk-row input { width:auto; margin-top:4px; }
+  .bulk-row { cursor:pointer; color:var(--text); font-size:inherit; margin:0; }
+  .bulk-row input { width:22px; height:22px; min-height:0; margin:2px 0 0; flex:0 0 22px; }
   .bulk-row .txt { flex:1; overflow-wrap:anywhere; }
   .timer.bad { color:var(--bad); }
   .score { display:grid; grid-template-columns:1fr 90px; gap:8px; align-items:center; margin-top:8px; }
@@ -458,7 +459,7 @@ function renderBulk() {
   const list = $("qb-list");
   list.replaceChildren();
   bulkLines.forEach((line, index) => {
-    const row = el("div", { class: "bulk-row" });
+    const row = el("label", { class: "bulk-row" });
     const box = el("input", { type: "checkbox" });
     box.checked = line.keep;
     box.disabled = line.status !== "ok";

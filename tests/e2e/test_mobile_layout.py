@@ -18,6 +18,24 @@ def overflow(page: Page) -> int:
     )
 
 
+def wide_elements(page: Page) -> list[str]:
+    return page.evaluate(
+        """() => {
+            const limit = document.documentElement.clientWidth + 0.5;
+            return [...document.querySelectorAll("body *")]
+                .filter((node) => node.getBoundingClientRect().right > limit)
+                .slice(0, 8)
+                .map((node) => node.tagName.toLowerCase() + (node.id ? "#" + node.id : "")
+                    + (node.className && typeof node.className === "string" ? "." + node.className.split(" ").join(".") : "")
+                    + ":" + Math.round(node.getBoundingClientRect().right));
+        }"""
+    )
+
+
+def assert_fits(page: Page) -> None:
+    assert overflow(page) <= 0, wide_elements(page)
+
+
 def test_new_pages_do_not_scroll_sideways_on_a_phone(page: Page, api, open_session):
     teacher, assignment = prepare(api, open_session, questions=3)
     code = teacher["code"]
@@ -53,13 +71,13 @@ def test_new_pages_do_not_scroll_sideways_on_a_phone(page: Page, api, open_sessi
     expect(page.locator("#need-login")).to_be_hidden(timeout=SLOW)
     page.click("#an-session")
     expect(page.locator("#an-weak table").first).to_be_visible(timeout=SLOW)
-    assert overflow(page) <= 0
+    assert_fits(page)
 
     page.goto("/students")
     expect(page.locator("#students > div").first).to_be_visible(timeout=SLOW)
     page.locator("#students > div").first.click()
     expect(page.locator("#card")).to_be_visible(timeout=SLOW)
-    assert overflow(page) <= 0
+    assert_fits(page)
 
     page.goto("/spaces")
     expect(page.locator("#spaces > div").first).to_be_visible(timeout=SLOW)
@@ -67,12 +85,12 @@ def test_new_pages_do_not_scroll_sideways_on_a_phone(page: Page, api, open_sessi
     expect(page.locator("#pubs > div").first).to_be_visible(timeout=SLOW)
     page.locator("#pubs").get_by_role("button", name="Показать").click()
     expect(page.locator("#preview")).to_be_visible(timeout=SLOW)
-    assert overflow(page) <= 0
+    assert_fits(page)
 
     page.goto("/teacher")
     page.get_by_role("button", name=code).click()
     expect(page.locator("#registration-btn")).to_be_visible(timeout=SLOW)
-    assert overflow(page) <= 0
+    assert_fits(page)
 
 
 def test_student_page_with_the_not_ready_controls_fits_a_phone(
@@ -85,10 +103,10 @@ def test_student_page_with_the_not_ready_controls_fits_a_phone(
     page.set_viewport_size(PHONE)
     student_join(page, session["code"], "Второй студент с очень длинным именем")
     expect(page.locator("#notready-btn")).to_be_visible(timeout=SLOW)
-    assert overflow(page) <= 0
+    assert_fits(page)
     page.click("#notready-btn")
     expect(page.locator("#ready-btn")).to_be_visible(timeout=SLOW)
-    assert overflow(page) <= 0
+    assert_fits(page)
     other.close()
 
 
@@ -104,23 +122,23 @@ def test_order_mode_controls_fit_a_phone(page: Page, browser, live_server, open_
     other_page.fill("#code", code)
     other_page.fill("#name", "Студент с очень длинным именем и фамилией")
     expect(other_page.locator("#ready-choice")).to_be_visible(timeout=SLOW)
-    assert overflow(other_page) <= 0
+    assert_fits(other_page)
     other_page.check("#ready-now")
     other_page.click("#join-btn")
     expect(other_page.locator("#message")).to_contain_text("Вы в списке", timeout=SLOW)
     expect(other_page.locator("#readynow-btn")).to_be_visible()
-    assert overflow(other_page) <= 0
+    assert_fits(other_page)
 
     page.set_viewport_size(PHONE)
     login_as(page, session)
     page.goto("/teacher")
     expect(page.locator("#order-mode")).to_be_visible(timeout=SLOW)
-    assert overflow(page) <= 0
+    assert_fits(page)
     page.get_by_role("button", name=code).click()
     expect(page.locator("#lottery-btn")).to_be_visible(timeout=SLOW)
     page.click("#settings-box summary")
     expect(page.locator("#s-ready-bonus")).to_be_visible()
-    assert overflow(page) <= 0
+    assert_fits(page)
     other.close()
 
 
@@ -151,10 +169,10 @@ def test_budget_panel_and_time_fields_fit_a_phone(page: Page, api, open_session)
     login_as(page, teacher)
     page.goto("/teacher")
     expect(page.locator("#limit-until")).to_be_visible(timeout=SLOW)
-    assert overflow(page) <= 0
+    assert_fits(page)
     page.get_by_role("button", name=teacher["code"]).click()
     expect(page.locator("#budget-offer")).to_be_visible(timeout=SLOW)
-    assert overflow(page) <= 0
+    assert_fits(page)
 
 
 def test_start_panel_and_work_panel_fit_a_phone(
@@ -168,18 +186,18 @@ def test_start_panel_and_work_panel_fit_a_phone(
     login_as(page, teacher)
     page.goto("/teacher")
     expect(page.locator("#mode")).to_be_visible(timeout=SLOW)
-    assert overflow(page) <= 0
+    assert_fits(page)
     page.click("#create-btn")
     expect(page.locator("#start-panel")).to_be_visible(timeout=SLOW)
     page.wait_for_function("document.getElementById('start-qr').naturalWidth > 0")
-    assert overflow(page) <= 0
+    assert_fits(page)
     page.click("#start-hide")
     page.get_by_role("button", name=teacher["code"]).click()
     expect(page.locator("#entries")).to_contain_text("Студент с очень", timeout=SLOW)
     page.click("#next-btn")
     expect(page.locator("#work-card")).to_be_visible(timeout=SLOW)
     expect(page.locator("#work-body .crit")).to_have_count(2)
-    assert overflow(page) <= 0
+    assert_fits(page)
     other.close()
 
 
@@ -202,7 +220,7 @@ def test_bulk_import_presets_and_quick_join_fit_a_phone(
     page.fill("#qb-text", "1. " + "очень длинный вопрос " * 12 + "\n2. Второй вопрос?")
     page.click("#qb-preview")
     expect(page.locator("#qb-list .bulk-row").first).to_be_visible(timeout=SLOW)
-    assert overflow(page) <= 0
+    assert_fits(page)
 
     other = browser.new_context(base_url=live_server)
     student = other.new_page()
@@ -212,7 +230,7 @@ def test_bulk_import_presets_and_quick_join_fit_a_phone(
     )
     student.goto(f"/?code={teacher['code']}")
     expect(student.locator("#quick-join")).to_be_visible(timeout=SLOW)
-    assert overflow(student) <= 0
+    assert_fits(student)
     other.close()
 
 
@@ -226,11 +244,11 @@ def test_presence_code_and_field_fit_a_phone(page: Page, browser, live_server, o
         re.compile(r"^\d{3} \d{3}$"), timeout=SLOW
     )
     page.wait_for_function("document.getElementById('presence-qr').naturalWidth > 0")
-    assert overflow(page) <= 0
+    assert_fits(page)
     other = browser.new_context(base_url=live_server)
     student = other.new_page()
     student.set_viewport_size(PHONE)
     student.goto(f"/?code={teacher['code']}")
     expect(student.locator("#presence-box")).to_be_visible(timeout=SLOW)
-    assert overflow(student) <= 0
+    assert_fits(student)
     other.close()

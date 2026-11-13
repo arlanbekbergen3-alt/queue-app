@@ -255,3 +255,20 @@ def test_opening_a_card_scrolls_it_into_view_on_a_phone(page: Page, api, open_se
     expect(page.locator("#card")).to_be_visible(timeout=SLOW)
     page.wait_for_timeout(900)
     assert page.evaluate(CARD_IN_VIEW, "#card")
+
+
+def test_the_teacher_header_stacks_and_paired_fields_line_up_on_a_phone(page: Page, open_session):
+    teacher = open_session("Шапка")
+    page.set_viewport_size({"width": 360, "height": 740})
+    login_as(page, teacher)
+    page.goto("/teacher")
+    expect(page.locator("#limit-until")).to_be_visible(timeout=SLOW)
+    title_bottom = (
+        page.locator("h1").bounding_box()["y"] + page.locator("h1").bounding_box()["height"]
+    )
+    for name in ("Протокол сдачи", "Студенты", "Группы"):
+        link = page.locator(".top").get_by_role("link", name=name).bounding_box()
+        assert link["y"] >= title_bottom - 2, (name, link, title_bottom)
+    until = page.locator("#limit-until").bounding_box()
+    minutes = page.locator("#limit-minutes").bounding_box()
+    assert abs((until["y"] + until["height"]) - (minutes["y"] + minutes["height"])) <= 2

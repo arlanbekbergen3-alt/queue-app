@@ -68,6 +68,10 @@ def test_ready_criteria_sets_are_added_with_one_click_and_stay_editable(
     page.fill("#c-name", "Своя строка")
     page.click("#c-add")
     expect(page.locator("#criteria > div")).to_have_count(8, timeout=SLOW)
+    page.fill("#qb-text", "1. Что такое индекс?" + chr(10) + "2. Зачем нужна транзакция?")
+    page.click("#qb-preview")
+    expect(page.locator("#qb-list .bulk-row")).to_have_count(2, timeout=SLOW)
+    page.set_viewport_size({"width": 1180, "height": 860})
     shot(page, "protocol-presets-and-bulk")
 
 

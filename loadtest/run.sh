@@ -20,8 +20,11 @@ MSYS_NO_PATHCONV=1 docker run --rm -i \
   -e STUDENTS="${STUDENTS:-300}" \
   -e ARRIVAL_SECONDS="${ARRIVAL_SECONDS:-60}" \
   -e POLL_SECONDS="${POLL_SECONDS:-240}" \
+  -e ORDER_MODE="${ORDER_MODE:-join}" \
+  -e PRESENCE="${PRESENCE:-0}" \
+  -e GRADE_INTERVAL_SECONDS="${GRADE_INTERVAL_SECONDS:-15}" \
   -v "$DIR:/scripts" \
   grafana/k6:0.57.0 run --quiet \
   --summary-export "/scripts/results/$LABEL-summary.json" \
   ${K6_OUT:+--out "json=/scripts/results/$LABEL-points.json"} \
-  /scripts/peak.js 2>&1 | tee "$RESULTS/$LABEL-k6.txt"
+  "/scripts/${SCRIPT:-peak.js}" 2>&1 | tee "$RESULTS/$LABEL-k6.txt"

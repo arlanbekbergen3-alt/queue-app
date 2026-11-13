@@ -15,6 +15,8 @@ TEACHER_START = 15.0
 TEACHER_INTERVAL = 60.0
 SAFETY_POLL = 60.0
 OUT = os.environ.get("OUT", "")
+SESSION_OPTIONS = json.loads(os.environ.get("SESSION_OPTIONS", "{}"))
+PRESENCE = os.environ.get("PRESENCE", "0") == "1"
 
 API = f"{BASE}/api/v1"
 timings: dict[str, list[float]] = {
@@ -74,16 +76,16 @@ async def read_stream(client, url, headers, on_event, stop: asyncio.Event):
         record_error("stream", type(exc).__name__)
 
 
-async def student(i: int, client: httpx.AsyncClient, code: str, run_id: str, stop: asyncio.Event):
+async def student(
+    i: int, client: httpx.AsyncClient, code: str, run_id: str, stop: asyncio.Event, auth: dict
+):
     token = f"lt-{run_id}-{i}".ljust(24, "x")
     await asyncio.sleep(random.random() * ARRIVAL)
-    joined = await timed(
-        client,
-        "join",
-        "POST",
-        f"{API}/sessions/{code}/join",
-        json={"name": f"Student {i}", "token": token},
-    )
+    body = {"name": f"Student {i}", "token": token}
+    if PRESENCE:
+        shown = await client.get(f"{API}/sessions/{code}/presence", headers=auth)
+        body["presence_code"] = shown.json().get("code")
+    joined = await timed(client, "join", "POST", f"{API}/sessions/{code}/join", json=body)
     if joined is None or joined.status_code != 200:
         return
     last = {"payload": None}
@@ -186,14 +188,23 @@ async def main() -> None:
         )
         auth = {"Authorization": f"Bearer {login.json()['access_token']}"}
         session = await client.post(
-            f"{API}/sessions", json={"title": "Load test SSE"}, headers=auth
+            f"{API}/sessions",
+            json={
+                "title": "Load test SSE",
+                **(
+                    {"presence_check": "rotating_code", "presence_interval": 60} if PRESENCE else {}
+                ),
+                **SESSION_OPTIONS,
+            },
+            headers=auth,
         )
         code = session.json()["code"]
 
         stop = asyncio.Event()
         started = time.perf_counter()
         tasks = [
-            asyncio.create_task(student(i, client, code, run_id, stop)) for i in range(STUDENTS)
+            asyncio.create_task(student(i, client, code, run_id, stop, auth))
+            for i in range(STUDENTS)
         ]
         tasks.append(asyncio.create_task(teacher(client, code, auth, stop)))
         await asyncio.sleep(ARRIVAL + DURATION)

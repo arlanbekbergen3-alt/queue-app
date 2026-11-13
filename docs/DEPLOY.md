@@ -1,121 +1,118 @@
-# Развёртывание на VPS (инструкция; на сервере не выполнялась)
+# Развёртывание на VPS с 1 ГБ памяти (инструкция; на сервере не выполнялась)
 
-Здесь описан порядок действий для одного сервера (Ubuntu/Debian) с Docker. **Деплой на сервер я не делал.** Проверено локально 11.11: `docker compose build --no-cache`, запуск на пустой базе (postgres и web healthy, `/ready` отвечает `{"status":"ready"}`, процесс не от root) и раздел 4 (резервная копия и восстановление). Всё остальное (Caddy, HTTPS, `FORWARDED_ALLOW_IPS`, cron, обновление через `git pull`) предположение, его нужно пройти на настоящем сервере.
+Порядок действий для одного сервера (Ubuntu/Debian) с Docker. **На настоящий сервер я ничего не выкладывал.** Проверено локально 13.11 на отдельном проекте compose (порты 18080 и 18443, имена `queueprodtest-*`, потом всё удалено): сборка образа, запуск `docker-compose.prod.yml` на пустой базе (postgres, web и caddy healthy), `/health` и `/ready` через Caddy, страницы, QR, поток событий SSE через прокси, `/metrics` снаружи закрыт (404), заголовки безопасности, процесс не от root, корневая файловая система только для чтения, резервная копия с ротацией и восстановление в новую базу. Не проверено: настоящий домен и выпуск сертификата Let's Encrypt (локально Caddy работал по обычному HTTP), cron, нагрузка на VPS с 1 ГБ, обновление через `git pull`.
 
 ## Что нужно
 
-- VPS от 1 ГБ памяти, 1 vCPU (предположение: нагрузки на одну группу хватает; замеров на VPS нет).
-- Домен, A-запись которого указывает на сервер.
+- VPS от 1 ГБ памяти, 1 vCPU (предположение: нагрузки на одну группу хватает; замеров на VPS нет). Локальный замер покоя: caddy 13 МБ, web 75 МБ, postgres 31 МБ (пределы в файле: 96, 384 и 320 МБ, в сумме больше 1 ГБ только на бумаге). Добавьте swap на 1-2 ГБ.
+- Домен, A-запись которого указывает на сервер; порты 80 и 443 открыты. Остальное (5432, 8000) наружу не публикуется вовсе: у web и postgres нет `ports`, они доступны только внутри сети compose.
 - Docker и Docker Compose plugin.
-- Открыты порты 80 и 443, остальные (в том числе 8000 и 5434) наружу не открывать: в `docker-compose.yml` они привязаны к `127.0.0.1`.
 
 ## 1. Код и настройки
 
 ```bash
-git clone <ваш-репозиторий> queue-app && cd queue-app    # git-репозиторий создаёте вы сами
-cp .env.example .env
-python3 -c "import secrets; print(secrets.token_urlsafe(48))"   # для JWT_SECRET_KEY
-python3 -c "import secrets; print(secrets.token_urlsafe(12))"   # для TEACHER_INVITE_CODE и DB_PASSWORD
-nano .env        # заполните DB_PASSWORD, JWT_SECRET_KEY, TEACHER_INVITE_CODE
+git clone <ваш-репозиторий> queue-app && cd queue-app
+cp .env.prod.example .env
+python3 -c "import secrets; print(secrets.token_urlsafe(48))"   # JWT_SECRET_KEY
+python3 -c "import secrets; print(secrets.token_urlsafe(12))"   # DB_PASSWORD, TEACHER_INVITE_CODE, METRICS_TOKEN
+nano .env      # SITE_ADDRESS=ваш.домен, DB_PASSWORD, JWT_SECRET_KEY, TEACHER_INVITE_CODE, METRICS_TOKEN
 chmod 600 .env
 ```
 
-Приложение не запустится с пустыми секретами, значениями `change-me...`, JWT-ключом короче 32 символов или кодом приглашения короче 8 (проверено локально: `tests/test_ops.py`).
-
-Важные переменные (полный список с умолчаниями в `.env.example`):
-
-| Переменная | Что делает |
-|---|---|
-| `TEACHER_INVITE_CODE` | код, без которого преподаватель не зарегистрируется; раздавайте только преподавателям |
-| `METRICS_TOKEN` | если задан, `/metrics` требует `Authorization: Bearer <токен>` |
-| `FORWARDED_ALLOW_IPS` | IP прокси, которому доверяем заголовок `X-Forwarded-For` (нужен для лимитов по IP) |
-| `MAX_QUEUE_SIZE`, `MAX_ENTRIES_PER_SESSION` | размер очереди и записей за сессию |
-| `RATE_LIMIT_*`, `MAX_CONCURRENT_REQUESTS` | защита от перегрузки (см. `docs/DECISIONS.md`, п. 5-6) |
-| `SESSION_AUTO_CLOSE_HOURS` | через сколько часов без активности закрывать забытую сессию (0 отключает) |
+Приложение не запустится с пустыми секретами, значениями `change-me...`, JWT-ключом короче 32 символов или кодом приглашения короче 8 (`tests/test_ops.py`). `.env.prod.example` содержит только пустые заглушки.
 
 ## 2. Запуск
 
 ```bash
-docker compose up -d --build
-docker compose ps                         # postgres и web должны быть healthy
-curl -s http://127.0.0.1:8000/ready       # {"status":"ready"}
+docker compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml ps          # postgres, web, caddy: healthy
+curl -s https://ваш.домен/ready                        # {"status":"ready"}
 ```
 
-Миграции применяются при старте контейнера `web` (`alembic upgrade head`). Процесс **один**: рассылка SSE, лимиты и метрики хранятся в памяти процесса. Не запускайте несколько реплик и `--workers N` без доработки (Redis или `LISTEN/NOTIFY`, см. `docs/DECISIONS.md`, п. 4).
+Миграции применяются при старте `web`. Процесс **один**: рассылка SSE, лимиты, счётчики перебора кода присутствия и метрики живут в памяти процесса, поэтому не запускайте несколько реплик или `--workers N` (`docs/DECISIONS.md`, п. 4).
 
-## 3. HTTPS через reverse proxy (пример для Caddy)
+Что сделано для безопасности в `docker-compose.prod.yml` и `Dockerfile` (проверено):
 
-Caddy сам получает и продлевает сертификат Let's Encrypt.
+- процесс в контейнере работает под пользователем `app` (uid 10001, без оболочки), код принадлежит root и ему недоступен для записи, корневая ФС только для чтения (запись только в `/tmp` в памяти), `cap_drop: ALL`, `no-new-privileges`;
+- у postgres и web нет опубликованных портов; наружу смотрит только Caddy (80 и 443);
+- пределы памяти и ротация журналов (10 МБ на файл, 5 файлов на контейнер);
+- postgres настроен под маленькую память (`shared_buffers=64MB`, `max_connections=40`), пул приложения 10 соединений (`DB_POOL_SIZE`);
+- `AI_ENABLED=false` по умолчанию: Ollama не нужна и на 1 ГБ не запустится (включение описано в `docs/AI.md`).
+
+`FORWARDED_ALLOW_IPS="*"` в файле допустим, потому что до `web` доходит только Caddy из внутренней сети. Не публикуйте порт 8000 наружу, иначе клиент сможет подделать свой IP в `X-Forwarded-For` и обойти лимиты по IP.
+
+## 3. HTTPS
+
+Caddy сам получает и продлевает сертификат Let's Encrypt для `SITE_ADDRESS` (нужны открытые 80 и 443 и корректная A-запись). Конфиг `deploy/Caddyfile`:
+
+- `/metrics` снаружи отвечает 404, Prometheus (если появится) обращается к `web` изнутри сети и передаёт `METRICS_TOKEN`;
+- `flush_interval -1` нужен, чтобы потоки SSE не буферизовались (проверено: событие приходит через прокси сразу);
+- заголовки `Strict-Transport-Security`, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`; заголовок `Server` убран.
+
+Для локальной проверки без домена задайте в `.env` `SITE_ADDRESS=:80`, `HTTP_PORT=18080`, `HTTPS_PORT=18443`.
+
+## 4. Резервное копирование и восстановление
+
+Скрипты в `deploy/` (проверены локально: три копии при `BACKUP_KEEP=2` оставляют две свежих; восстановление в новую базу показало те же числа и версию миграции):
 
 ```bash
-sudo apt install -y caddy
-sudo tee /etc/caddy/Caddyfile >/dev/null <<'EOF'
-queue.example.com {
-    encode gzip
-    @metrics path /metrics
-    respond @metrics 404
-    reverse_proxy 127.0.0.1:8000 {
-        flush_interval -1
-    }
-}
-EOF
-sudo systemctl reload caddy
+# вручную
+BACKUP_DIR=/var/backups/queue BACKUP_KEEP=14 bash deploy/backup.sh
+
+# ежедневно в 03:10 (crontab -e), хранить 14 последних копий
+10 3 * * * cd /home/ubuntu/queue-app && BACKUP_DIR=/var/backups/queue BACKUP_KEEP=14 bash deploy/backup.sh >> /var/log/queue-backup.log 2>&1
 ```
 
-- `flush_interval -1` нужен, чтобы потоки SSE (`/events`) не буферизовались прокси.
-- Блок `@metrics` скрывает `/metrics` от интернета; Prometheus (если появится) ходит на `127.0.0.1:8000/metrics` напрямую.
-- Для nginx: `proxy_buffering off;`, `proxy_read_timeout 1h;`, заголовки `X-Forwarded-For`.
+`backup.sh` делает `pg_dump -Fc`, проверяет, что архив читается (`pg_restore --list`), только потом сохраняет файл (права 600; поведение на повреждённом архиве не проверялось) и удаляет всё, что старше `BACKUP_KEEP` последних. Папка копий должна принадлежать пользователю, от которого запускается cron.
 
-**IP клиента (предположение, не проверено):** приложение видит адрес, с которого пришёл прокси. Для Docker с опубликованным портом это обычно адрес шлюза сети compose. Узнайте его и пропишите в `.env`, затем перезапустите:
+Восстановление **в новую базу** (живую базу скрипт не трогает и откажется её перезаписывать):
 
 ```bash
-docker network inspect queue-app_default -f '{{(index .IPAM.Config 0).Gateway}}'
-# FORWARDED_ALLOW_IPS=<этот адрес>
-docker compose up -d
+bash deploy/restore.sh /var/backups/queue/queue_20260101-031000.dump queue_restore
+# выведет число сессий и записей и версию миграции; проверьте, что они похожи на ожидаемые
 ```
 
-Если не задать, лимиты по IP будут считать всех студентов одним клиентом (адресом прокси). Лимиты щедрые (6000 запросов в минуту на IP), но проверьте на пилоте.
+Чтобы заменить рабочую базу копией: остановить web (`docker compose -f docker-compose.prod.yml stop web`), переименовать базы через `psql` (`ALTER DATABASE queue_db RENAME TO queue_db_old`, затем `queue_restore` в `queue_db`), запустить web. **Копии лежат на том же сервере**: для настоящей защиты копируйте их на другой сервер или в облако (`rclone`, `scp`; предложение, не настроено). **Регулярно проверяйте восстановление**: неподтверждённая копия не считается копией. Копии содержат имена и оценки (см. `docs/PILOT.md`, раздел 5), храните их так же осторожно, как саму базу.
 
-## 4. Резервное копирование БД
+## 5. Чек-лист безопасности перед первым занятием
 
-Проверено локально на тестовом стеке с тем же `docker-compose.yml` (имена контейнеров были другие): `pg_dump -Fc`, затем `pg_restore --no-owner` в новую базу `queue_restore`; после восстановления число записей, сессий и версия миграции совпали с исходными. Не проверено: cron, удаление старых копий, восстановление поверх существующей базы.
+- [ ] `.env` с правами 600, секреты сгенерированы, не совпадают с примерами, в git не попали (`git status`);
+- [ ] `TEACHER_INVITE_CODE` выдан только преподавателям; после регистрации всех нужных преподавателей его можно сменить;
+- [ ] `METRICS_TOKEN` задан; `/metrics` снаружи отвечает 404 (`curl -s -o /dev/null -w "%{http_code}" https://ваш.домен/metrics`);
+- [ ] `CORS_ORIGINS=[]`: страницы отдаются с того же домена, чужие сайты не нужны;
+- [ ] открыты только 80 и 443 (`ss -tlnp`, брандмауэр хостинга); 5432 и 8000 с интернета недоступны;
+- [ ] лимиты запросов оставлены по умолчанию или осознанно изменены (`RATE_LIMIT_*`, `MAX_CONCURRENT_REQUESTS`, `docs/DECISIONS.md`, п. 5-6); перебор кода присутствия ограничен отдельно (п. 37);
+- [ ] `AI_ENABLED=false`, пока Ollama не развёрнута отдельно;
+- [ ] срок хранения данных `DATA_RETENTION_DAYS` согласован (по умолчанию 180 дней, `docs/PILOT.md`, раздел 5);
+- [ ] резервная копия сделана и **один раз восстановлена** в тестовую базу;
+- [ ] `docker compose -f docker-compose.prod.yml ps` показывает `healthy`, `curl https://ваш.домен/ready` отвечает `ready`;
+- [ ] ОС и Docker обновлены, вход по SSH только по ключу (вне этого репозитория).
 
-```bash
-sudo mkdir -p /var/backups/queue && sudo chown "$USER" /var/backups/queue && chmod 700 /var/backups/queue   # владелец тот, от кого запускается cron
-# ежедневная копия в 03:10, хранить 14 дней (crontab -e от пользователя с доступом к docker)
-10 3 * * * docker exec queue_db pg_dump -U postgres -Fc queue_db > /var/backups/queue/queue_$(date +\%F).dump && find /var/backups/queue -name 'queue_*.dump' -mtime +14 -delete
-```
-
-Восстановление в новую базу и проверка:
-
-```bash
-docker exec queue_db psql -U postgres -c "CREATE DATABASE queue_restore"
-docker exec -i queue_db pg_restore -U postgres -d queue_restore --no-owner < /var/backups/queue/queue_2026-01-01.dump
-docker exec queue_db psql -U postgres -d queue_restore -c "SELECT count(*) FROM entries"
-```
-
-Дамп формата `-Fc` бинарный: на Windows в PowerShell перенаправление `>` его портит, делайте команду в Git Bash или `docker exec ... pg_dump -f` внутри контейнера и `docker cp` (на сервере Linux это не касается). Копии лежат на том же сервере: для настоящей защиты копируйте их на другой сервер или в облако (`rclone`, `scp`). **Проверку восстановления делайте регулярно**, копия, которую не пробовали восстановить, не считается.
-
-## 4.1. ИИ-помощник на сервере (необязательно)
-
-По умолчанию выключен. Включение (`AI_ENABLED=true`) и установка Ollama описаны в `docs/AI.md`. Для доступа контейнера к Ollama на хосте в `docker-compose.yml` добавлен `extra_hosts: host.docker.internal:host-gateway`; Ollama на хосте должна принимать подключения не только с `127.0.0.1` (**не проверено на Linux-сервере**). Модель на процессоре медленная, а на VPS с 1 ГБ памяти не запустится. Тренировка студентов раскрывает банк вопросов: включайте её только осознанно.
-
-## 5. Обновление
+## 6. Обновление
 
 ```bash
 git pull
-docker compose up -d --build        # миграции применятся при старте web
-curl -s http://127.0.0.1:8000/ready
+docker compose -f docker-compose.prod.yml up -d --build        # миграции применятся при старте web
+curl -s https://ваш.домен/ready
 ```
 
-Короткий перерыв (секунды) при перезапуске неизбежен; студенты в этот момент автоматически переходят на опрос и переподключают поток.
+Перед обновлением сделайте копию (`deploy/backup.sh`). Короткий перерыв (секунды) при перезапуске неизбежен: страницы студентов переходят на опрос и переподключают поток сами. Откат миграции: `docker compose -f docker-compose.prod.yml exec web alembic downgrade -1`; учтите, что `downgrade` удаляет данные добавленных столбцов и таблиц (`docs/KNOWN_ISSUES.md`).
 
-## 6. Что смотреть после запуска
+## 7. Что смотреть после запуска
 
-- `docker compose logs -f web` (логи в JSON, в каждой строке `request_id`).
-- `curl -s http://127.0.0.1:8000/metrics`: `queue_http_requests_total{status="5xx"}`, `queue_http_rejected_*` (отказы по лимитам), `queue_db_pool_checked_out` (у пула 30 соединений), `queue_sse_connections`.
-- Рост числа 503 или `queue_db_pool_checked_out`, близкий к 30, значит перегрузку; значения лимитов настраиваются переменными окружения.
+- `docker compose -f docker-compose.prod.yml logs -f web` (JSON, в каждой строке `request_id`).
+- `/metrics` с заголовком `Authorization: Bearer <METRICS_TOKEN>` изнутри сервера: `queue_http_requests_total{status="5xx"}`, `queue_http_rejected_*`, `queue_db_pool_checked_out` (у пула 10 соединений), `queue_sse_connections`, `queue_sessions_purged_total`.
+- Очистка старых данных пишет в журнал строку «Retention: removed …»; вручную: `docker compose -f docker-compose.prod.yml exec web python -m services.retention --days 180` (только посчитать) и с `--apply` (удалить).
+- Рост 503 или `queue_db_pool_checked_out`, близкий к размеру пула, значит перегрузку; значения лимитов задаются переменными окружения.
+
+## 8. ИИ-помощник на сервере (необязательно)
+
+По умолчанию выключен. Включение и установка Ollama описаны в `docs/AI.md`; на VPS с 1 ГБ модель не запустится, подходит только отдельная машина. В `docker-compose.prod.yml` доступа к Ollama на хосте нет (в отличие от `docker-compose.yml` для разработки): его нужно добавить осознанно. Тренировка студентов раскрывает банк вопросов: включайте её только осознанно.
+
+## Разработка и прежний файл
+
+`docker-compose.yml` остался для локальной разработки (порты привязаны к `127.0.0.1`, имена `queue_db` и `queue_api`); боевой вариант это `docker-compose.prod.yml`.
 
 ## Чего здесь нет
 
-Мониторинга и оповещений, автоматического резервного копирования вне сервера, нескольких реплик, нагрузочных замеров на реальном VPS и в Wi-Fi колледжа.
+Мониторинга и оповещений, автоматического копирования копий вне сервера, нескольких реплик, нагрузочных замеров на реальном VPS и в Wi-Fi колледжа, проверенного выпуска сертификата.

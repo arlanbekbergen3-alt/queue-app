@@ -31,6 +31,9 @@ from schemas.protocol import (
     CriterionUpdate,
     GradesIn,
     ImportLineOut,
+    LevelIn,
+    LevelOut,
+    LevelsIn,
     MySubmissionOut,
     OriginOut,
     PresetApplyIn,
@@ -270,10 +273,13 @@ class ProtocolService:
             >= settings.MAX_CRITERIA_PER_ASSIGNMENT
         ):
             raise ConflictError("Too many criteria", code="criteria_limit")
+        levels = self._levels_payload(data.levels, data.max_points)
         criterion = CriterionORM(
             assignment_id=assignment_id,
             position=await self.repo.next_criterion_position(assignment_id),
-            **data.model_dump(),
+            name=data.name,
+            max_points=data.max_points,
+            levels=levels,
         )
         self.db.add(criterion)
         await self._commit_unique(
@@ -292,9 +298,33 @@ class ProtocolService:
         for key, value in data.model_dump(exclude_unset=True).items():
             if value is not None:
                 setattr(criterion, key, value)
+        self._levels_payload(
+            [LevelIn(**level) for level in criterion.levels or []], criterion.max_points
+        )
         await self._commit_unique(
             "A criterion with this name already exists", "criterion_duplicate"
         )
+        return CriterionOut.model_validate(criterion)
+
+    @staticmethod
+    def _levels_payload(levels: list[LevelIn] | None, max_points: int) -> list[dict] | None:
+        if not levels:
+            return None
+        if any(level.points > max_points for level in levels):
+            raise UnprocessableError(
+                f"Баллы уровней должны быть от 0 до {max_points}", code="levels_out_of_range"
+            )
+        return [level.model_dump() for level in levels]
+
+    async def set_levels(
+        self, teacher_id: str, assignment_id: str, criterion_id: str, data: LevelsIn
+    ) -> CriterionOut:
+        await self._mutable(assignment_id, teacher_id)
+        criterion = await self.repo.get_criterion(assignment_id, criterion_id)
+        if criterion is None:
+            raise NotFoundError("Criterion not found", code="criterion_not_found")
+        criterion.levels = self._levels_payload(data.levels, criterion.max_points)
+        await self.db.commit()
         return CriterionOut.model_validate(criterion)
 
     async def delete_criterion(
@@ -390,6 +420,7 @@ class ProtocolService:
             points=score.points,
             max_points=criterion.max_points,
             comment=score.comment,
+            levels=[LevelOut(**level) for level in criterion.levels or []],
         )
 
     async def list_submissions(self, code: str, teacher_id: str) -> list[SubmissionOut]:

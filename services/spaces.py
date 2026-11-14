@@ -209,6 +209,7 @@ class SpaceService:
                     name=c.name,
                     max_points=c.max_points,
                     position=c.position,
+                    levels=c.levels,
                 )
             )
         for q in questions:
@@ -309,6 +310,7 @@ class SpaceService:
                     name=c.name,
                     max_points=c.max_points,
                     position=c.position,
+                    levels=c.levels,
                 )
             )
         for q in await self.repo.publication_questions(source.id):

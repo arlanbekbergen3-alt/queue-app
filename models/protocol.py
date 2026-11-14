@@ -97,6 +97,9 @@ class CriterionORM(Base):
     name: Mapped[str] = mapped_column(String(80), nullable=False)
     max_points: Mapped[int] = mapped_column(Integer, nullable=False)
     position: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    levels: Mapped[list[dict[str, Any]] | None] = mapped_column(
+        JSON().with_variant(JSONB(), "postgresql"), nullable=True
+    )
 
 
 class SubmissionORM(Base):

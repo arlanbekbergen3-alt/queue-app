@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
-from schemas.protocol import Text
+from schemas.protocol import LevelOut, Text
 
 
 class SpaceCreate(BaseModel):
@@ -53,8 +53,14 @@ class PubCriterionOut(BaseModel):
     name: str
     max_points: int
     position: int
+    levels: list[LevelOut] = Field(default_factory=list)
 
     model_config = {"from_attributes": True}
+
+    @field_validator("levels", mode="before")
+    @classmethod
+    def _none_is_empty(cls, value):
+        return value or []
 
 
 class PubQuestionOut(BaseModel):

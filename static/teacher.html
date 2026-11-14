@@ -73,6 +73,8 @@
   .wtimer.bad { color:var(--bad); }
   .crit { border-top:1px solid var(--border); padding:10px 0; }
   .crit.active { background:color-mix(in srgb, var(--accent) 10%, transparent); border-radius:10px; padding:10px; }
+  .lvl { display:flex; flex-wrap:wrap; gap:2px 14px; margin-top:6px; font-size:.85rem; color:var(--muted); }
+  .lvl .on { color:var(--text); font-weight:700; }
   .crit .name { font-weight:600; margin-bottom:6px; display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; }
   .pts { display:flex; flex-wrap:wrap; gap:6px; }
   .pts button { min-width:44px; min-height:44px; padding:6px 10px; background:var(--bg); color:var(--text); border:1px solid var(--border); }
@@ -909,7 +911,10 @@ function pointButtons(criterion) {
   const max = criterion.max_points;
   const marks = max <= 12 ? Array.from({ length: max + 1 }, (_, i) => i) : [...new Set([0, Math.round(max / 2), max])];
   for (const value of marks) {
-    box.append(el("button", { type: "button", "data-points": String(value), onclick: () => setPoints(criterion.id, value, true) }, String(value)));
+    const level = criterion.levels.find((l) => l.points === value);
+    const button = el("button", { type: "button", "data-points": String(value), onclick: () => setPoints(criterion.id, value, true) }, String(value));
+    if (level) button.title = level.text;
+    box.append(button);
   }
   if (max > 12) {
     const input = el("input", { type: "number", min: "0", max: String(max), placeholder: "0–" + max, "data-input": criterion.id });
@@ -919,11 +924,17 @@ function pointButtons(criterion) {
   return box;
 }
 
+function levelLegend(criterion) {
+  if (!criterion.levels.length) return "";
+  return el("div", { class: "lvl" }, ...criterion.levels.map((l) => el("span", { "data-lv": String(l.points) }, l.points + " — " + l.text)));
+}
+
 function paintWork() {
   work.criteria.forEach((criterion, index) => {
     const row = $("crit-" + criterion.id);
     if (!row) return;
     row.classList.toggle("active", index === work.active);
+    for (const span of row.querySelectorAll(".lvl span")) span.classList.toggle("on", work.values[criterion.id] === Number(span.dataset.lv));
     for (const button of row.querySelectorAll("button[data-points]")) {
       button.classList.toggle("on", work.values[criterion.id] === Number(button.dataset.points));
     }
@@ -1066,7 +1077,7 @@ async function updateWork(queue) {
     return;
   }
   work.submission = submission;
-  work.criteria = criteria.map((c) => ({ id: c.id, name: c.name, max_points: c.max_points }));
+  work.criteria = criteria.map((c) => ({ id: c.id, name: c.name, max_points: c.max_points, levels: c.levels || [] }));
   for (const score of submission.scores) work.values[score.criterion_id] = score.points;
   const parts = [];
   if (submission.questions.length) {
@@ -1076,7 +1087,7 @@ async function updateWork(queue) {
   for (const criterion of work.criteria) {
     parts.push(el("div", { class: "crit", id: "crit-" + criterion.id },
       el("div", { class: "name" }, el("span", {}, criterion.name), el("span", { class: "muted" }, "макс. " + criterion.max_points)),
-      pointButtons(criterion)));
+      pointButtons(criterion), levelLegend(criterion)));
   }
   const comment = el("textarea", { maxlength: "1000", placeholder: queue.session_mode === "quick" ? "Заметка (необязательно)" : "Комментарий к сдаче" });
   comment.value = submission.comment || "";

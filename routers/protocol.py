@@ -13,6 +13,7 @@ from schemas.protocol import (
     CriterionOut,
     CriterionUpdate,
     GradesIn,
+    LevelsIn,
     MySubmissionOut,
     PresetApplyIn,
     PresetOut,
@@ -157,6 +158,19 @@ async def update_criterion(
     service: ProtocolServiceDep,
 ):
     return await service.update_criterion(teacher.id, assignment_id, criterion_id, data)
+
+
+@router.put(
+    "/assignments/{assignment_id}/criteria/{criterion_id}/levels", response_model=CriterionOut
+)
+async def set_levels(
+    assignment_id: str,
+    criterion_id: str,
+    data: LevelsIn,
+    teacher: CurrentTeacher,
+    service: ProtocolServiceDep,
+):
+    return await service.set_levels(teacher.id, assignment_id, criterion_id, data)
 
 
 @router.delete(

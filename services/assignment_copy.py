@@ -64,6 +64,7 @@ class AssignmentCopyService:
                     name=criterion.name,
                     max_points=criterion.max_points,
                     position=criterion.position,
+                    levels=criterion.levels,
                 )
             )
         for question in await self.repo.list_questions(source.id):

@@ -84,9 +84,37 @@ class QuestionOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+MAX_LEVELS = 11
+
+
+class LevelIn(BaseModel):
+    points: int = Field(ge=0, le=100)
+    text: Text = Field(min_length=1, max_length=200)
+
+
+class LevelOut(BaseModel):
+    points: int
+    text: str
+
+
+def _check_levels(levels: list[LevelIn] | None) -> list[LevelIn] | None:
+    if levels is None:
+        return None
+    if len(levels) > MAX_LEVELS:
+        raise ValueError("Too many levels")
+    points = [level.points for level in levels]
+    if len(set(points)) != len(points):
+        raise ValueError("Level points must be unique")
+    return sorted(levels, key=lambda level: level.points)
+
+
+Levels = Annotated[list[LevelIn] | None, AfterValidator(_check_levels)]
+
+
 class CriterionCreate(BaseModel):
     name: Text = Field(min_length=1, max_length=80)
     max_points: int = Field(ge=1, le=100)
+    levels: Levels = None
 
 
 class CriterionUpdate(BaseModel):
@@ -94,13 +122,23 @@ class CriterionUpdate(BaseModel):
     max_points: int | None = Field(default=None, ge=1, le=100)
 
 
+class LevelsIn(BaseModel):
+    levels: Levels = None
+
+
 class CriterionOut(BaseModel):
     id: str
     name: str
     max_points: int
     position: int
+    levels: list[LevelOut] = Field(default_factory=list)
 
     model_config = {"from_attributes": True}
+
+    @field_validator("levels", mode="before")
+    @classmethod
+    def _none_is_empty(cls, value):
+        return value or []
 
 
 class AssignmentCopyIn(BaseModel):
@@ -157,6 +195,7 @@ class ScoreOut(BaseModel):
     points: int
     max_points: int
     comment: str
+    levels: list[LevelOut] = Field(default_factory=list)
 
 
 class SubmissionOut(BaseModel):

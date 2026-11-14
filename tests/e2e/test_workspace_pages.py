@@ -251,3 +251,33 @@ def test_teacher_login_form_still_works_and_lists_sessions_with_a_hint(page: Pag
     teacher = open_session("Вход")
     teacher_login(page, teacher["username"], teacher["password"])
     expect(page.locator("#sessions")).to_contain_text("Вход · ", timeout=SLOW)
+
+
+def test_level_descriptions_appear_under_the_buttons_and_the_chosen_one_is_marked(
+    page: Page, browser, live_server, api, open_session
+):
+    teacher, assignment = prepare(api, open_session, questions=4)
+    headers = teacher["headers"]
+    first = api.get(f"/assignments/{assignment['id']}/criteria", headers=headers).json()[0]
+    api.put(
+        f"/assignments/{assignment['id']}/criteria/{first['id']}/levels",
+        headers=headers,
+        json={"levels": [{"points": 0, "text": "Нет ответа"}, {"points": 4, "text": "Почти всё"}]},
+    )
+    open_teacher_page(page, teacher)
+    page.get_by_role("button", name=teacher["code"]).click()
+    ctx, student = new_context(browser, live_server)
+    student_join(student, teacher["code"], "Лиза Орлова")
+    expect(row(page, "Лиза Орлова")).to_be_visible(timeout=SLOW)
+    page.keyboard.press("n")
+    expect(page.locator("#work-card")).to_be_visible(timeout=SLOW)
+    legend = page.locator("#work-body .crit").first.locator(".lvl")
+    expect(legend).to_contain_text("0 — Нет ответа")
+    expect(legend).to_contain_text("4 — Почти всё")
+    expect(page.locator("#work-body .crit").nth(1).locator(".lvl")).to_have_count(0)
+    page.keyboard.press("4")
+    expect(legend.locator("span.on")).to_have_text("4 — Почти всё")
+    expect(
+        page.locator("#work-body .crit").first.locator("button[data-points='4']")
+    ).to_have_attribute("title", "Почти всё")
+    ctx.close()

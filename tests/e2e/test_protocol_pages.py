@@ -230,3 +230,41 @@ def test_ai_draft_survives_a_failed_status_poll_and_shows_the_counter(
     expect(page.locator("#ai-err")).to_contain_text("Модель недоступна", timeout=SLOW)
     assert failed
     expect(page.locator("#ai-start")).to_be_enabled()
+
+
+def test_level_descriptions_are_shown_while_grading_in_both_screens(page: Page, api, open_session):
+    teacher, assignment = prepare(api, open_session)
+    headers = teacher["headers"]
+    criteria = api.get(f"/assignments/{assignment['id']}/criteria", headers=headers).json()
+    api.put(
+        f"/assignments/{assignment['id']}/criteria/{criteria[0]['id']}/levels",
+        headers=headers,
+        json={
+            "levels": [{"points": 0, "text": "Нет ответа"}, {"points": 5, "text": "Верно и полно"}]
+        },
+    )
+    joined = api.post(
+        "/sessions/" + teacher["code"] + "/join", json={"name": "Вера", "token": "v" * 20}
+    )
+    called = api.post(f"/sessions/{teacher['code']}/next", headers=headers)
+    assert joined.status_code == 200 and called.status_code == 200, (joined.text, called.text)
+
+    login_as(page, teacher)
+    page.goto(f"/protocol?code={teacher['code']}")
+    current = page.locator("#current")
+    expect(current).to_contain_text("Талон №1", timeout=SLOW)
+    expect(current).to_contain_text("0 — Нет ответа")
+    expect(current).to_contain_text("5 — Верно и полно")
+
+    page.goto("/protocol")
+    page.locator("#assignments").get_by_role("button", name="Открыть").first.click()
+    page.locator("#criteria").get_by_role("button", name="Уровни").first.click()
+    editor = page.locator("#criteria textarea").first
+    editor.fill("0: ноль\n3: три")
+    page.locator("#criteria").get_by_role("button", name="Сохранить уровни").first.click()
+    expect(page.locator("#criteria .levels-view").first).to_contain_text("3 — три", timeout=SLOW)
+
+    page.locator("#criteria").get_by_role("button", name="Уровни").first.click()
+    page.locator("#criteria .levels-editor textarea").first.fill("абв")
+    page.locator("#criteria").get_by_role("button", name="Сохранить уровни").first.click()
+    expect(page.locator("#c-err")).to_contain_text("должна быть вида", timeout=SLOW)

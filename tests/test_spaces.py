@@ -160,7 +160,7 @@ async def test_publication_is_a_snapshot_of_criteria_and_questions_only(client, 
         "questions",
     }
     assert set(body["questions"][0]) == {"text", "difficulty", "topic", "position"}
-    assert set(body["criteria"][0]) == {"name", "max_points", "position"}
+    assert set(body["criteria"][0]) == {"name", "max_points", "position", "levels"}
 
     questions = (
         await client.get(f"{API}/assignments/{assignment['id']}/questions", headers=owner)

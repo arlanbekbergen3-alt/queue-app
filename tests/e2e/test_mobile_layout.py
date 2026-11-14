@@ -70,6 +70,8 @@ def test_new_pages_do_not_scroll_sideways_on_a_phone(page: Page, api, open_sessi
     page.goto(f"/protocol?code={code}")
     expect(page.locator("#need-login")).to_be_hidden(timeout=SLOW)
     page.click("#an-session")
+    expect(page.locator("#an-details")).to_be_visible(timeout=SLOW)
+    page.locator("#an-details").evaluate("node => { node.open = true; }")
     expect(page.locator("#an-weak table").first).to_be_visible(timeout=SLOW)
     assert_fits(page)
 

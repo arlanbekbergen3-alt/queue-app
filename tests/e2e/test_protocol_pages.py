@@ -200,7 +200,7 @@ def test_analytics_block_says_when_there_is_too_little_data(page: Page, api, ope
     expect(page.locator("#done")).to_contain_text("10/10", timeout=SLOW)
     page.click("#an-session")
     expect(page.locator("#an-out")).to_contain_text("Завершённых сдач: 1")
-    expect(page.locator("#an-out")).to_contain_text("Мало данных")
+    expect(page.locator("#an-out")).to_contain_text("Недостаточно данных")
     expect(page.locator("#an-out")).not_to_contain_text("Дима")
 
 

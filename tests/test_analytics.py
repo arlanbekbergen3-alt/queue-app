@@ -22,7 +22,7 @@ def test_small_samples_make_no_conclusions():
     out = analyze([item(i, 100, 9) for i in range(1, 5)], CRITERIA, min_submissions=5)
     assert out.sufficient is False and out.submissions == 4
     assert out.duration is None and out.flags == [] and out.criteria == []
-    assert "для выводов нужно не меньше 5" in out.note
+    assert "нужно не менее 5 сдач" in out.note
 
 
 def test_empty_sample_is_handled():

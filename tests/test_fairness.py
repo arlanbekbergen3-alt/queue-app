@@ -136,7 +136,7 @@ def test_peers_with_too_few_results_and_mismatched_criteria_are_left_out():
         minimum=5,
     )
 
-    assert block.rows == [] and "Данных мало" in block.note
+    assert block.rows == [] and "Недостаточно данных" in block.note
 
 
 def test_the_comparison_needs_the_minimum_number_of_other_participants(monkeypatch):
@@ -248,7 +248,7 @@ async def test_too_few_results_give_the_data_is_scarce_note_and_no_numbers(clien
 
     block = await fairness(client, headers, f"{API}/assignments/{work['id']}/analytics")
 
-    assert block["sufficient"] is False and "Данных мало" in block["note"]
+    assert block["sufficient"] is False and "Недостаточно данных" in block["note"]
     assert block["order"] is None and block["attempts"] is None and block["spread"] is None
     assert block["disclaimer"]
 
@@ -426,7 +426,7 @@ async def test_someone_who_did_not_agree_is_never_included_and_sees_nothing(clie
         client, members[2][1], f"{API}/assignments/{members[2][2]['id']}/analytics"
     )
 
-    assert agreeing["peers"]["rows"] == [] and "Данных мало" in agreeing["peers"]["note"]
+    assert agreeing["peers"]["rows"] == [] and "Недостаточно данных" in agreeing["peers"]["note"]
     assert refusing["peers"]["enabled"] is False and refusing["peers"]["rows"] == []
 
 

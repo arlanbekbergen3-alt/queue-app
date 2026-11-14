@@ -59,6 +59,22 @@
   table.weak { width:100%; border-collapse:collapse; font-size:14px; }
   table.weak th, table.weak td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--border); vertical-align:middle; }
   table.weak td.q { overflow-wrap:anywhere; min-width:160px; }
+  .insight { border:1px solid var(--border); border-left:5px solid var(--accent); border-radius:10px; padding:10px 12px; margin-top:8px; }
+  .insight.warn { border-left-color:var(--warn); }
+  .insight .tag { display:inline-block; font-size:12px; font-weight:700; letter-spacing:.02em; text-transform:uppercase; color:var(--muted); margin-bottom:2px; }
+  .insight.warn .tag { color:var(--warn); }
+  .insight .what { font-size:14px; margin-top:4px; }
+  .chart { margin-top:14px; }
+  .chart svg { display:block; width:100%; height:auto; }
+  .chart .c-label, .chart .c-value, .chart .c-axis { fill:var(--text); font-size:13px; }
+  .chart .c-value { font-weight:700; }
+  .chart .c-axis { fill:var(--muted); font-size:12px; }
+  .chart .c-track { fill:var(--border); }
+  .chart .c-fill { fill:var(--accent); }
+  .chart .c-fill.low { fill:var(--bad); }
+  .chart .c-box { fill:var(--accent); opacity:.35; stroke:var(--accent); stroke-width:1.5; }
+  .chart .c-line { stroke:var(--muted); stroke-width:2; }
+  .chart .c-median { stroke:var(--text); stroke-width:3; }
   .bar { height:10px; min-width:80px; border-radius:6px; background:var(--border); overflow:hidden; }
   .bar > span { display:block; height:100%; background:var(--accent); }
   .bar.low > span { background:var(--bad); }
@@ -218,12 +234,17 @@
         <h3>Завершённые и прочие</h3>
         <div class="list" id="done"></div>
         <h3>Аналитика сдач</h3>
-        <div class="muted">Агрегаты для самоанализа. Студенты показываются только номером талона.</div>
+        <div class="muted">Сводные данные для самоанализа. Студенты показываются только номером талона.</div>
         <div class="row"><button class="ghost" id="an-session">По этой сессии</button><button class="ghost" id="an-assignment">По всей работе</button></div>
         <div class="err" id="an-err"></div>
-        <pre id="an-out"></pre>
-        <div id="an-weak"></div>
-        <div id="an-fair"></div>
+        <div id="an-main"></div>
+        <div id="an-charts"></div>
+        <details class="more hidden" id="an-details">
+          <summary>Подробнее</summary>
+          <pre id="an-out"></pre>
+          <div id="an-weak"></div>
+          <div id="an-fair"></div>
+        </details>
         <div class="hidden" id="audit-box"><h3>Журнал изменений</h3><pre id="audit"></pre></div>
       </div>
     </section>
@@ -952,15 +973,99 @@ async function showAudit(submission) {
   }).join("\n") || "Записей нет.";
 }
 
+const SVG_NS = "http://www.w3.org/2000/svg";
+function svg(name, attrs = {}, ...children) {
+  const node = document.createElementNS(SVG_NS, name);
+  for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, String(value));
+  for (const child of children) node.append(child);
+  return node;
+}
+function svgText(x, y, className, text, anchor) {
+  const node = svg("text", { x, y, class: className, ...(anchor ? { "text-anchor": anchor } : {}) });
+  node.textContent = text;
+  return node;
+}
+function clip(text, limit) { return text.length > limit ? text.slice(0, limit - 1) + "…" : text; }
+
+function hbars(title, rows, summary) {
+  const rowHeight = 42;
+  const chart = svg("svg", { viewBox: "0 0 360 " + rows.length * rowHeight, role: "img", "aria-label": summary });
+  rows.forEach((row, index) => {
+    const top = index * rowHeight;
+    const width = Math.max(0, Math.min(100, row.value)) * 3;
+    chart.append(
+      svgText(0, top + 15, "c-label", clip(row.label, 38)),
+      svg("rect", { class: "c-track", x: 0, y: top + 22, width: 300, height: 12, rx: 6 }),
+      svg("rect", { class: "c-fill" + (row.low ? " low" : ""), x: 0, y: top + 22, width, height: 12, rx: 6 }),
+      svgText(308, top + 33, "c-value", row.text),
+    );
+  });
+  return el("div", { class: "chart" }, el("h3", {}, title), chart);
+}
+
+function durationChart(d) {
+  const span = Math.max(1, d.max);
+  const at = (seconds) => 10 + (340 * seconds) / span;
+  const chart = svg("svg", { viewBox: "0 0 360 78", role: "img",
+    "aria-label": "Длительность сдачи: быстрее всего " + clock(d.min) + ", обычно от " + clock(d.p25) + " до " + clock(d.p75) + ", типичная " + clock(d.median) + ", дольше всего " + clock(d.max) });
+  chart.append(
+    svg("line", { class: "c-line", x1: at(d.min), x2: at(d.max), y1: 30, y2: 30 }),
+    svg("rect", { class: "c-box", x: at(d.p25), y: 18, width: Math.max(2, at(d.p75) - at(d.p25)), height: 24, rx: 4 }),
+    svg("line", { class: "c-median", x1: at(d.median), x2: at(d.median), y1: 14, y2: 46 }),
+    svgText(10, 66, "c-axis", clock(d.min), "start"),
+    svgText(350, 66, "c-axis", clock(d.max), "end"),
+    svgText(Math.min(320, Math.max(40, at(d.median))), 11, "c-value", clock(d.median), "middle"),
+  );
+  return el("div", { class: "chart" }, el("h3", {}, "Сколько длится сдача"), chart,
+    el("div", { class: "muted" }, "Быстрее всего " + clock(d.min) + ", обычно от " + clock(d.p25) + " до " + clock(d.p75) + ", типичная " + clock(d.median) + ", дольше всего " + clock(d.max) + ". Закрашенная полоса показывает, где укладывается большинство сдач."));
+}
+
+function mainBlock(a) {
+  const box = el("div", { id: "an-main-box" }, el("h3", {}, "Главное"));
+  const ins = a.insights;
+  if (!ins || !ins.sufficient) {
+    box.append(el("div", { class: "muted", id: "an-main-note" }, ins ? ins.note : "Недостаточно данных."));
+    return box;
+  }
+  for (const item of ins.items) {
+    box.append(el("div", { class: "insight " + item.severity },
+      el("div", { class: "tag" }, item.severity === "warn" ? "Обратите внимание" : "К сведению"),
+      el("div", { class: "what-text" }, item.text),
+      el("div", { class: "what muted" }, "Что можно сделать: " + item.action)));
+  }
+  box.append(el("div", { class: "muted" }, ins.note));
+  return box;
+}
+
+function chartsBlock(a) {
+  const box = el("div", { id: "an-charts-box" });
+  if (!a.sufficient) return box;
+  const crit = a.criteria.filter((c) => c.max_points > 0).map((c) => {
+    const value = Math.round((1000 * c.mean) / c.max_points) / 10;
+    return { label: c.name, value, text: pct(value), low: value < 50 };
+  });
+  if (crit.length) box.append(hbars("Средний балл по критериям (процент от максимума)", crit,
+    "Средний балл по критериям: " + crit.map((r) => r.label + " " + r.text).join(", ")));
+  const spots = a.weak_spots;
+  if (spots && spots.sufficient && spots.distribution.length) {
+    const top = Math.max(1, ...spots.distribution.map((b) => b.count));
+    const rows = spots.distribution.map((b) => ({ label: b.from_percent + "–" + b.to_percent + "%", value: (100 * b.count) / top, text: counted(b.count, "сдача", "сдачи", "сдач") }));
+    box.append(hbars("Как распределились результаты (сколько сдач в каждом диапазоне)", rows,
+      "Распределение результатов: " + spots.distribution.map((b) => b.from_percent + "–" + b.to_percent + "% — " + b.count).join(", ")));
+  }
+  if (a.duration && a.duration.max > 0) box.append(durationChart(a.duration));
+  return box;
+}
+
 function renderAnalytics(a) {
   const lines = [];
   lines.push("Завершённых сдач: " + a.submissions);
   if (!a.sufficient) { lines.push(a.note); return lines.join("\n"); }
   const d = a.duration;
-  lines.push("Длительность: медиана " + clock(d.median) + ", средние 50% от " + clock(d.p25) + " до " + clock(d.p75) + ", минимум " + clock(d.min) + ", максимум " + clock(d.max));
+  lines.push("Длительность: обычно от " + clock(d.p25) + " до " + clock(d.p75) + " (типичная " + clock(d.median) + "), быстрее всего " + clock(d.min) + ", дольше всего " + clock(d.max));
   for (const c of a.criteria) {
     const dist = Object.entries(c.distribution).filter(([, n]) => n > 0).map(([p, n]) => p + ": " + n).join(", ");
-    lines.push(c.name + ": среднее " + String(c.mean).replace(".", ",") + " из " + c.max_points + " (баллы: количество) " + dist);
+    lines.push(c.name + ": в среднем " + String(c.mean).replace(".", ",") + " из " + c.max_points + "; сколько студентов получили каждый балл (балл: число) " + dist);
   }
   for (const b of a.bands) lines.push("Результат «" + b.label + "»: " + b.count + " сдач" + (b.median_duration != null ? ", медиана " + clock(b.median_duration) : ", мало для сравнения"));
   if (a.flags.length) { lines.push("", "Что стоит посмотреть:"); for (const f of a.flags) lines.push("• " + f.text); }
@@ -1017,58 +1122,73 @@ function renderWeak(a) {
     out.append(weakBlock("Только первые попытки", a.first_attempts), weakBlock("Только пересдачи", a.retakes));
   }
 }
+function oneLine(id, text) { return el("div", { class: "muted", id }, text); }
 function fairBlock(f) {
   const box = el("div", { id: "fair-box" }, el("h3", {}, "Справедливость оценивания"));
   if (!f) return box;
-  if (!f.sufficient) box.append(el("div", { class: "muted", id: "fair-note" }, f.note));
+  if (!f.sufficient) {
+    box.append(oneLine("fair-note", f.note));
+  }
   if (f.order) {
-    box.append(el("h3", {}, "Результат по порядку сдачи"));
-    box.append(weakTable(["Четверть очереди", "Сдач", "Средний результат", ""], f.order.quarters.map((q) => [
-      el("td", {}, String(q.quarter)), el("td", {}, String(q.count)),
-      el("td", {}, q.mean_percent == null ? "—" : pct(q.mean_percent)), el("td", {}, bar(q.mean_percent || 0)),
-    ])));
-    if (f.order.fatigue_flag) {
-      box.append(el("div", { class: "dev", id: "fair-fatigue" }, "Последняя четверть ниже первой на " + f.order.drop_percent + " п. п. (порог " + f.order.threshold_percent + " п. п.). Возможен эффект усталости, посмотрите на свои оценки в конце занятия."));
-    } else if (f.order.drop_percent != null) {
-      box.append(el("div", {}, "Первая четверть минус последняя: " + f.order.drop_percent + " п. п., порог " + f.order.threshold_percent + "."));
+    if (f.order.drop_percent == null) {
+      box.append(oneLine("fair-order-note", "Четверти очереди: недостаточно данных (нужно не менее 2 сдач в первой и в последней четверти)."));
     } else {
-      box.append(el("div", { class: "muted" }, "В первой или последней четверти меньше двух сдач, сравнивать нельзя."));
+      box.append(el("h3", {}, "Результат по порядку сдачи"));
+      box.append(weakTable(["Четверть очереди", "Сдач", "Средний результат", ""], f.order.quarters.map((q) => [
+        el("td", {}, String(q.quarter)), el("td", {}, String(q.count)),
+        el("td", {}, q.mean_percent == null ? "—" : pct(q.mean_percent)), el("td", {}, bar(q.mean_percent || 0)),
+      ])));
+      if (f.order.fatigue_flag) {
+        box.append(el("div", { class: "dev", id: "fair-fatigue" }, "Последняя четверть ниже первой на " + f.order.drop_percent + " п. п. (порог " + f.order.threshold_percent + " п. п.). Возможен эффект усталости или усиления строгости к концу очереди; это только гипотеза."));
+      } else {
+        box.append(el("div", {}, "Первая четверть минус последняя: " + f.order.drop_percent + " п. п., порог " + f.order.threshold_percent + "."));
+      }
+      box.append(el("div", { class: "muted" }, f.order.hint));
     }
-    box.append(el("div", { class: "muted" }, f.order.hint));
   }
   if (f.attempts) {
     const a = f.attempts;
-    const part = (title, g) => title + ": " + (g.sufficient ? g.count + " сдач, средний результат " + pct(g.mean_percent) : "данных мало (" + g.count + ")");
-    box.append(el("h3", {}, "Первые попытки и пересдачи"), el("div", {}, part("Первые попытки", a.first)), el("div", {}, part("Пересдачи", a.retakes)));
-    if (a.difference_percent != null) box.append(el("div", {}, "Пересдачи минус первые попытки: " + a.difference_percent + " п. п."));
-    box.append(el("div", { class: "muted" }, a.hint));
+    if (a.first.sufficient && a.retakes.sufficient) {
+      box.append(el("h3", {}, "Первые попытки и пересдачи"),
+        el("div", {}, "Первые попытки: " + a.first.count + " сдач, средний результат " + pct(a.first.mean_percent)),
+        el("div", {}, "Пересдачи: " + a.retakes.count + " сдач, средний результат " + pct(a.retakes.mean_percent)));
+      if (a.difference_percent != null) box.append(el("div", {}, "Пересдачи минус первые попытки: " + a.difference_percent + " п. п."));
+      box.append(el("div", { class: "muted" }, a.hint));
+    } else {
+      box.append(oneLine("fair-attempts-note", "Первые попытки и пересдачи: недостаточно данных (нужно не менее " + f.min_submissions + " сдач в каждой группе)."));
+    }
   }
   if (f.spread) {
-    box.append(el("h3", {}, "Разброс оценок и крайние оценки"));
+    box.append(el("h3", {}, "Насколько оценки отличаются друг от друга"));
     if (f.spread.rows.length) {
-      box.append(weakTable(["Критерий", "Среднее", "Разброс", "Нули", "Максимум"], f.spread.rows.map((r) => [
+      box.append(weakTable(["Критерий", "Среднее", "Отличие оценок", "Нули", "Максимум"], f.spread.rows.map((r) => [
         el("td", {}, r.name), el("td", {}, pct(r.mean_percent)), el("td", {}, pct(r.stdev_percent)), el("td", {}, pct(r.zero_percent)), el("td", {}, pct(r.top_percent)),
       ])));
+      box.append(el("div", { class: "muted" }, "«Отличие оценок»: чем число больше, тем сильнее оценки по критерию различаются между студентами. «Нули» и «Максимум»: доля сдач с нулём и с полным баллом."));
       box.append(el("div", {}, "Доля крайних оценок (0 и максимум) по всем критериям: " + pct(f.spread.extreme_percent)));
     } else {
-      box.append(el("div", { class: "muted" }, "По критериям данных мало."));
+      box.append(oneLine("fair-spread-note", "По критериям недостаточно данных (нужно не менее " + f.min_submissions + " оценок на критерий)."));
     }
     box.append(el("div", { class: "muted" }, f.spread.hint));
   }
   const p = f.peers;
-  box.append(el("h3", {}, "Сравнение с другими преподавателями группы"));
   if (p.rows.length) {
+    box.append(el("h3", {}, "Сравнение с другими преподавателями группы"));
     box.append(weakTable(["Критерий", "Ваше среднее", "Другие участники (" + p.rows[0].peers + ")"], p.rows.map((r) => [
       el("td", {}, r.name), el("td", {}, pct(r.own_percent)), el("td", {}, r.peer_percents.map((v) => pct(v)).join(", ")),
     ])));
+    box.append(el("div", { class: "muted" }, p.hint));
   } else {
-    box.append(el("div", { class: "muted", id: "peers-note" }, p.note));
+    box.append(oneLine("peers-note", "Сравнение с другими преподавателями: " + p.note));
   }
-  box.append(el("div", { class: "muted" }, p.hint), el("div", { class: "muted", id: "fair-disclaimer" }, f.disclaimer));
+  box.append(el("div", { class: "muted", id: "fair-disclaimer" }, f.disclaimer));
   return box;
 }
 async function loadAnalytics(path) {
   const a = await request(path);
+  $("an-main").replaceChildren(mainBlock(a));
+  $("an-charts").replaceChildren(chartsBlock(a));
+  $("an-details").classList.remove("hidden");
   $("an-out").textContent = renderAnalytics(a);
   renderWeak(a);
   $("an-fair").replaceChildren(fairBlock(a.fairness));

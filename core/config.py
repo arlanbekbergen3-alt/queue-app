@@ -67,6 +67,8 @@ class Settings(BaseSettings):
     ANALYTICS_OUTLIER_FACTOR: float = Field(default=2.0, gt=1)
     FAIRNESS_FATIGUE_DROP_PERCENT: float = Field(default=10.0, gt=0, le=100)
     FAIRNESS_MIN_PEERS: int = Field(default=2, ge=1)
+    INSIGHT_ZEROS_PERCENT: float = Field(default=30.0, gt=0, le=100)
+    INSIGHT_EXTREME_PERCENT: float = Field(default=60.0, gt=0, le=100)
     DEVIATION_MIN_SAMPLES: int = Field(default=5, ge=2)
     EXTREME_REASON_MIN_LENGTH: int = Field(default=5, ge=1)
 

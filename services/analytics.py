@@ -11,6 +11,12 @@ from models.protocol import AssignmentORM
 from repositories.protocol import ProtocolRepository
 from repositories.queue import QueueRepository
 from services.fairness import FairnessOut, Rated, build_fairness, peers_block
+from services.insights import (
+    CriterionInput,
+    InsightInput,
+    InsightsOut,
+    build_insights,
+)
 from services.queue import normalize_code
 
 BANDS = (("low", "низкий", 0.0), ("mid", "средний", 0.5), ("high", "высокий", 0.8))
@@ -111,6 +117,7 @@ class AnalyticsOut(BaseModel):
     first_attempts: WeakSpots | None = None
     retakes: WeakSpots | None = None
     fairness: FairnessOut | None = None
+    insights: InsightsOut | None = None
 
 
 def band_of(total: int, maximum: int) -> str:
@@ -161,7 +168,7 @@ def weak_spots(
             submissions=count,
             min_submissions=min_submissions,
             sufficient=False,
-            note=f"Мало данных: {label} {count}, для выводов нужно не меньше {min_submissions}.",
+            note=f"Недостаточно данных (нужно не менее {min_submissions} сдач; {label}: {count}).",
         )
     rated = [i for i in items if i.max_points > 0]
     shares = [i.total_points / i.max_points for i in rated]
@@ -244,7 +251,7 @@ def analyze(
             submissions=count,
             min_submissions=minimum,
             sufficient=False,
-            note=f"Мало данных: завершённых сдач {count}, для выводов нужно не меньше {minimum}.",
+            note=f"Недостаточно данных (нужно не менее {minimum} сдач, сейчас {count}).",
             weak_spots=weak_spots(items, criteria, min_submissions=minimum),
             first_attempts=weak_spots(
                 [i for i in items if i.attempt_number <= 1],
@@ -409,6 +416,36 @@ class AnalyticsService:
             items=rated, criterion_scores=scores, criteria=criteria, minimum=minimum, peers=peers
         )
 
+    @staticmethod
+    def _insights(
+        items: list[SubmissionData],
+        criteria: dict[str, tuple[str, int]],
+        fairness: FairnessOut,
+    ) -> InsightsOut:
+        inputs = [
+            InsightInput(
+                total_percent=percent(i.total_points, i.max_points) if i.max_points > 0 else None,
+                duration_seconds=i.duration_seconds,
+            )
+            for i in items
+        ]
+        rules = [
+            CriterionInput(
+                name=name,
+                max_points=maximum,
+                points=[i.scores[cid] for i in items if cid in i.scores],
+            )
+            for cid, (name, maximum) in criteria.items()
+        ]
+        order = fairness.order
+        return build_insights(
+            inputs,
+            rules,
+            minimum=settings.ANALYTICS_MIN_SUBMISSIONS,
+            fatigue_drop=order.drop_percent if order else None,
+            fatigue_flag=order.fatigue_flag if order else False,
+        )
+
     async def for_assignment(self, teacher_id: str, assignment_id: str) -> AnalyticsOut:
         assignment = await self.repo.get_assignment(assignment_id, teacher_id)
         if assignment is None:
@@ -416,6 +453,7 @@ class AnalyticsService:
         items, criteria = await self._load(assignment_id, None)
         out = analyze(items, criteria)
         out.fairness = await self._fairness(assignment, items, criteria)
+        out.insights = self._insights(items, criteria, out.fairness)
         return out
 
     async def for_session(self, code: str, teacher_id: str) -> AnalyticsOut:
@@ -430,4 +468,5 @@ class AnalyticsService:
         items, criteria = await self._load(session.assignment_id, session.id)
         out = analyze(items, criteria)
         out.fairness = await self._fairness(assignment, items, criteria)
+        out.insights = self._insights(items, criteria, out.fairness)
         return out

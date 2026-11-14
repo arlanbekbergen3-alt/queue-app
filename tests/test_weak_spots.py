@@ -133,7 +133,7 @@ def test_fewer_than_the_minimum_submissions_give_no_numbers():
     assert spots.criteria == [] and spots.questions == [] and spots.distribution == []
     assert spots.weakest_criteria == []
     assert spots.mean_percent is None
-    assert "для выводов нужно не меньше 5" in spots.note
+    assert "нужно не менее 5 сдач" in spots.note
 
 
 def test_an_empty_sample_is_handled():
@@ -176,7 +176,7 @@ def test_first_attempts_and_retakes_are_counted_separately_with_their_own_minimu
     assert out.first_attempts.sufficient is True and out.first_attempts.submissions == 7
     assert out.first_attempts.mean_percent == pytest.approx(37.5, abs=0.1)
     assert out.retakes.sufficient is False and out.retakes.submissions == 3
-    assert "пересдач 3" in out.retakes.note
+    assert "пересдач: 3" in out.retakes.note
     assert out.retakes.criteria == []
 
 

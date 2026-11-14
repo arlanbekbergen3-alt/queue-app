@@ -32,6 +32,8 @@ def open_analytics(page: Page, teacher: dict, button: str) -> None:
     page.goto(f"/protocol?code={teacher['code']}")
     expect(page.locator("#p-body")).to_be_visible(timeout=SLOW)
     page.click(button)
+    expect(page.locator("#an-details")).to_be_visible(timeout=SLOW)
+    page.locator("#an-details").evaluate("node => { node.open = true; }")
 
 
 def test_fairness_block_flags_a_tiring_queue_and_always_carries_the_caveat(
@@ -46,7 +48,7 @@ def test_fairness_block_flags_a_tiring_queue_and_always_carries_the_caveat(
     expect(box).to_contain_text("Справедливость оценивания", timeout=SLOW)
     expect(page.locator("#fair-fatigue")).to_contain_text("Возможен эффект усталости")
     expect(box).to_contain_text("Первые попытки и пересдачи")
-    expect(box).to_contain_text("Разброс оценок и крайние оценки")
+    expect(box).to_contain_text("Насколько оценки отличаются друг от друга")
     expect(page.locator("#fair-disclaimer")).to_contain_text(
         "не доказывают ошибку или предвзятость"
     )
@@ -60,7 +62,7 @@ def test_fairness_block_says_the_data_is_scarce(page: Page, api, open_session):
 
     open_analytics(page, teacher, "#an-assignment")
 
-    expect(page.locator("#fair-note")).to_contain_text("Данных мало", timeout=SLOW)
+    expect(page.locator("#fair-note")).to_contain_text("Недостаточно данных", timeout=SLOW)
     expect(page.locator("#fair-fatigue")).to_have_count(0)
 
 

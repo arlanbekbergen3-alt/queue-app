@@ -216,6 +216,7 @@ class AuditLogORM(Base):
     __tablename__ = "audit_log"
     __table_args__ = (
         Index("ix_audit_log_submission_seq", "submission_id", "seq"),
+        Index("ix_audit_log_submission_request_key", "submission_id", "request_key"),
         CheckConstraint(
             "action <> 'correct' OR length(trim(reason)) > 0", name="ck_audit_log_reason"
         ),
@@ -232,6 +233,7 @@ class AuditLogORM(Base):
     old_value: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     new_value: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     reason: Mapped[str] = mapped_column(String(300), default="", nullable=False)
+    request_key: Mapped[str | None] = mapped_column(String(64), nullable=True)
 
 
 class SessionEventORM(Base):

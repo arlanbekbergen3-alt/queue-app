@@ -292,6 +292,17 @@ class ProtocolRepository:
         self.db.add_all(rows)
         await self.db.flush()
 
+    async def audit_key_used(self, submission_id: str, request_key: str) -> bool:
+        stmt = (
+            select(AuditLogORM.seq)
+            .where(
+                AuditLogORM.submission_id == submission_id,
+                AuditLogORM.request_key == request_key,
+            )
+            .limit(1)
+        )
+        return (await self.db.execute(stmt)).first() is not None
+
     def add_audit(
         self,
         *,
@@ -303,6 +314,7 @@ class ProtocolRepository:
         new_value: str | None,
         reason: str = "",
         occurred_at: datetime | None = None,
+        request_key: str | None = None,
     ) -> None:
         entry = AuditLogORM(
             submission_id=submission_id,
@@ -312,6 +324,7 @@ class ProtocolRepository:
             old_value=old_value,
             new_value=new_value,
             reason=reason,
+            request_key=request_key,
         )
         if occurred_at is not None:
             entry.occurred_at = occurred_at

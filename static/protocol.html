@@ -862,7 +862,7 @@ async function refreshSubmissions() {
     const row = el("div", {}, el("div", { class: "txt" }, describeSubmission(s),
       s.status === "completed" ? el("div", { class: "muted" }, s.scores.map((x) => x.name + ": " + x.points + "/" + x.max_points).join("; ")) : ""));
     const buttons = el("div", { class: "row" });
-    if (s.status === "completed") buttons.append(el("button", { class: "ghost", onclick: () => correct(s, row) }, "Править"));
+    if (s.status === "completed") buttons.append(el("button", { class: "ghost", onclick: (event) => correct(s, row, event.currentTarget) }, "Править"));
     if (s.bonus_points > 0) buttons.append(el("button", { class: "ghost", onclick: () => removeBonus(s) }, "Снять бонус"));
     buttons.append(el("button", { class: "ghost", onclick: () => showAudit(s) }, "Журнал"));
     row.append(buttons);
@@ -870,20 +870,53 @@ async function refreshSubmissions() {
   }
 }
 
-async function correct(submission, row) {
-  const criteria = submission.scores.map((x) => ({ criterion_id: x.criterion_id, name: x.name, max_points: x.max_points, levels: x.levels, points: x.points, comment: x.comment }));
-  const form = scoreForm(submission, criteria, { reason: true, rules: await gradingRules(), submissionId: submission.id });
-  const err = el("div", { class: "err" });
-  const holder = el("div", { style: "width:100%" }, form, err,
-    el("button", { onclick: async () => {
+const editors = new Map();
+const opening = new Set();
+
+function requestKey() {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function correct(submission, row, trigger) {
+  const existing = editors.get(submission.id);
+  if (existing && existing.isConnected) {
+    existing.remove();
+    editors.delete(submission.id);
+    if (trigger) trigger.textContent = "Править";
+    return;
+  }
+  if (opening.has(submission.id)) return;
+  opening.add(submission.id);
+  if (trigger) trigger.disabled = true;
+  try {
+    const criteria = submission.scores.map((x) => ({ criterion_id: x.criterion_id, name: x.name, max_points: x.max_points, levels: x.levels, points: x.points, comment: x.comment }));
+    const form = scoreForm(submission, criteria, { reason: true, rules: await gradingRules(), submissionId: submission.id });
+    const err = el("div", { class: "err" });
+    const key = requestKey();
+    const save = el("button", { onclick: async () => {
+      if (save.disabled) return;
+      save.disabled = true;
       err.textContent = "";
       try {
         const g = form.collect();
-        await request("/submissions/" + submission.id + "/correct", { method: "POST", body: JSON.stringify(g) });
+        await request("/submissions/" + submission.id + "/correct", { method: "POST", headers: { "Idempotency-Key": key }, body: JSON.stringify(g) });
+        editors.delete(submission.id);
         await refreshSubmissions();
-      } catch (e) { err.textContent = e.message; }
-    } }, "Сохранить правку"));
-  row.after(holder);
+      } catch (e) {
+        err.textContent = e.message;
+        save.disabled = false;
+      }
+    } }, "Сохранить правку");
+    const holder = el("div", { style: "width:100%" }, form, err, save);
+    row.after(holder);
+    editors.set(submission.id, holder);
+    if (trigger) trigger.textContent = "Закрыть правку";
+  } finally {
+    opening.delete(submission.id);
+    if (trigger) trigger.disabled = false;
+  }
 }
 
 async function removeBonus(submission) {

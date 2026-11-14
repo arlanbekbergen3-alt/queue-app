@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, Response, status
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, Header, Response, status
 
 from core.dependencies import CurrentTeacher, EntryToken, ProtocolServiceDep
 from core.ratelimit import limit_token
@@ -247,9 +249,15 @@ async def complete_submission(
 
 @router.post("/submissions/{submission_id}/correct", response_model=SubmissionOut)
 async def correct_submission(
-    submission_id: str, data: CorrectionIn, teacher: CurrentTeacher, service: ProtocolServiceDep
+    submission_id: str,
+    data: CorrectionIn,
+    teacher: CurrentTeacher,
+    service: ProtocolServiceDep,
+    idempotency_key: Annotated[
+        str | None, Header(alias="Idempotency-Key", min_length=8, max_length=64)
+    ] = None,
 ):
-    return await service.correct(teacher.id, submission_id, data)
+    return await service.correct(teacher.id, submission_id, data, idempotency_key)
 
 
 @router.post("/submissions/{submission_id}/bonus/remove", response_model=SubmissionOut)

@@ -653,9 +653,18 @@ class ProtocolService:
         return await self._submission_out(submission, await self.repo.submission_ticket(submission))
 
     async def correct(
-        self, teacher_id: str, submission_id: str, data: CorrectionIn
+        self,
+        teacher_id: str,
+        submission_id: str,
+        data: CorrectionIn,
+        request_key: str | None = None,
     ) -> SubmissionOut:
         submission, session = await self._locked(teacher_id, submission_id)
+        if request_key and await self.repo.audit_key_used(submission.id, request_key):
+            await self.db.commit()
+            return await self._submission_out(
+                submission, await self.repo.submission_ticket(submission)
+            )
         if submission.status != SubmissionStatus.COMPLETED:
             raise ConflictError(
                 "Only a completed submission can be corrected", code="not_completed"
@@ -702,6 +711,7 @@ class ProtocolService:
                 new_value=new,
                 reason=data.reason,
                 occurred_at=now,
+                request_key=request_key,
             )
         await self.db.commit()
         notify_changed(session.code)

@@ -18,6 +18,8 @@ from services.ai_drafts import runtime as ai_runtime
 from services.auth import login_guard
 from services.live import gateway
 
+API = "/api/v1"
+
 APP_DATABASE_URL = make_url(settings.DATABASE_URL)
 TEST_DATABASE_URL = APP_DATABASE_URL.set(database="queue_test")
 
@@ -143,3 +145,56 @@ def join(client):
         return {**response.json(), "token": token}
 
     return _join
+
+
+@pytest.fixture
+def setup(client, make_teacher, make_session, join):
+    async def _setup(
+        username: str,
+        *,
+        questions: int = 6,
+        criteria: tuple[tuple[str, int], ...] = (("Код", 5), ("Защита", 5)),
+        students: int = 1,
+        per_submission: int = 3,
+    ):
+        headers = await make_teacher(username)
+        response = await client.post(
+            f"{API}/assignments",
+            headers=headers,
+            json={"title": f"Работа {username}", "questions_per_submission": per_submission},
+        )
+        assert response.status_code == 201, response.text
+        assignment = response.json()
+        for i in range(questions):
+            r = await client.post(
+                f"{API}/assignments/{assignment['id']}/questions",
+                headers=headers,
+                json={"text": f"Вопрос {i}", "difficulty": 1 + i % 3, "topic": "t"},
+            )
+            assert r.status_code == 201, r.text
+        crit = []
+        for name, points in criteria:
+            r = await client.post(
+                f"{API}/assignments/{assignment['id']}/criteria",
+                headers=headers,
+                json={"name": name, "max_points": points},
+            )
+            assert r.status_code == 201, r.text
+            crit.append(r.json())
+        code = await make_session(headers)
+        r = await client.put(
+            f"{API}/sessions/{code}/assignment",
+            headers=headers,
+            json={"assignment_id": assignment["id"]},
+        )
+        assert r.status_code == 204, r.text
+        joined = [await join(code, f"{username}-s{i}") for i in range(students)]
+        return {
+            "headers": headers,
+            "assignment": assignment,
+            "criteria": crit,
+            "code": code,
+            "students": joined,
+        }
+
+    return _setup

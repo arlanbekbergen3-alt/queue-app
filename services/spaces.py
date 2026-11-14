@@ -299,6 +299,7 @@ class SpaceService:
             origin_author=author,
             origin_space=space.name,
             origin_title=source.title,
+            origin_publication_id=source.id,
         )
         self.db.add(clone)
         await self.db.flush()

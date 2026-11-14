@@ -32,6 +32,7 @@ class AssignmentCreate(BaseModel):
     require_extreme_reason: bool = False
     deviation_warning: bool = False
     deviation_sigma: float = Field(default=2.0, ge=0.5, le=5)
+    fairness_sharing: bool = False
 
 
 class AssignmentUpdate(BaseModel):
@@ -43,6 +44,7 @@ class AssignmentUpdate(BaseModel):
     require_extreme_reason: bool | None = None
     deviation_warning: bool | None = None
     deviation_sigma: float | None = Field(default=None, ge=0.5, le=5)
+    fairness_sharing: bool | None = None
 
 
 class OriginOut(BaseModel):
@@ -61,6 +63,7 @@ class AssignmentOut(BaseModel):
     require_extreme_reason: bool = False
     deviation_warning: bool = False
     deviation_sigma: float = 2.0
+    fairness_sharing: bool = False
     created_at: datetime
     question_count: int = 0
     criteria_count: int = 0

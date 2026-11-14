@@ -7,8 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
 from core.exceptions import NotFoundError
+from models.protocol import AssignmentORM
 from repositories.protocol import ProtocolRepository
 from repositories.queue import QueueRepository
+from services.fairness import FairnessOut, Rated, build_fairness, peers_block
 from services.queue import normalize_code
 
 BANDS = (("low", "низкий", 0.0), ("mid", "средний", 0.5), ("high", "высокий", 0.8))
@@ -27,6 +29,7 @@ class SubmissionData:
     scores: dict[str, int] = field(default_factory=dict)
     attempt_number: int = 1
     questions: list[str] = field(default_factory=list)
+    session_id: str = ""
 
 
 class DurationStats(BaseModel):
@@ -107,6 +110,7 @@ class AnalyticsOut(BaseModel):
     weak_spots: WeakSpots | None = None
     first_attempts: WeakSpots | None = None
     retakes: WeakSpots | None = None
+    fairness: FairnessOut | None = None
 
 
 def band_of(total: int, maximum: int) -> str:
@@ -354,16 +358,65 @@ class AnalyticsService:
                 scores=scores,
                 attempt_number=sub.attempt_number,
                 questions=texts.get(sub.id, []),
+                session_id=sub.session_id,
             )
             for sub, ticket, scores in rows
         ]
         return items, criteria
 
+    async def _fairness(
+        self,
+        assignment: AssignmentORM,
+        items: list[SubmissionData],
+        criteria: dict[str, tuple[str, int]],
+    ) -> FairnessOut:
+        minimum = settings.ANALYTICS_MIN_SUBMISSIONS
+        enabled = assignment.fairness_sharing
+        publication_id = assignment.origin_publication_id
+        own: dict[tuple[str, int], tuple[float, int]] = {}
+        others: list[tuple[str, str, int, float, int]] = []
+        if enabled and publication_id is not None:
+            for _, name, maximum, mean, count in await self.repo.criterion_means(
+                assignment_id=assignment.id, minimum=minimum
+            ):
+                own[(name, maximum)] = (mean, count)
+            others = await self.repo.criterion_means(
+                publication_id=publication_id,
+                exclude_teacher_id=assignment.teacher_id,
+                minimum=minimum,
+            )
+        peers = peers_block(
+            enabled=enabled,
+            has_origin=publication_id is not None,
+            own=own,
+            others=others,
+            minimum=minimum,
+        )
+        rated = [
+            Rated(
+                session_id=i.session_id,
+                share=i.total_points / i.max_points,
+                attempt_number=i.attempt_number,
+            )
+            for i in items
+            if i.max_points > 0
+        ]
+        scores: dict[str, list[int]] = defaultdict(list)
+        for item in items:
+            for criterion_id, points in item.scores.items():
+                scores[criterion_id].append(points)
+        return build_fairness(
+            items=rated, criterion_scores=scores, criteria=criteria, minimum=minimum, peers=peers
+        )
+
     async def for_assignment(self, teacher_id: str, assignment_id: str) -> AnalyticsOut:
-        if await self.repo.get_assignment(assignment_id, teacher_id) is None:
+        assignment = await self.repo.get_assignment(assignment_id, teacher_id)
+        if assignment is None:
             raise NotFoundError("Assignment not found", code="assignment_not_found")
         items, criteria = await self._load(assignment_id, None)
-        return analyze(items, criteria)
+        out = analyze(items, criteria)
+        out.fairness = await self._fairness(assignment, items, criteria)
+        return out
 
     async def for_session(self, code: str, teacher_id: str) -> AnalyticsOut:
         session = await self.queue_repo.get_session(normalize_code(code))
@@ -371,5 +424,10 @@ class AnalyticsService:
             raise NotFoundError("Session not found", code="session_not_found")
         if session.assignment_id is None:
             raise NotFoundError("The session has no assignment", code="submission_not_found")
+        assignment = await self.db.get(AssignmentORM, session.assignment_id)
+        if assignment is None:
+            raise NotFoundError("The session has no assignment", code="submission_not_found")
         items, criteria = await self._load(session.assignment_id, session.id)
-        return analyze(items, criteria)
+        out = analyze(items, criteria)
+        out.fairness = await self._fairness(assignment, items, criteria)
+        return out

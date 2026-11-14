@@ -53,6 +53,7 @@
   .score .dev { padding:8px 10px; border:1px solid var(--warn); border-radius:10px; color:var(--warn); font-size:.9rem; }
   .score .hidden { display:none; }
   .rules { display:grid; gap:6px; margin-top:10px; }
+  #fair-box .dev { padding:8px 10px; border:1px solid var(--warn); border-radius:10px; color:var(--warn); }
   .draft { border:1px dashed var(--warn); border-radius:12px; padding:12px; margin-top:12px; }
   .scroll { overflow-x:auto; }
   table.weak { width:100%; border-collapse:collapse; font-size:14px; }
@@ -117,6 +118,7 @@
         <label class="row" style="margin:0"><input id="s-reason" type="checkbox" style="width:auto"> Требовать пояснение для крайних оценок (0 или максимум)</label>
         <label class="row" style="margin:0"><input id="s-deviation" type="checkbox" style="width:auto"> Предупреждать, если балл заметно отличается от ваших обычных</label>
         <label class="row" style="margin:0">Порог, стандартных отклонений <input id="s-sigma" type="number" min="0.5" max="5" step="0.5" style="width:90px"></label>
+        <label class="row" style="margin:0"><input id="s-fair" type="checkbox" style="width:auto"> Делиться обезличенными сводками с другими преподавателями группы и видеть их</label>
         <div class="muted">Пояснение видно студенту рядом с оценкой. Предупреждение мягкое: оно ничего не запрещает и работает при накопленных не менее 5 сдач по критерию.</div>
       </div>
       <div class="row" style="margin-top:8px">
@@ -214,6 +216,7 @@
         <div class="err" id="an-err"></div>
         <pre id="an-out"></pre>
         <div id="an-weak"></div>
+        <div id="an-fair"></div>
         <div class="hidden" id="audit-box"><h3>Журнал изменений</h3><pre id="audit"></pre></div>
       </div>
     </section>
@@ -396,6 +399,7 @@ async function openAssignment(id) {
   $("s-reason").checked = a.require_extreme_reason;
   $("s-deviation").checked = a.deviation_warning;
   $("s-sigma").value = a.deviation_sigma;
+  $("s-fair").checked = a.fairness_sharing;
   $("s-template").checked = a.is_template;
   $("a-origin").classList.toggle("hidden", !a.origin);
   $("a-origin").textContent = a.origin
@@ -458,7 +462,8 @@ $("s-save").addEventListener("click", () => guarded("s-err", async () => {
   await request("/assignments/" + current.id, { method: "PATCH", body: JSON.stringify({
     questions_per_submission: Number($("s-count").value), practice_enabled: $("s-practice").checked,
     is_template: $("s-template").checked, require_extreme_reason: $("s-reason").checked,
-    deviation_warning: $("s-deviation").checked, deviation_sigma: Number($("s-sigma").value) || 2 }) });
+    deviation_warning: $("s-deviation").checked, deviation_sigma: Number($("s-sigma").value) || 2,
+    fairness_sharing: $("s-fair").checked }) });
   show("s-err", "Сохранено", true);
   await loadAssignments();
 }));
@@ -963,10 +968,61 @@ function renderWeak(a) {
     out.append(weakBlock("Только первые попытки", a.first_attempts), weakBlock("Только пересдачи", a.retakes));
   }
 }
+function fairBlock(f) {
+  const box = el("div", { id: "fair-box" }, el("h3", {}, "Справедливость оценивания"));
+  if (!f) return box;
+  if (!f.sufficient) box.append(el("div", { class: "muted", id: "fair-note" }, f.note));
+  if (f.order) {
+    box.append(el("h3", {}, "Результат по порядку сдачи"));
+    box.append(weakTable(["Четверть очереди", "Сдач", "Средний результат", ""], f.order.quarters.map((q) => [
+      el("td", {}, String(q.quarter)), el("td", {}, String(q.count)),
+      el("td", {}, q.mean_percent == null ? "—" : pct(q.mean_percent)), el("td", {}, bar(q.mean_percent || 0)),
+    ])));
+    if (f.order.fatigue_flag) {
+      box.append(el("div", { class: "dev", id: "fair-fatigue" }, "Последняя четверть ниже первой на " + f.order.drop_percent + " п. п. (порог " + f.order.threshold_percent + " п. п.). Возможен эффект усталости, посмотрите на свои оценки в конце занятия."));
+    } else if (f.order.drop_percent != null) {
+      box.append(el("div", {}, "Первая четверть минус последняя: " + f.order.drop_percent + " п. п., порог " + f.order.threshold_percent + "."));
+    } else {
+      box.append(el("div", { class: "muted" }, "В первой или последней четверти меньше двух сдач, сравнивать нельзя."));
+    }
+    box.append(el("div", { class: "muted" }, f.order.hint));
+  }
+  if (f.attempts) {
+    const a = f.attempts;
+    const part = (title, g) => title + ": " + (g.sufficient ? g.count + " сдач, средний результат " + pct(g.mean_percent) : "данных мало (" + g.count + ")");
+    box.append(el("h3", {}, "Первые попытки и пересдачи"), el("div", {}, part("Первые попытки", a.first)), el("div", {}, part("Пересдачи", a.retakes)));
+    if (a.difference_percent != null) box.append(el("div", {}, "Пересдачи минус первые попытки: " + a.difference_percent + " п. п."));
+    box.append(el("div", { class: "muted" }, a.hint));
+  }
+  if (f.spread) {
+    box.append(el("h3", {}, "Разброс оценок и крайние оценки"));
+    if (f.spread.rows.length) {
+      box.append(weakTable(["Критерий", "Среднее", "Разброс", "Нули", "Максимум"], f.spread.rows.map((r) => [
+        el("td", {}, r.name), el("td", {}, pct(r.mean_percent)), el("td", {}, pct(r.stdev_percent)), el("td", {}, pct(r.zero_percent)), el("td", {}, pct(r.top_percent)),
+      ])));
+      box.append(el("div", {}, "Доля крайних оценок (0 и максимум) по всем критериям: " + pct(f.spread.extreme_percent)));
+    } else {
+      box.append(el("div", { class: "muted" }, "По критериям данных мало."));
+    }
+    box.append(el("div", { class: "muted" }, f.spread.hint));
+  }
+  const p = f.peers;
+  box.append(el("h3", {}, "Сравнение с другими преподавателями группы"));
+  if (p.rows.length) {
+    box.append(weakTable(["Критерий", "Ваше среднее", "Другие участники (" + p.rows[0].peers + ")"], p.rows.map((r) => [
+      el("td", {}, r.name), el("td", {}, pct(r.own_percent)), el("td", {}, r.peer_percents.map((v) => pct(v)).join(", ")),
+    ])));
+  } else {
+    box.append(el("div", { class: "muted", id: "peers-note" }, p.note));
+  }
+  box.append(el("div", { class: "muted" }, p.hint), el("div", { class: "muted", id: "fair-disclaimer" }, f.disclaimer));
+  return box;
+}
 async function loadAnalytics(path) {
   const a = await request(path);
   $("an-out").textContent = renderAnalytics(a);
   renderWeak(a);
+  $("an-fair").replaceChildren(fairBlock(a.fairness));
 }
 $("an-session").addEventListener("click", () => guarded("an-err", async () => {
   await loadAnalytics("/sessions/" + sessionCode + "/analytics");

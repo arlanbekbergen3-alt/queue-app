@@ -339,3 +339,39 @@ class ProtocolRepository:
             )
         )
         return list((await self.db.execute(stmt)).scalars())
+
+    async def criterion_means(
+        self,
+        *,
+        assignment_id: str | None = None,
+        publication_id: str | None = None,
+        exclude_teacher_id: str | None = None,
+        minimum: int = 1,
+    ) -> list[tuple[str, str, int, float, int]]:
+        stmt = (
+            select(
+                AssignmentORM.id,
+                CriterionORM.name,
+                CriterionORM.max_points,
+                func.avg(ScoreORM.points),
+                func.count(),
+            )
+            .select_from(ScoreORM)
+            .join(SubmissionORM, SubmissionORM.id == ScoreORM.submission_id)
+            .join(CriterionORM, CriterionORM.id == ScoreORM.criterion_id)
+            .join(AssignmentORM, AssignmentORM.id == SubmissionORM.assignment_id)
+            .where(SubmissionORM.status == SubmissionStatus.COMPLETED)
+            .group_by(AssignmentORM.id, CriterionORM.name, CriterionORM.max_points)
+            .having(func.count() >= minimum)
+        )
+        if assignment_id is not None:
+            stmt = stmt.where(AssignmentORM.id == assignment_id)
+        if publication_id is not None:
+            stmt = stmt.where(
+                AssignmentORM.origin_publication_id == publication_id,
+                AssignmentORM.fairness_sharing.is_(True),
+            )
+        if exclude_teacher_id is not None:
+            stmt = stmt.where(AssignmentORM.teacher_id != exclude_teacher_id)
+        rows = (await self.db.execute(stmt)).all()
+        return [(r[0], r[1], r[2], float(r[3]), r[4]) for r in rows]

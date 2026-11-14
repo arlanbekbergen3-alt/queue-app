@@ -68,6 +68,12 @@ class AssignmentORM(Base):
     deviation_sigma: Mapped[float] = mapped_column(
         Float, default=2.0, server_default=text("2.0"), nullable=False
     )
+    fairness_sharing: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false"), nullable=False
+    )
+    origin_publication_id: Mapped[str | None] = mapped_column(
+        ForeignKey("space_publications.id", ondelete="SET NULL"), nullable=True, index=True
+    )
     origin_author: Mapped[str | None] = mapped_column(String(50), nullable=True)
     origin_space: Mapped[str | None] = mapped_column(String(80), nullable=True)
     origin_title: Mapped[str | None] = mapped_column(String(120), nullable=True)

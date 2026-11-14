@@ -160,7 +160,8 @@ async def test_closing_and_reopening_leave_a_trace_in_the_session_journal(client
     await client.post(f"{API}/sessions/{code}/reopen", headers=headers)
     await client.post(f"{API}/sessions/{code}/reopen", headers=headers)
 
-    events = (await client.get(f"{API}/sessions/{code}/events-log", headers=headers)).json()
+    log = (await client.get(f"{API}/sessions/{code}/events-log", headers=headers)).json()
+    events = [e for e in log if e["kind"] != "questions_drawn"]
 
     assert [(e["kind"], e["details"]) for e in events] == [
         ("close", {"cancelled_submissions": 1}),

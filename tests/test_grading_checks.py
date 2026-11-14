@@ -130,7 +130,8 @@ async def check(client, headers, submission, criterion, points):
 
 
 async def events(client, headers, code):
-    return (await client.get(f"{API}/sessions/{code}/events-log", headers=headers)).json()
+    log = (await client.get(f"{API}/sessions/{code}/events-log", headers=headers)).json()
+    return [e for e in log if e["kind"] != "questions_drawn"]
 
 
 @pytest.mark.asyncio

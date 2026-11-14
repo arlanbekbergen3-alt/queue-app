@@ -91,11 +91,14 @@
       <h2>Работы</h2>
       <div class="list" id="assignments"></div>
       <h3>Новая работа</h3>
+      <label for="a-title">Название работы</label>
+      <input class="grow" id="a-title" maxlength="120" placeholder="Название, например: Лабораторная №3">
+      <label for="a-count">Сколько вопросов выпадает каждому студенту на сдаче (от 1 до 10)</label>
       <div class="row">
-        <input class="grow" id="a-title" maxlength="120" placeholder="Название, например: Лабораторная №3">
-        <input id="a-count" type="number" min="1" max="10" value="3" style="width:90px" title="Вопросов на сдачу">
-        <button id="a-create">Создать</button>
+        <input id="a-count" type="number" min="1" max="10" value="3" style="width:90px">
+        <span class="muted">Если в банке вопросов меньше, студент получит все.</span>
       </div>
+      <button id="a-create" style="margin-top:10px">Создать</button>
       <div class="hidden" id="tpl-row" style="margin-top:8px">
         <div class="row">
           <select class="grow" id="tpl-select" aria-label="Шаблон"></select>
@@ -109,8 +112,9 @@
     <section class="card hidden" id="a-card">
       <h2 id="a-name"></h2>
       <div class="muted hidden" id="a-origin"></div>
+      <div class="short-note" id="s-short" role="status"></div>
       <div class="row">
-        <label class="row" style="margin:0">Вопросов на сдачу <input id="s-count" type="number" min="1" max="10" style="width:80px"></label>
+        <label class="row" style="margin:0" for="s-count">Сколько вопросов выпадает каждому студенту (от 1 до 10) <input id="s-count" type="number" min="1" max="10" style="width:80px"></label>
         <label class="row" style="margin:0"><input id="s-practice" type="checkbox" style="width:auto"> Включить тренировку для студентов</label>
         <label class="row" style="margin:0"><input id="s-template" type="checkbox" style="width:auto"> Использовать как шаблон</label>
         <button id="s-save">Сохранить</button>
@@ -206,6 +210,7 @@
           <select class="grow" id="p-assignment"></select>
           <button id="p-attach">Подключить работу к сессии</button>
         </div>
+        <div class="short-note" id="p-short" role="status"></div>
         <div class="note" id="p-note"></div>
 
         <h3>Текущая сдача</h3>
@@ -389,6 +394,11 @@ async function loadAssignments() {
   tpl.replaceChildren();
   for (const t of templates) tpl.append(el("option", { value: t.id }, t.title));
   $("tpl-row").classList.toggle("hidden", !templates.length);
+  showAttachNote();
+}
+
+function showAttachNote() {
+  $("p-short").textContent = bankNote(assignments.find((a) => a.id === $("p-assignment").value));
 }
 
 async function openAssignment(id) {
@@ -398,6 +408,7 @@ async function openAssignment(id) {
   $("a-card").classList.remove("hidden");
   $("a-name").textContent = a.title;
   $("s-count").value = a.questions_per_submission;
+  $("s-short").textContent = bankNote(a);
   $("s-practice").checked = a.practice_enabled;
   $("s-reason").checked = a.require_extreme_reason;
   $("s-deviation").checked = a.deviation_warning;
@@ -696,9 +707,11 @@ async function openSession() {
   const sessions = await request("/sessions");
   const mine = sessions.find((s) => s.code === code);
   $("p-assignment").value = mine && mine.assignment_id ? mine.assignment_id : "";
+  showAttachNote();
   await refreshSubmissions();
 }
 $("p-open").addEventListener("click", () => guarded("p-err", openSession));
+$("p-assignment").addEventListener("change", showAttachNote);
 $("p-attach").addEventListener("click", () => guarded("p-err", async () => {
   await request("/sessions/" + sessionCode + "/assignment", { method: "PUT", body: JSON.stringify({
     assignment_id: $("p-assignment").value || null }) });

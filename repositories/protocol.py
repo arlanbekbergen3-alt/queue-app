@@ -224,6 +224,19 @@ class ProtocolRepository:
             result[submission_id].append(text)
         return result
 
+    async def session_question_usage(self, session_id: str) -> dict[str, int]:
+        stmt = (
+            select(SubmissionQuestionORM.question_id, func.count())
+            .join(SubmissionORM, SubmissionORM.id == SubmissionQuestionORM.submission_id)
+            .where(
+                SubmissionORM.session_id == session_id,
+                SubmissionORM.status != SubmissionStatus.CANCELLED,
+                SubmissionQuestionORM.question_id.is_not(None),
+            )
+            .group_by(SubmissionQuestionORM.question_id)
+        )
+        return {qid: n for qid, n in (await self.db.execute(stmt)).all()}
+
     async def question_usage(self, student_id: str, assignment_id: str) -> dict[str, int]:
         stmt = (
             select(SubmissionQuestionORM.question_id, func.count())

@@ -69,7 +69,7 @@ def test_teacher_screen_asks_for_a_reason_and_shows_the_soft_warning(page: Page,
     assert scores[criteria[0]["id"]]["points"] == 0
     assert scores[criteria[0]["id"]]["comment"] == "Нет ответа на вопрос"
     log = api.get(f"/sessions/{teacher['code']}/events-log", headers=headers).json()
-    assert [e["kind"] for e in log] == ["deviation_shown"]
+    assert [e["kind"] for e in log if e["kind"] != "questions_drawn"] == ["deviation_shown"]
 
 
 def test_teacher_screen_stays_quiet_when_the_features_are_off(page: Page, api, open_session):
@@ -89,7 +89,8 @@ def test_teacher_screen_stays_quiet_when_the_features_are_off(page: Page, api, o
 
     expect(first.locator(".why")).to_be_hidden()
     expect(first.locator(".dev")).to_be_hidden()
-    assert api.get(f"/sessions/{code}/events-log", headers=headers).json() == []
+    log = api.get(f"/sessions/{code}/events-log", headers=headers).json()
+    assert [e for e in log if e["kind"] != "questions_drawn"] == []
 
 
 def test_protocol_screen_settings_reason_and_warning(page: Page, api, open_session):

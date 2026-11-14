@@ -161,6 +161,9 @@ class SubmissionORM(Base):
     selection_usage: Mapped[dict[str, Any] | None] = mapped_column(
         JSON().with_variant(JSONB(), "postgresql"), nullable=True
     )
+    selection_session_usage: Mapped[dict[str, Any] | None] = mapped_column(
+        JSON().with_variant(JSONB(), "postgresql"), nullable=True
+    )
     selection_seed: Mapped[str] = mapped_column(String(32), nullable=False)
     pool_question_ids: Mapped[list[Any]] = mapped_column(
         JSON().with_variant(JSONB(), "postgresql"), nullable=False

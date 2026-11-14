@@ -161,6 +161,7 @@
       <div id="w-protocol">
         <label for="w-assignment">Работа с критериями и вопросами</label>
         <select id="w-assignment"><option value="">выберу позже</option></select>
+        <div class="short-note" id="w-short" role="status"></div>
       </div>
       <div id="w-quick" class="hidden">
         <label for="quick-max">Максимальная оценка</label>
@@ -683,6 +684,11 @@ async function loadAssignmentChoices() {
   select.replaceChildren(el("option", { value: "" }, "выберу позже"));
   for (const a of lastAssignments) select.append(el("option", { value: a.id }, a.title));
   select.value = keep;
+  showBankNote();
+}
+
+function showBankNote() {
+  $("w-short").textContent = bankNote(lastAssignments.find((a) => a.id === $("w-assignment").value));
 }
 
 function prefillFromLast(sessions) {
@@ -1405,6 +1411,7 @@ $("reopen-btn").addEventListener("click", reopenSession);
 $("registration-btn").addEventListener("click", toggleRegistration);
 $("presence-toggle").addEventListener("click", togglePresence);
 $("mode").addEventListener("change", syncMode);
+$("w-assignment").addEventListener("change", showBankNote);
 for (const type of ["input", "change"]) $("wizard").addEventListener(type, () => { formTouched = true; });
 $("start-panel").addEventListener("toggle", renderJoin);
 $("copy-link").addEventListener("click", copyLink);

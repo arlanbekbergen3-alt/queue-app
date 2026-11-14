@@ -245,6 +245,8 @@ class SubmissionOut(BaseModel):
     selection_seed: str | None = None
     pool_question_ids: list[str] | None = None
     selection_usage: dict[str, int] | None = None
+    selection_session_usage: dict[str, int] | None = None
+    selection_round: int | None = None
 
 
 class MySubmissionOut(BaseModel):

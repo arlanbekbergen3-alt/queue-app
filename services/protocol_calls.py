@@ -6,28 +6,48 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.entry import EntryORM
-from models.protocol import SubmissionORM, SubmissionQuestionORM, SubmissionStatus
+from models.protocol import (
+    SessionEventORM,
+    SubmissionORM,
+    SubmissionQuestionORM,
+    SubmissionStatus,
+)
 from models.queue_session import QueueSessionORM
 from repositories.protocol import ProtocolRepository
 
 
 def choose_question_ids(
-    seed: str, pool_ids: list[str], count: int, usage: dict[str, int] | None = None
+    seed: str,
+    pool_ids: list[str],
+    count: int,
+    usage: dict[str, int] | None = None,
+    session_usage: dict[str, int] | None = None,
 ) -> list[str]:
     count = min(count, len(pool_ids))
     if count <= 0:
         return []
     rng = random.Random(seed)
-    if not usage or not any(usage.get(i, 0) for i in pool_ids):
-        return [pool_ids[i] for i in rng.sample(range(len(pool_ids)), count)]
+    usage = usage or {}
+    session_usage = session_usage or {}
+    tiers: dict[tuple[int, int], list[str]] = {}
+    for question_id in pool_ids:
+        key = (usage.get(question_id, 0), session_usage.get(question_id, 0))
+        tiers.setdefault(key, []).append(question_id)
     chosen: list[str] = []
-    for level in sorted({usage.get(i, 0) for i in pool_ids}):
+    for key in sorted(tiers):
         need = count - len(chosen)
         if need <= 0:
             break
-        tier = [i for i in pool_ids if usage.get(i, 0) == level]
+        tier = tiers[key]
         chosen += [tier[j] for j in rng.sample(range(len(tier)), min(need, len(tier)))]
     return chosen
+
+
+def draw_round(session_usage: dict[str, int] | None, pool_ids: list[str] | None) -> int:
+    if not pool_ids:
+        return 1
+    usage = session_usage or {}
+    return min(usage.get(question_id, 0) for question_id in pool_ids) + 1
 
 
 async def start_submission(db: AsyncSession, session: QueueSessionORM, entry: EntryORM) -> None:
@@ -64,12 +84,15 @@ async def start_submission(db: AsyncSession, session: QueueSessionORM, entry: En
     if entry.student_id is not None:
         usage = await repo.question_usage(entry.student_id, assignment.id)
     usage = {qid: n for qid, n in usage.items() if qid in by_id}
+    session_usage = {
+        qid: n for qid, n in (await repo.session_question_usage(session.id)).items() if qid in by_id
+    }
     wanted = assignment.questions_per_submission
     if session.questions_override:
         wanted = min(wanted, session.questions_override)
     if session.ready_priority and entry.ready_now and session.ready_skip_questions:
         wanted = max(1, wanted - session.ready_skip_questions)
-    chosen = choose_question_ids(seed, pool_ids, wanted, usage)
+    chosen = choose_question_ids(seed, pool_ids, wanted, usage, session_usage)
     submission = SubmissionORM(
         entry_id=entry.id,
         session_id=session.id,
@@ -78,10 +101,26 @@ async def start_submission(db: AsyncSession, session: QueueSessionORM, entry: En
         selection_seed=seed,
         pool_question_ids=pool_ids,
         selection_usage=usage or None,
+        selection_session_usage=session_usage or None,
         questions_target=wanted,
     )
     db.add(submission)
     await db.flush()
+    db.add(
+        SessionEventORM(
+            session_id=session.id,
+            actor_id=session.teacher_id,
+            kind="questions_drawn",
+            details={
+                "submission_id": submission.id,
+                "round": draw_round(session_usage, pool_ids),
+                "pool": len(pool_ids),
+                "wanted": wanted,
+                "chosen": chosen,
+                "short": len(chosen) < wanted,
+            },
+        )
+    )
     for position, question_id in enumerate(chosen, start=1):
         question = by_id[question_id]
         db.add(

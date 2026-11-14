@@ -58,7 +58,7 @@ from services.grading_checks import (
     is_extreme,
     reason_given,
 )
-from services.protocol_calls import start_submission
+from services.protocol_calls import draw_round, start_submission
 from services.question_import import parse
 from services.queue import normalize_code
 from services.serving import mark_entry_done
@@ -415,6 +415,12 @@ class ProtocolService:
             selection_seed=submission.selection_seed if audit_view else None,
             pool_question_ids=pool if audit_view else None,
             selection_usage=(submission.selection_usage or None) if audit_view else None,
+            selection_session_usage=(submission.selection_session_usage or None)
+            if audit_view
+            else None,
+            selection_round=draw_round(submission.selection_session_usage, pool)
+            if audit_view
+            else None,
         )
 
     async def _per_submission(self, assignment_id: str) -> int | None:

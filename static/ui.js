@@ -12,6 +12,13 @@ function sessionName(title, group) {
   return title + " · " + group;
 }
 
+function bankNote(assignment) {
+  if (!assignment || assignment.question_count >= assignment.questions_per_submission) return "";
+  return "В банке " + counted(assignment.question_count, "вопрос", "вопроса", "вопросов") +
+    ", а на сдачу нужно " + assignment.questions_per_submission + ": каждый студент получит " +
+    assignment.question_count + ". Добавьте вопросы в банк.";
+}
+
 function counted(count, one, few, many) {
   return count + " " + plural(count, one, few, many);
 }

@@ -52,6 +52,8 @@ class Settings(BaseSettings):
     MAX_SPACES_OWNED: int = Field(default=5, ge=1)
     MAX_SPACES_JOINED: int = Field(default=10, ge=1)
     MAX_SPACE_MEMBERS: int = Field(default=30, ge=2)
+    MAX_ROSTER_PER_GROUP: int = Field(default=100, ge=1)
+    MAX_ROSTER_GROUPS: int = Field(default=30, ge=1)
     MAX_SPACE_PUBLICATIONS: int = Field(default=100, ge=1)
     MAX_PUBLICATIONS_PER_AUTHOR: int = Field(default=20, ge=1)
 

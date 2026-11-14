@@ -136,6 +136,9 @@
       <h2>Начать занятие</h2>
       <label for="group">Группа</label>
       <input id="group" maxlength="60" placeholder="Например: ИС-22">
+      <div class="muted hidden" id="roster-hint"></div>
+      <label class="check hidden" id="roster-only-row" for="roster-only"><input type="checkbox" id="roster-only"> Вход только по списку группы</label>
+      <div class="muted"><a href="/students#roster">Загрузить или изменить списки групп</a></div>
       <label for="mode">Как проводим сдачу</label>
       <select id="mode">
         <option value="protocol">Полный протокол: критерии, вопросы, журнал</option>
@@ -322,6 +325,7 @@ const MESSAGES = {
   invalid_credentials: "Неверный логин или пароль",
   invalid_invite_code: "Неверный код приглашения",
   username_taken: "Этот логин уже занят",
+  roster_missing: "Для входа по списку загрузите список этой группы",
   already_serving: "Сначала завершите работу с текущим студентом",
   queue_empty: "В очереди никого нет",
   not_called: "Отметить «сдал» можно только вызванного студента",
@@ -561,11 +565,26 @@ function showAuth() {
   $("logout-btn").classList.add("hidden");
 }
 
+let rosterGroups = [];
+function rosterKey(value) { return (value || "").normalize("NFKC").toLowerCase().replaceAll("ё", "е").replace(/\s+/g, ""); }
+function paintRoster() {
+  const found = rosterGroups.find((g) => rosterKey(g.group) === rosterKey($("group").value));
+  $("roster-hint").classList.toggle("hidden", !found);
+  $("roster-only-row").classList.toggle("hidden", !found);
+  if (found) $("roster-hint").textContent = "Список группы: " + found.count + " чел. Студенты смогут выбрать себя из списка.";
+  else $("roster-only").checked = false;
+}
+async function loadRoster() {
+  try { rosterGroups = await request("/roster"); } catch { rosterGroups = []; }
+  paintRoster();
+}
+
 async function showApp() {
   $("auth-view").classList.add("hidden");
   $("app-view").classList.remove("hidden");
   $("logout-btn").classList.remove("hidden");
   await loadSessions();
+  await loadRoster();
 }
 
 async function loadSessions() {
@@ -665,6 +684,7 @@ async function createSession() {
       ready_priority: $("ready-priority").checked,
       ready_bonus_points: Number($("ready-bonus").value),
       ready_skip_questions: Number($("ready-skip").value),
+      roster_only: $("roster-only").checked,
     }) });
     $("title").value = "";
     if (mode === "protocol" && $("w-assignment").value) {
@@ -1254,6 +1274,7 @@ for (const id of ["username", "password", "invite"]) {
 for (const id of ["title", "group"]) {
   $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") createSession(); });
 }
+$("group").addEventListener("input", paintRoster);
 
 if (token) showApp(); else showAuth();
 </script>

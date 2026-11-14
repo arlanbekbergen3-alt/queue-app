@@ -20,6 +20,7 @@ class SessionCreate(BaseModel):
     ready_skip_questions: int = Field(default=0, ge=0, le=1)
     duration_minutes: int | None = Field(default=None, ge=1, le=720)
     deadline_at: datetime | None = None
+    roster_only: bool = False
 
     @model_validator(mode="after")
     def one_time_limit(self) -> "SessionCreate":
@@ -52,6 +53,7 @@ class SessionSettingsIn(BaseModel):
     ready_priority: bool | None = None
     ready_bonus_points: int | None = Field(default=None, ge=0, le=5)
     ready_skip_questions: int | None = Field(default=None, ge=0, le=1)
+    roster_only: bool | None = None
 
 
 class ReadyNowIn(BaseModel):
@@ -83,6 +85,7 @@ class SessionOut(BaseModel):
     quick_max_points: int = 10
     presence_check: str = "off"
     presence_interval: int = 30
+    roster_only: bool = False
 
     model_config = {"from_attributes": True}
 
@@ -104,6 +107,8 @@ class SessionPublic(BaseModel):
     session_mode: str = "protocol"
     presence_check: str = "off"
     graded: bool = False
+    roster_only: bool = False
+    roster_available: bool = False
 
 
 class PresenceIn(BaseModel):

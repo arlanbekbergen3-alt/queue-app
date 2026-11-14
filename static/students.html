@@ -79,6 +79,19 @@
       <div class="list" id="students"></div>
     </section>
 
+    <section class="card" id="roster">
+      <h2>Списки групп</h2>
+      <div class="muted">Вставьте список группы, по одному студенту в строке (нумерацию, маркеры и повторы уберём). При входе студент выбирает себя из списка, а история и пересдачи связываются точно, без ошибок в написании имени. Включить вход только по списку можно при создании занятия.</div>
+      <label for="r-group">Группа</label>
+      <input id="r-group" maxlength="60" placeholder="Например: ИС-22">
+      <label for="r-text">Список (фамилия и имя в строке)</label>
+      <textarea id="r-text" rows="8" maxlength="20000" placeholder="Иванов Иван&#10;Петрова Анна"></textarea>
+      <div class="tools"><button id="r-save">Сохранить список</button></div>
+      <div class="muted">Новая загрузка заменяет прежний список этой группы.</div>
+      <div class="err" id="r-err"></div>
+      <div class="list" id="r-groups"></div>
+    </section>
+
     <section class="card hidden" id="card">
       <h2 id="c-name"></h2>
       <div class="muted" id="c-meta"></div>
@@ -107,6 +120,10 @@ const MESSAGES = {
   invalid_token: "Войдите заново на странице преподавателя",
   rate_limited: "Слишком много запросов, подождите минуту",
   validation_error: "Проверьте введённые данные",
+  roster_empty: "В списке нет ни одной фамилии",
+  roster_not_found: "Список группы не найден",
+  roster_groups_limit: "Слишком много списков групп, удалите ненужный",
+  invalid_group: "Название группы: от 1 до 60 символов",
 };
 const STATUS = { completed: "завершена", in_progress: "идёт", cancelled: "отменена" };
 const $ = (id) => document.getElementById(id);
@@ -253,6 +270,35 @@ async function openCard(id) {
   $("card").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+const SKIPPED = { duplicate: "повтор", too_long: "слишком длинная строка", over_limit: "сверх лимита группы", control: "недопустимые символы" };
+async function loadRosters() {
+  const groups = await request("/roster");
+  const box = $("r-groups");
+  box.replaceChildren();
+  if (!groups.length) box.append(el("div", { class: "muted" }, "Списков пока нет."));
+  for (const g of groups) {
+    box.append(el("div", {},
+      el("span", {}, g.group + " · " + g.count + " чел."),
+      el("span", { class: "tools" },
+        el("button", { class: "ghost", onclick: () => guarded("r-err", async () => {
+          const roster = await request("/roster/names?group=" + encodeURIComponent(g.group));
+          $("r-group").value = roster.group;
+          $("r-text").value = roster.names.join("\n");
+        }) }, "Показать"),
+        el("button", { class: "ghost", onclick: () => guarded("r-err", async () => {
+          if (!confirm("Удалить список группы " + g.group + "?")) return;
+          await request("/roster?group=" + encodeURIComponent(g.group), { method: "DELETE" });
+          await loadRosters();
+        }) }, "Удалить"))));
+  }
+}
+$("r-save").addEventListener("click", () => guarded("r-err", async () => {
+  const roster = await request("/roster", { method: "PUT", body: JSON.stringify({ group: $("r-group").value.trim() || " ", text: $("r-text").value }) });
+  $("r-text").value = roster.names.join("\n");
+  const skipped = roster.skipped.map((s) => s.text + " (" + (SKIPPED[s.reason] || s.reason) + ")");
+  show("r-err", "Сохранено: " + roster.names.length + " чел." + (skipped.length ? ". Пропущено: " + skipped.join("; ") : ""), true);
+  await loadRosters();
+}));
 $("f-go").addEventListener("click", () => guarded("list-err", loadStudents));
 $("c-merge").addEventListener("click", () => guarded("c-err", async () => {
   const target = $("c-merge-target").value;
@@ -269,6 +315,7 @@ async function start() {
   try {
     await loadAssignments();
     await loadStudents();
+    await loadRosters();
   } catch (error) {
     $("app").classList.add("hidden");
     $("need-login").classList.remove("hidden");

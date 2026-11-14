@@ -17,6 +17,7 @@ from schemas.queue import (
     TeacherEntryOut,
     TeacherQueueOut,
 )
+from schemas.roster import PublicRosterOut
 
 router = APIRouter(prefix="/sessions", tags=["Sessions"])
 
@@ -34,6 +35,11 @@ async def list_sessions(teacher: CurrentTeacher, service: QueueServiceDep):
 @router.get("/{code}", response_model=SessionPublic)
 async def session_info(code: str, service: QueueServiceDep):
     return await service.public_info(code)
+
+
+@router.get("/{code}/roster", response_model=PublicRosterOut)
+async def session_roster(code: str, service: QueueServiceDep):
+    return await service.public_roster(code)
 
 
 @router.post("/{code}/join", response_model=MyEntryOut, dependencies=[Depends(limit_join)])

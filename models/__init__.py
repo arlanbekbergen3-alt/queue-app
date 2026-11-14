@@ -11,6 +11,7 @@ from models.protocol import (
     SubmissionQuestionORM,
 )
 from models.queue_session import QueueSessionORM
+from models.roster import RosterEntryORM
 from models.space import (
     PublicationCriterionORM,
     PublicationORM,
@@ -34,6 +35,7 @@ __all__ = [
     "SubjectSpaceORM",
     "QueueSessionORM",
     "QuestionORM",
+    "RosterEntryORM",
     "ScoreORM",
     "SessionEventORM",
     "SubmissionORM",

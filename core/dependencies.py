@@ -13,6 +13,7 @@ from repositories.user import UserRepository
 from services.auth import AuthService
 from services.protocol import ProtocolService
 from services.queue import QueueService
+from services.roster import RosterService
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -51,6 +52,10 @@ def get_auth_service(db: DbSession) -> AuthService:
     return AuthService(db)
 
 
+def get_roster_service(db: DbSession) -> RosterService:
+    return RosterService(db)
+
+
 def get_queue_service(db: DbSession) -> QueueService:
     return QueueService(db)
 
@@ -62,3 +67,4 @@ def get_protocol_service(db: DbSession) -> ProtocolService:
 ProtocolServiceDep = Annotated[ProtocolService, Depends(get_protocol_service)]
 AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
 QueueServiceDep = Annotated[QueueService, Depends(get_queue_service)]
+RosterServiceDep = Annotated[RosterService, Depends(get_roster_service)]

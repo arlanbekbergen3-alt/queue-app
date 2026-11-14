@@ -38,6 +38,10 @@
   .row { display:flex; justify-content:space-between; gap:12px; margin-top:14px; }
   .check { display:flex; align-items:center; gap:10px; color:var(--text); font-size:16px; }
   .check input { width:auto; margin:0; }
+  .roster { display:flex; flex-wrap:wrap; gap:6px; max-height:230px; overflow-y:auto; margin-top:8px; }
+  .roster button { width:auto; margin:0; padding:9px 12px; min-height:44px; font-size:15px; font-weight:500; background:var(--bg); color:var(--text); border:1px solid var(--border); }
+  .roster button.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+  input[readonly] { cursor:pointer; }
 </style>
 </head>
 <body>
@@ -50,6 +54,10 @@
     <input id="code" maxlength="8" autocomplete="off" autocapitalize="characters" placeholder="ABC123">
     <label for="name">Ваше имя и фамилия</label>
     <input id="name" maxlength="60" autocomplete="name" placeholder="Анна Иванова">
+    <div id="roster-box" class="hidden">
+      <div class="muted small" id="roster-hint"></div>
+      <div class="roster" id="roster-list"></div>
+    </div>
     <div id="presence-box" class="hidden">
       <label for="presence-code">Код с экрана преподавателя</label>
       <input id="presence-code" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="6 цифр">
@@ -105,6 +113,9 @@ const MESSAGES = {
   session_closed: "Сессия закрыта",
   registration_closed: "Запись закрыта",
   lottery_pending: "Порядок ещё не определён",
+  not_in_roster: "Вас нет в списке группы: выберите себя из списка или обратитесь к преподавателю",
+  name_taken: "Этот студент уже в очереди. Если это вы, откройте страницу на том же устройстве",
+  roster_missing: "Для входа по списку нужен список группы",
   presence_code_invalid: "Неверный код, посмотрите на экран",
   presence_code_required: "Введите код с экрана преподавателя",
   presence_locked: "Слишком много неверных кодов. Подождите пару минут и посмотрите на экран",
@@ -204,6 +215,32 @@ function offerQuickJoin() {
   quick.classList.toggle("hidden", !offered);
   if (offered) quick.textContent = "Войти как " + name;
 }
+function hideRoster() {
+  $("roster-box").classList.add("hidden");
+  $("roster-list").replaceChildren();
+  $("name").readOnly = false;
+  $("name").placeholder = "Анна Иванова";
+}
+async function showRoster(code, only) {
+  const roster = await request("/" + encodeURIComponent(code) + "/roster");
+  if (previewCode !== code || !roster.names.length) return;
+  const list = $("roster-list");
+  list.replaceChildren();
+  for (const name of roster.names) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = name;
+    button.addEventListener("click", () => {
+      $("name").value = name;
+      for (const other of list.children) other.classList.toggle("on", other === button);
+    });
+    list.append(button);
+  }
+  $("roster-hint").textContent = only ? "Выберите себя в списке группы" : "Выберите себя в списке или введите имя";
+  $("name").readOnly = only;
+  if (only) { $("name").value = ""; $("name").placeholder = "Выберите себя в списке"; }
+  $("roster-box").classList.remove("hidden");
+}
 let previewCode = "";
 async function previewSession() {
   const code = $("code").value.trim().toUpperCase();
@@ -212,10 +249,12 @@ async function previewSession() {
   const box = $("ready-choice");
   box.classList.add("hidden");
   $("presence-box").classList.add("hidden");
+  hideRoster();
   if (code.length < 6) return;
   try {
     const info = await request("/" + encodeURIComponent(code));
     if (previewCode !== code) return;
+    if (info.roster_available && info.status === "open") await showRoster(code, info.roster_only);
     const offered = info.ready_priority && info.join_open && info.status === "open";
     box.classList.toggle("hidden", !offered);
     $("perks-join").textContent = offered ? perksText(info) : "";
@@ -313,6 +352,7 @@ async function join() {
     startLive();
   } catch (error) {
     $("join-err").textContent = error.status === 404 ? "Сессия с таким кодом не найдена" : error.message;
+    if (error.message === MESSAGES.name_taken || error.message === MESSAGES.not_in_roster) { previewCode = ""; previewSession(); }
   } finally {
     $("join-btn").disabled = false;
   }

@@ -34,6 +34,7 @@ from routers.live import router as live_router
 from routers.practice import router as practice_router
 from routers.protocol import router as protocol_router
 from routers.qr import router as qr_router
+from routers.roster import router as roster_router
 from routers.sessions import router as sessions_router
 from routers.spaces import router as spaces_router
 from routers.templates import router as templates_router
@@ -121,6 +122,7 @@ app.include_router(analytics_router, prefix=API_V1_PREFIX)
 app.include_router(history_router, prefix=API_V1_PREFIX)
 app.include_router(templates_router, prefix=API_V1_PREFIX)
 app.include_router(spaces_router, prefix=API_V1_PREFIX)
+app.include_router(roster_router, prefix=API_V1_PREFIX)
 
 
 def _error(status: int, detail: str, code: str, headers: dict | None = None, **extra):

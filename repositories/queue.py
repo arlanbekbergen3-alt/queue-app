@@ -133,6 +133,18 @@ class QueueRepository:
         )
         return list((await self.db.execute(stmt)).scalars())
 
+    async def name_in_queue(self, session_id: str, name: str) -> bool:
+        stmt = (
+            select(EntryORM.id)
+            .where(
+                EntryORM.session_id == session_id,
+                EntryORM.name == name,
+                EntryORM.status != EntryStatus.LEFT,
+            )
+            .limit(1)
+        )
+        return (await self.db.execute(stmt)).scalar_one_or_none() is not None
+
     async def allocate_ticket(self, session_id: str) -> int:
         stmt = (
             update(QueueSessionORM)

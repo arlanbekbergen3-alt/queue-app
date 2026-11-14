@@ -35,6 +35,7 @@ from schemas.queue import (
     TeacherEntryOut,
     TeacherQueueOut,
 )
+from schemas.roster import PublicRosterOut
 from services import presence
 from services.identity import find_or_create_student
 from services.ordering import (
@@ -52,6 +53,7 @@ from services.protocol_calls import (
     start_submission,
 )
 from services.quick import QuickAssignments
+from services.roster import RosterService
 from services.serving import (  # noqa: F401
     AVERAGE_SMOOTHING,
     MAX_SERVICE_SECONDS,
@@ -177,6 +179,8 @@ class QueueService:
 
     async def create_session(self, teacher_id: str, data: SessionCreate) -> QueueSessionORM:
         deadline = self._deadline(data)
+        if data.roster_only:
+            await self._require_roster(teacher_id, data.group)
         assignment_id = None
         if data.session_mode == "quick":
             assignment_id = await QuickAssignments(self.db).ensure(
@@ -201,6 +205,7 @@ class QueueService:
                         presence_interval=data.presence_interval,
                         quick_max_points=data.quick_max_points,
                         assignment_id=assignment_id,
+                        roster_only=data.roster_only,
                     )
                     await self.db.flush()
             except IntegrityError:
@@ -258,11 +263,25 @@ class QueueService:
             session_mode=session.session_mode,
             presence_check=session.presence_check,
             graded=session.assignment_id is not None,
+            roster_only=session.roster_only,
+            roster_available=await RosterService(self.db).has_roster(
+                session.teacher_id, session.group_name
+            ),
         )
 
     async def join(self, code: str, data: JoinIn, client_ip: str = "-") -> MyEntryOut:
         async with join_gate(normalize_code(code)):
             return await self._join(code, data, client_ip)
+
+    async def _roster_name(self, session: QueueSessionORM, name: str) -> str:
+        canonical = await RosterService(self.db).canonical(
+            session.teacher_id, session.group_name, name
+        )
+        if canonical is None:
+            raise UnprocessableError("Вас нет в списке группы", code="not_in_roster")
+        if await self.repo.name_in_queue(session.id, canonical):
+            raise ConflictError("Этот студент уже в очереди", code="name_taken")
+        return canonical
 
     def _check_presence(self, session: QueueSessionORM, code: str | None, client_ip: str) -> None:
         wait = presence.guard.retry_after(session.code, client_ip)
@@ -300,15 +319,18 @@ class QueueService:
         session = await self._lock(code)
         self._check_registration(session)
         self._check_capacity(*await self.repo.queue_counts(session.id))
+        name = data.name
+        if session.roster_only:
+            name = await self._roster_name(session, data.name)
         try:
             student = await find_or_create_student(
-                self.db, session.teacher_id, session.group_name, data.name
+                self.db, session.teacher_id, session.group_name, name
             )
             ticket = await self.repo.allocate_ticket(session.id)
             wants_ready = data.ready_now and session.ready_priority and session.lottery_at is None
             inserted = await self.repo.insert_entry_if_room(
                 session.id,
-                data.name,
+                name,
                 token_hash,
                 ticket,
                 settings.MAX_QUEUE_SIZE,
@@ -601,6 +623,18 @@ class QueueService:
             notify_changed(session.code)
         return await self._view(entry.id)
 
+    async def public_roster(self, code: str) -> PublicRosterOut:
+        session = await self._get_session(code)
+        return await RosterService(self.db).public(
+            session.id, session.teacher_id, session.group_name, session.roster_only
+        )
+
+    async def _require_roster(self, teacher_id: str, group: str | None) -> None:
+        if not await RosterService(self.db).has_roster(teacher_id, group):
+            raise UnprocessableError(
+                "Для входа по списку загрузите список этой группы", code="roster_missing"
+            )
+
     async def update_settings(
         self, code: str, teacher_id: str, data: SessionSettingsIn
     ) -> QueueSessionORM:
@@ -612,6 +646,8 @@ class QueueService:
                 "Настройки порядка можно менять только до закрытия записи", code="settings_locked"
             )
         changes = data.model_dump(exclude_unset=True, exclude_none=True)
+        if changes.get("roster_only"):
+            await self._require_roster(teacher_id, session.group_name)
         priority_before = session.ready_priority
         for name, value in changes.items():
             setattr(session, name, value)

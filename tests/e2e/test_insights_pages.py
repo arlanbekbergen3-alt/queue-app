@@ -41,7 +41,7 @@ def open_report(page: Page, teacher: dict) -> None:
 
 
 def test_the_main_block_gives_short_conclusions_with_numbers_and_advice(
-    page: Page, api, open_session
+    page: Page, api, open_session, shot
 ):
     teacher = with_results(api, open_session, 8)
     open_report(page, teacher)
@@ -56,6 +56,8 @@ def test_the_main_block_gives_short_conclusions_with_numbers_and_advice(
         expect(card.locator(".tag")).to_have_text(re.compile("Обратите внимание|К сведению"))
     expect(page.locator("#an-main-box")).to_contain_text("«Защита»")
     snapshot(page, "report", "light", "desktop")
+    page.click("#an-details summary")
+    shot(page, "analytics-report")
     assert "Студент" not in page.locator("#an-main-box").inner_text()
 
 

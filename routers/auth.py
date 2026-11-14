@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Request, status
 
 from core.dependencies import AuthServiceDep, CurrentTeacher
-from core.ratelimit import limit_auth
+from core.ratelimit import client_ip, limit_auth
 from schemas.auth import LoginIn, RegisterIn, TeacherOut, TokenOut
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -18,8 +18,8 @@ async def register(data: RegisterIn, service: AuthServiceDep):
 
 
 @router.post("/login", response_model=TokenOut, dependencies=[Depends(limit_auth)])
-async def login(data: LoginIn, service: AuthServiceDep):
-    return TokenOut(access_token=await service.login(data))
+async def login(data: LoginIn, request: Request, service: AuthServiceDep):
+    return TokenOut(access_token=await service.login(data, client_ip(request)))
 
 
 @router.get("/me", response_model=TeacherOut)

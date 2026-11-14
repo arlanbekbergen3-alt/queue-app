@@ -33,6 +33,11 @@ class Settings(BaseSettings):
     RATE_LIMIT_IP_PER_MINUTE: int = Field(default=6000, ge=0)
     RATE_LIMIT_JOIN_PER_IP_PER_MINUTE: int = Field(default=600, ge=0)
     RATE_LIMIT_AUTH_PER_IP_PER_MINUTE: int = Field(default=20, ge=0)
+    LOGIN_FAILURES_PER_IP: int = Field(default=5, ge=1)
+    LOGIN_FAILURES_PER_USER: int = Field(default=30, ge=1)
+    LOGIN_FAILURE_WINDOW_SECONDS: int = Field(default=900, ge=1)
+    LOGIN_LOCK_SECONDS: int = Field(default=900, ge=1)
+    HSTS_MAX_AGE_SECONDS: int = Field(default=0, ge=0)
     RATE_LIMIT_TOKEN_PER_MINUTE: int = Field(default=120, ge=0)
     MAX_CONCURRENT_REQUESTS: int = Field(default=400, ge=0)
 

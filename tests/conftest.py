@@ -15,6 +15,7 @@ from db.database import get_db
 from main import app
 from services import presence
 from services.ai_drafts import runtime as ai_runtime
+from services.auth import login_guard
 from services.live import gateway
 
 APP_DATABASE_URL = make_url(settings.DATABASE_URL)
@@ -84,6 +85,7 @@ def reset_rate_limiter():
     limiter.reset()
     hourly_limiter.reset()
     presence.guard.reset()
+    login_guard.reset()
 
 
 @pytest_asyncio.fixture

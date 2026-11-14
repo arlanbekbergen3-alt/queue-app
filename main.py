@@ -24,6 +24,7 @@ from core.logging import setup_logging
 from core.metrics import metrics
 from core.ratelimit import limit_ip, limiter
 from core.readiness import schema_is_current
+from core.security_headers import SecurityHeadersMiddleware
 from db.database import AsyncSessionLocal, engine
 from routers.ai import router as ai_router
 from routers.analytics import router as analytics_router
@@ -239,5 +240,6 @@ async def practice_page():
 
 
 app.add_middleware(ConcurrencyLimitMiddleware)
+app.add_middleware(SecurityHeadersMiddleware, static_dir=STATIC_DIR)
 app.add_middleware(RequestContextMiddleware, access_log=settings.ACCESS_LOG)
 configure_cors(app, settings.CORS_ORIGINS)

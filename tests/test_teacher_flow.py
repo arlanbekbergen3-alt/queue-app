@@ -40,7 +40,7 @@ async def test_call_next_follows_ticket_order_and_requires_finishing(
     assert (await post(client, headers, code, "next")).status_code == 409
 
     info = (await client.get(f"{API}/{code}")).json()
-    assert info["now_serving"] == {"ticket": 1, "name": "Anna"}
+    assert info["now_serving"] == {"ticket": 1, "name": None}
     assert info["waiting_count"] == 1
 
     done = await post(client, headers, code, "done", called.json()["id"])
@@ -319,7 +319,7 @@ async def test_me_includes_now_serving_for_one_request_polling(
     assert (await client.get(f"{API}/{code}/me", headers=token)).json()["now_serving"] is None
     await post(client, headers, code, "next")
     now = (await client.get(f"{API}/{code}/me", headers=token)).json()["now_serving"]
-    assert now == {"ticket": 1, "name": "Anna"}
+    assert now == {"ticket": 1, "name": None}
 
 
 @pytest.mark.asyncio

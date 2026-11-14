@@ -55,6 +55,9 @@ class QueueSessionORM(Base):
     roster_only: Mapped[bool] = mapped_column(
         Boolean, default=False, server_default=text("false"), nullable=False
     )
+    show_student_names: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false"), nullable=False
+    )
     order_mode: Mapped[str] = mapped_column(
         String(16), default="join", server_default=text("'join'"), nullable=False
     )

@@ -21,6 +21,7 @@ class SessionCreate(BaseModel):
     duration_minutes: int | None = Field(default=None, ge=1, le=720)
     deadline_at: datetime | None = None
     roster_only: bool = False
+    show_student_names: bool = False
 
     @model_validator(mode="after")
     def one_time_limit(self) -> "SessionCreate":
@@ -54,6 +55,7 @@ class SessionSettingsIn(BaseModel):
     ready_bonus_points: int | None = Field(default=None, ge=0, le=5)
     ready_skip_questions: int | None = Field(default=None, ge=0, le=1)
     roster_only: bool | None = None
+    show_student_names: bool | None = None
 
 
 class ReadyNowIn(BaseModel):
@@ -62,7 +64,7 @@ class ReadyNowIn(BaseModel):
 
 class NowServing(BaseModel):
     ticket: int
-    name: str
+    name: str | None = None
 
 
 class SessionOut(BaseModel):
@@ -86,6 +88,7 @@ class SessionOut(BaseModel):
     presence_check: str = "off"
     presence_interval: int = 30
     roster_only: bool = False
+    show_student_names: bool = False
 
     model_config = {"from_attributes": True}
 
@@ -193,6 +196,7 @@ class TeacherQueueOut(BaseModel):
     entries: list[TeacherEntryOut]
     join_open: bool = True
     not_ready_max: int = 2
+    show_student_names: bool = False
     order_mode: str = "join"
     ready_priority: bool = False
     ready_bonus_points: int = 0

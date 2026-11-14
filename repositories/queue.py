@@ -71,6 +71,7 @@ _STUDENT_VIEW = (
         QueueSessionORM.ready_priority,
         QueueSessionORM.ready_bonus_points,
         QueueSessionORM.ready_skip_questions,
+        QueueSessionORM.show_student_names,
         QueueSessionORM.lottery_at,
         _waiting_total.label("waiting_total"),
         QueueSessionORM.avg_service_seconds,

@@ -174,7 +174,7 @@ def test_two_students_in_two_browser_contexts_see_their_own_places(
 
     expect(first.locator("#status-badge")).to_have_text("Вас вызвали", timeout=SLOW)
     expect(first.locator("#message")).to_contain_text("Подойдите к преподавателю")
-    expect(second.locator("#now-serving")).to_contain_text("Первый", timeout=SLOW)
+    expect(second.locator("#now-serving")).to_have_text("№ 1", timeout=SLOW)
     shot(first, "student-called")
 
     row(page, "Первый").get_by_text("Сдал").click()
@@ -278,7 +278,7 @@ def test_student_page_updates_in_real_time_without_waiting_for_a_poll(
     api.post(f"/sessions/{session['code']}/next", headers=session["headers"])
 
     expect(page.locator("#position")).to_have_text("2", timeout=2500)
-    expect(page.locator("#now-serving")).to_contain_text("Первый", timeout=2500)
+    expect(page.locator("#now-serving")).to_have_text("№ 1", timeout=2500)
 
 
 def test_student_page_falls_back_to_polling_when_the_stream_is_blocked(

@@ -133,6 +133,7 @@ class Snapshot:
             ],
             join_open=self.join_open,
             not_ready_max=settings.NOT_READY_MAX_PER_SESSION,
+            show_student_names=self.flags.show_names,
             order_mode=self.flags.order_mode,
             ready_priority=self.flags.ready_priority,
             ready_bonus_points=self.flags.ready_bonus_points,
@@ -343,6 +344,7 @@ class LiveGateway:
                 ready_skip_questions=service_row.ready_skip_questions,
                 join_open=service_row.join_open,
                 waiting_count=service_row.waiting_total,
+                show_names=service_row.show_student_names,
             ),
         )
 

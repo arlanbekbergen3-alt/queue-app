@@ -59,7 +59,14 @@
   .qr { display:block; width:100%; max-width:min(90vw, 70vh); aspect-ratio:1; background:#fff; padding:8px; border-radius:10px; margin:12px auto; }
   .bigcode { font-size:clamp(30px, 10.5vw, 120px); font-weight:800; letter-spacing:.06em; text-align:center; line-height:1.1; }
   @media (min-width: 700px) { .bigcode { font-size:96px; letter-spacing:.12em; } }
-  #start-panel { border:2px solid var(--accent); border-radius:14px; padding:14px; margin-top:12px; text-align:center; }
+  #start-panel { margin-top:8px; }
+  #start-panel summary { cursor:pointer; color:var(--accent); font-weight:600; }
+  .linkline { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:4px 0 6px; overflow-wrap:anywhere; }
+  .linkline .muted { flex:1 1 200px; min-width:0; }
+  button.compact { padding:6px 10px; font-size:14px; }
+  .copied { color:var(--ok); font-weight:600; font-size:14px; }
+  details.more { margin-top:6px; }
+  details.more summary { cursor:pointer; color:var(--muted); font-size:14px; }
   #projector { position:fixed; inset:0; background:#fff; color:#111; z-index:50; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:16px; text-align:center; }
   #projector .qr { max-width:min(80vw, 62vh); padding:0; }
   #projector .bigcode { color:#111; }
@@ -177,6 +184,7 @@
       <details id="w-more" style="margin-top:10px">
         <summary>Поощрения за раннюю сдачу и название</summary>
         <label class="check" for="ready-priority"><input type="checkbox" id="ready-priority"> Сначала те, кто готов сдать сразу</label>
+        <label class="check" for="show-names"><input type="checkbox" id="show-names"> Показывать студентам имя вызванного (иначе только номер талона)</label>
         <div class="settings-row">
           <div>
             <label for="ready-bonus">Бонус за раннюю сдачу</label>
@@ -215,11 +223,19 @@
         <div>
           <div class="muted" id="queue-title"></div>
           <div class="code" id="queue-code"></div>
-          <div class="muted" id="queue-link"></div>
+          <div class="linkline">
+            <span class="muted" id="queue-link"></span>
+            <button class="ghost compact" id="copy-link">Копировать</button>
+            <span class="copied" id="copy-note" role="status" aria-live="polite"></span>
+          </div>
           <div><a id="protocol-session-link" href="/protocol">Журнал, правки и аналитика этой сдачи</a></div>
+          <details id="start-panel">
+            <summary>QR-код для входа</summary>
+            <img class="qr" id="start-qr" alt="QR-код для входа в очередь">
+          </details>
           <div class="actions" style="margin-top:8px">
-            <button class="ghost" id="start-show">Код и QR</button>
-            <button class="ghost" id="help-btn" title="Горячие клавиши">?</button>
+            <button class="ghost" id="projector-btn">Показать для проектора</button>
+            <button class="ghost" id="help-btn" title="Горячие клавиши: N вызвать следующего, Enter завершить сдачу" aria-label="Горячие клавиши">? Клавиши</button>
           </div>
         </div>
         <div class="actions">
@@ -232,11 +248,14 @@
       <div id="presence-panel" style="margin-top:12px">
         <div class="line" style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">
           <strong>Проверка присутствия</strong>
-          <div class="actions">
-            <select id="presence-interval-live" style="width:auto"><option value="30">30 с</option><option value="45">45 с</option><option value="60">60 с</option></select>
-            <button class="ghost" id="presence-toggle">Включить проверку присутствия</button>
-          </div>
+          <button class="ghost compact" id="presence-toggle">Включить проверку присутствия</button>
         </div>
+        <details class="more">
+          <summary>Подробности</summary>
+          <div class="muted">Студенты вводят код, который меняется сам, или наводят камеру на QR. Так видно, кто действительно в аудитории.</div>
+          <label for="presence-interval-live">Код меняется каждые</label>
+          <select id="presence-interval-live" style="width:auto"><option value="30">30 с</option><option value="45">45 с</option><option value="60">60 с</option></select>
+        </details>
         <div class="hidden" id="presence-live" style="text-align:center">
           <div class="muted">Студенты вводят этот код или наводят камеру на QR</div>
           <div class="bigcode" id="presence-digits"></div>
@@ -244,18 +263,9 @@
           <img class="qr" id="presence-qr" alt="QR-код с кодом присутствия" style="max-width:260px">
         </div>
       </div>
-      <div class="hidden" id="start-panel">
-        <div class="muted">Код для студентов</div>
-        <div class="bigcode" id="start-code"></div>
-        <div class="muted" id="start-link"></div>
-        <img class="qr" id="start-qr" alt="QR-код для входа в очередь">
-        <div class="actions" style="justify-content:center">
-          <button id="projector-btn">На проектор</button>
-          <button class="ghost" id="start-hide">Скрыть</button>
-        </div>
-      </div>
       <div class="muted" id="queue-meta" style="margin-top:10px"></div>
       <div class="muted" id="queue-modes"></div>
+      <label class="check" for="live-names"><input type="checkbox" id="live-names"> Показывать студентам имя вызванного (иначе только номер талона)</label>
       <div class="hidden" id="budget-panel">
         <div class="line"><strong>Время и прогноз</strong><span class="pill" id="budget-status"></span></div>
         <div class="line"><span class="muted">Осталось времени</span><strong id="budget-left"></strong></div>
@@ -642,7 +652,7 @@ async function loadSessions() {
     box.replaceChildren();
     if (!sessions.length) box.append(el("div", { class: "muted" }, "Пока нет сессий"));
     for (const s of sessions) {
-      const label = s.title + (s.group ? " · " + s.group : "") + " · " + s.code + (s.status === "closed" ? " · закрыта" : "");
+      const label = sessionName(s.title, s.group) + " · " + s.code + (s.status === "closed" ? " · закрыта" : "");
       box.append(el("button", { onclick: () => openSession(s.code) }, label));
     }
   } catch (error) {
@@ -731,6 +741,7 @@ async function createSession() {
       ready_bonus_points: Number($("ready-bonus").value),
       ready_skip_questions: Number($("ready-skip").value),
       roster_only: $("roster-only").checked,
+      show_student_names: $("show-names").checked,
     }) });
     $("title").value = "";
     if (mode === "protocol" && $("w-assignment").value) {
@@ -776,7 +787,7 @@ function renderPresence() {
   }
   $("projector-presence").classList.toggle("hidden", !presence.enabled);
   if (presence.enabled && presence.code) $("projector-presence").textContent = spaced(presence.code);
-  if (!$("start-panel").classList.contains("hidden")) showStart(true);
+  renderJoin();
   if (!$("projector").classList.contains("hidden")) {
     $("projector-qr").src = qrSource(current);
     $("projector-link").textContent = joinLink(current);
@@ -798,12 +809,30 @@ setInterval(() => {
   $("presence-left").textContent = "Код обновится через " + Math.max(0, Math.ceil((presence.expiresAt - Date.now()) / 1000)) + " с";
 }, 1000);
 
-function showStart(show) {
-  $("start-panel").classList.toggle("hidden", !show);
-  if (!show || !current) return;
-  $("start-code").textContent = current;
-  $("start-link").textContent = joinLink(current);
-  $("start-qr").src = qrSource(current);
+function renderJoin() {
+  if (!current) return;
+  $("queue-code").textContent = current;
+  $("queue-link").textContent = joinLink(current);
+  if ($("start-panel").open) $("start-qr").src = qrSource(current);
+}
+
+let copyTimer = null;
+async function copyLink() {
+  if (!current) return;
+  const text = joinLink(current);
+  let done = false;
+  try { await navigator.clipboard.writeText(text); done = true; } catch {}
+  if (!done) {
+    const area = document.createElement("textarea");
+    area.value = text;
+    document.body.append(area);
+    area.select();
+    try { done = document.execCommand("copy"); } catch {}
+    area.remove();
+  }
+  $("copy-note").textContent = done ? "Скопировано" : "Не удалось скопировать, выделите адрес вручную";
+  clearTimeout(copyTimer);
+  copyTimer = setTimeout(() => { $("copy-note").textContent = ""; }, 2500);
 }
 
 function openProjector() {
@@ -824,9 +853,8 @@ function openSession(code, announce) {
   if (current !== code) { stopLive(); workState.key = ""; }
   current = code;
   $("queue-card").classList.remove("hidden");
-  $("queue-code").textContent = code;
-  $("queue-link").textContent = joinLink(code);
-  showStart(!!announce);
+  $("start-panel").open = false;
+  renderJoin();
   presence.enabled = false;
   presence.code = null;
   loadPresence();
@@ -858,7 +886,7 @@ async function refresh() {
 }
 
 function renderQueue(queue) {
-  $("queue-title").textContent = queue.title + (queue.group ? " · " + queue.group : "") + (queue.status === "closed" ? " (закрыта)" : "");
+  $("queue-title").textContent = sessionName(queue.title, queue.group) + (queue.status === "closed" ? " (закрыта)" : "");
   $("queue-meta").textContent =
     "Ждут: " + queue.waiting_count + " · среднее время сдачи: " + Math.round(queue.avg_service_seconds / 60 * 10) / 10 + " мин";
   const closed = queue.status === "closed";
@@ -1249,11 +1277,22 @@ function renderModes(queue) {
   $("lottery-log-btn").classList.toggle("hidden", !queue.lottery_done);
   if (!queue.lottery_done) $("lottery-log").classList.add("hidden");
   $("settings-box").classList.toggle("hidden", !editable);
+  $("live-names").checked = !!queue.show_student_names;
   if (!$("settings-box").open) {
     $("s-order-mode").value = queue.order_mode;
     $("s-ready-priority").checked = queue.ready_priority;
     $("s-ready-bonus").value = String(queue.ready_bonus_points);
     $("s-ready-skip").value = String(queue.ready_skip_questions);
+  }
+}
+
+async function saveNames() {
+  const box = $("live-names");
+  try {
+    await request("/sessions/" + current + "/settings", { method: "PUT", body: JSON.stringify({ show_student_names: box.checked }) });
+  } catch (error) {
+    box.checked = !box.checked;
+    showActionError(error.message);
   }
 }
 
@@ -1367,8 +1406,9 @@ $("registration-btn").addEventListener("click", toggleRegistration);
 $("presence-toggle").addEventListener("click", togglePresence);
 $("mode").addEventListener("change", syncMode);
 for (const type of ["input", "change"]) $("wizard").addEventListener(type, () => { formTouched = true; });
-$("start-show").addEventListener("click", () => showStart($("start-panel").classList.contains("hidden")));
-$("start-hide").addEventListener("click", () => showStart(false));
+$("start-panel").addEventListener("toggle", renderJoin);
+$("copy-link").addEventListener("click", copyLink);
+$("live-names").addEventListener("change", saveNames);
 $("projector-btn").addEventListener("click", openProjector);
 $("projector").addEventListener("click", closeProjector);
 $("help-btn").addEventListener("click", () => $("help-overlay").classList.remove("hidden"));

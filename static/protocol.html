@@ -692,7 +692,7 @@ async function openSession() {
   sessionCode = code;
   sessionAvg = queue.avg_service_seconds;
   $("p-body").classList.remove("hidden");
-  $("p-title").textContent = queue.title + (queue.group ? " · " + queue.group : "") + " · " + code;
+  $("p-title").textContent = sessionName(queue.title, queue.group) + " · " + code;
   const sessions = await request("/sessions");
   const mine = sessions.find((s) => s.code === code);
   $("p-assignment").value = mine && mine.assignment_id ? mine.assignment_id : "";

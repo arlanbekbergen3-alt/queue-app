@@ -95,7 +95,7 @@ async def test_students_get_updates_after_teacher_actions(client, room):
     _, b_now = await event(stream_b)
     assert a_now["status"] == "called"
     assert (b_now["position"], b_now["people_ahead"]) == (1, 1)
-    assert b_now["now_serving"]["name"] == "A"
+    assert b_now["now_serving"] == {"ticket": 1, "name": None}
 
     await act(client, headers, code, "done", a_id)
     _, a_done = await event(stream_a)

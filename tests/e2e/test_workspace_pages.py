@@ -16,8 +16,8 @@ def open_teacher_page(page: Page, teacher: dict) -> None:
 
 
 def started_code(page: Page) -> str:
-    expect(page.locator("#start-code")).to_have_text(re.compile(r"^[A-Z2-9]{6}$"), timeout=SLOW)
-    return page.locator("#start-code").inner_text()
+    expect(page.locator("#queue-code")).to_have_text(re.compile(r"^[A-Z2-9]{6}$"), timeout=SLOW)
+    return page.locator("#queue-code").inner_text()
 
 
 def new_context(browser, live_server):
@@ -32,15 +32,19 @@ def test_starting_a_lesson_takes_one_click_and_shows_code_link_and_qr(
     open_teacher_page(page, teacher)
     expect(page.locator("#mode")).to_have_value("protocol")
     page.click("#create-btn")
-    expect(page.locator("#start-panel")).to_be_visible(timeout=SLOW)
     code = started_code(page)
     assert len(code) == 6 and code.isalnum()
-    expect(page.locator("#start-link")).to_have_text(
+    expect(page.locator("#queue-link")).to_have_text(
         f"{page.url.split('/teacher')[0]}/?code={code}"
     )
+    assert page.locator("#start-panel").evaluate("node => node.open") is False
+    assert page.locator("#queue-code").count() == 1
+    page.click("#start-panel summary")
     qr = page.locator("#start-qr")
     expect(qr).to_be_visible()
-    page.wait_for_function("document.getElementById('start-qr').naturalWidth > 0")
+    expect(page.locator("#start-qr")).to_have_attribute("src", re.compile(r"qr\.svg"))
+    expect(page.locator("#start-qr")).to_have_js_property("complete", True)
+    assert page.locator("#start-qr").evaluate("node => node.naturalWidth") > 0
     box = qr.bounding_box()
     assert box and box["width"] > 200
     shot(page, "teacher-start-panel")
@@ -51,10 +55,8 @@ def test_starting_a_lesson_takes_one_click_and_shows_code_link_and_qr(
     page.wait_for_function("document.getElementById('projector-qr').naturalWidth > 0")
     page.keyboard.press("Escape")
     expect(page.locator("#projector")).to_be_hidden()
-    page.click("#start-hide")
-    expect(page.locator("#start-panel")).to_be_hidden()
-    page.click("#start-show")
-    expect(page.locator("#start-panel")).to_be_visible()
+    page.click("#start-panel summary")
+    expect(page.locator("#start-qr")).to_be_hidden()
 
 
 def test_the_form_starts_from_the_last_session_settings(page: Page, api, open_session):

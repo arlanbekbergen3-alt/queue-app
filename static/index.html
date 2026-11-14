@@ -85,8 +85,8 @@
     <div id="message"></div>
     <div id="result"></div>
     <div id="practice-link" class="hidden"><a id="practice-a" href="/practice">Потренироваться перед сдачей (не оценка)</a></div>
-    <div class="row"><span class="muted">Сейчас у преподавателя</span><strong id="now-serving">—</strong></div>
-    <div class="row"><span class="muted">Примерное ожидание</span><strong id="eta">—</strong></div>
+    <div class="row" id="row-now"><span class="muted">Сейчас у преподавателя</span><strong id="now-serving">—</strong></div>
+    <div class="row" id="row-eta"><span class="muted">Примерное ожидание</span><strong id="eta">—</strong></div>
     <div class="row"><span class="muted">Ваш номер</span><strong id="ticket">—</strong></div>
     <div id="priority-box" class="hidden">
       <div class="row"><span class="muted">Готовность</span><strong id="ready-state">Ещё готовлюсь</strong></div>
@@ -191,9 +191,14 @@ function randomToken() {
   crypto.getRandomValues(bytes);
   return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
 }
+function finishedStatus() {
+  const status = $("status-badge").dataset.status;
+  return status === "done" || status === "left";
+}
 function sessionLabel() {
   if (!sessionInfo || sessionInfo.code !== state.code) return "Сессия " + state.code;
-  return sessionInfo.title + (sessionInfo.group ? " · " + sessionInfo.group : "") + " (" + state.code + ")";
+  const name = sessionName(sessionInfo.title, sessionInfo.group);
+  return finishedStatus() ? name : name + " (" + state.code + ")";
 }
 async function loadSessionInfo() {
   if (!state || (sessionInfo && sessionInfo.code === state.code)) return;
@@ -446,8 +451,11 @@ function render(entry) {
   loadSessionInfo();
   $("ticket").textContent = entry.ticket == null ? "—" : "№ " + entry.ticket;
   $("now-serving").textContent = entry.now_serving
-    ? "№ " + entry.now_serving.ticket + " " + entry.now_serving.name
+    ? "№ " + entry.now_serving.ticket + (entry.now_serving.name ? " " + entry.now_serving.name : "")
     : "—";
+  const over = entry.status === "done" || entry.status === "left";
+  $("row-now").classList.toggle("hidden", over);
+  $("row-eta").classList.toggle("hidden", over);
   $("eta").textContent = entry.status === "waiting" ? formatEta(entry.eta_seconds) : "—";
 
   const message = $("message");
@@ -502,7 +510,7 @@ function render(entry) {
     $("position").textContent = entry.status === "done" ? "✓" : "–";
     $("position-label").textContent = "";
     if (entry.status === "skipped") addMessage("Вас пропустили. Подойдите к преподавателю — он может вернуть вас в очередь", "warn");
-    if (entry.status === "done") addMessage("Сдача завершена", "ok");
+    if (entry.status === "done") addMessage("Сдача завершена, результат ниже", "ok");
   }
   if (entry.status === "done") loadResult();
   else if (resultLoaded) { resultLoaded = false; $("result").replaceChildren(); }

@@ -86,6 +86,7 @@ class QueueFlags:
     session_mode: str = "protocol"
     quick_max_points: int = 10
     assignment_id: str | None = None
+    show_names: bool = False
 
     @property
     def in_pool(self) -> bool:
@@ -104,6 +105,7 @@ class QueueFlags:
             session_mode=session.session_mode,
             quick_max_points=session.quick_max_points,
             assignment_id=session.assignment_id,
+            show_names=session.show_student_names,
         )
 
 
@@ -144,7 +146,7 @@ def build_student_view(
         eta_seconds=eta,
         session_status=session_status,
         now_serving=(
-            NowServing(ticket=called_ticket, name=called_name or "")
+            NowServing(ticket=called_ticket, name=(called_name or "") if flags.show_names else None)
             if called_ticket is not None
             else None
         ),
@@ -207,6 +209,7 @@ class QueueService:
                         quick_max_points=data.quick_max_points,
                         assignment_id=assignment_id,
                         roster_only=data.roster_only,
+                        show_student_names=data.show_student_names,
                     )
                     await self.db.flush()
             except IntegrityError:
@@ -253,7 +256,11 @@ class QueueService:
             group=session.group_name,
             status=session.status,
             waiting_count=await self.repo.count_waiting(session.id),
-            now_serving=NowServing(ticket=called.ticket, name=called.name) if called else None,
+            now_serving=NowServing(
+                ticket=called.ticket, name=called.name if session.show_student_names else None
+            )
+            if called
+            else None,
             practice=practice,
             join_open=session.join_open,
             order_mode=session.order_mode,
@@ -415,6 +422,7 @@ class QueueService:
             entries=[TeacherEntryOut.model_validate(e) for e in entries],
             join_open=session.join_open,
             not_ready_max=settings.NOT_READY_MAX_PER_SESSION,
+            show_student_names=session.show_student_names,
             order_mode=session.order_mode,
             ready_priority=session.ready_priority,
             ready_bonus_points=session.ready_bonus_points,
@@ -680,11 +688,14 @@ class QueueService:
         session = await self._owned(code, teacher_id, lock=True)
         if session.status != SessionStatus.OPEN:
             raise ConflictError("Сессия закрыта", code="session_closed")
-        if not session.join_open or session.lottery_at is not None:
+        changes = data.model_dump(exclude_unset=True, exclude_none=True)
+        names = changes.pop("show_student_names", None)
+        if names is not None:
+            session.show_student_names = names
+        if changes and (not session.join_open or session.lottery_at is not None):
             raise ConflictError(
                 "Настройки порядка можно менять только до закрытия записи", code="settings_locked"
             )
-        changes = data.model_dump(exclude_unset=True, exclude_none=True)
         if changes.get("roster_only"):
             await self._require_roster(teacher_id, session.group_name)
         priority_before = session.ready_priority
@@ -804,5 +815,6 @@ class QueueService:
                 ready_skip_questions=row.ready_skip_questions,
                 join_open=row.join_open,
                 waiting_count=row.waiting_total,
+                show_names=row.show_student_names,
             ),
         )

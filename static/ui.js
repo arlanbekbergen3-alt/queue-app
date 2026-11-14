@@ -7,6 +7,11 @@ function plural(count, one, few, many) {
   return many;
 }
 
+function sessionName(title, group) {
+  if (!group || title.toLowerCase().includes(group.toLowerCase())) return title;
+  return title + " · " + group;
+}
+
 function counted(count, one, few, many) {
   return count + " " + plural(count, one, few, many);
 }

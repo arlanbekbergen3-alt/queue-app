@@ -177,10 +177,10 @@ def test_the_widest_session_code_fits_the_start_panel_and_the_projector_on_a_pho
     login_as(page, teacher)
     page.goto("/teacher")
     page.get_by_role("button", name=teacher["code"]).click()
-    page.click("#start-show")
-    expect(page.locator("#start-panel")).to_be_visible(timeout=SLOW)
+    page.click("#start-panel summary")
+    expect(page.locator("#start-qr")).to_be_visible(timeout=SLOW)
     page.evaluate(
-        "document.getElementById('start-code').textContent = 'WWWWWW';"
+        "document.getElementById('queue-code').textContent = 'WWWWWW';"
         "document.getElementById('projector-code').textContent = 'WWWWWW';"
     )
     assert_fits(page)

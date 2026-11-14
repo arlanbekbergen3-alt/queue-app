@@ -6,3 +6,4 @@ ruff
 mypy==2.4.1
 playwright==1.65.0
 pytest-playwright==0.10.0
+axe-playwright-python==0.1.8

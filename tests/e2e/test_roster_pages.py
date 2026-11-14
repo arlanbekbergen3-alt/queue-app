@@ -30,9 +30,9 @@ def test_the_teacher_uploads_a_list_from_the_students_page_and_sees_what_was_ski
     page.fill("#r-group", "ИС-22")
     page.fill("#r-text", LIST + "\nиванов иван")
     page.click("#r-save")
-    expect(page.locator("#r-err")).to_contain_text("Сохранено: 3 чел.", timeout=SLOW)
+    expect(page.locator("#r-err")).to_contain_text("Сохранено: 3 человека", timeout=SLOW)
     expect(page.locator("#r-err")).to_contain_text("повтор")
-    expect(page.locator("#r-groups")).to_contain_text("ИС-22 · 3 чел.")
+    expect(page.locator("#r-groups")).to_contain_text("ИС-22 · 3 человека")
     expect(page.locator("#r-text")).to_have_value("Иванов Иван\nПетрова Анна\nСидоров Пётр")
 
     page.once("dialog", lambda dialog: dialog.accept())
@@ -49,7 +49,7 @@ def test_the_session_form_offers_the_list_only_for_a_group_that_has_one(
     page.goto("/teacher")
     page.fill("#group", "ис - 22")
     expect(page.locator("#roster-only-row")).to_be_visible(timeout=SLOW)
-    expect(page.locator("#roster-hint")).to_contain_text("3 чел.")
+    expect(page.locator("#roster-hint")).to_contain_text("3 человека")
     page.fill("#group", "ПО-11")
     expect(page.locator("#roster-only-row")).to_be_hidden()
 

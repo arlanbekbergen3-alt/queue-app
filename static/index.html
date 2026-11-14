@@ -43,7 +43,8 @@
   .roster button.on { background:var(--accent); color:#fff; border-color:var(--accent); }
   input[readonly] { cursor:pointer; }
 </style>
-<link rel="stylesheet" href="/theme.css">
+<link rel="stylesheet" href="/ui.css">
+<script src="/ui.js"></script>
 </head>
 <body>
 <main>
@@ -149,8 +150,8 @@ function describeValidation(errors) {
     const label = FIELD_LABELS[field] || field || "Поле";
     const ctx = e.ctx || {};
     if (e.type === "missing") return label + ": обязательное поле";
-    if (e.type === "string_too_short") return label + ": минимум " + ctx.min_length + " симв.";
-    if (e.type === "string_too_long") return label + ": максимум " + ctx.max_length + " симв.";
+    if (e.type === "string_too_short") return label + ": минимум " + ctx.min_length + " " + plural(ctx.min_length, "символ", "символа", "символов");
+    if (e.type === "string_too_long") return label + ": максимум " + ctx.max_length + " " + plural(ctx.max_length, "символ", "символа", "символов");
     if (e.type === "string_pattern_mismatch") return label + ": " + (PATTERN_HINTS[field] || "недопустимые символы");
     return label + ": недопустимое значение";
   });

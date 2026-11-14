@@ -27,7 +27,7 @@ def test_two_teachers_share_a_bank_through_a_subject_group(
     page.click("#p-go")
     expect(page.locator("#p-err")).to_have_text("Опубликовано", timeout=SLOW)
     expect(page.locator("#pubs > div")).to_have_count(1)
-    expect(page.locator("#pubs")).to_contain_text("3 вопр.")
+    expect(page.locator("#pubs")).to_contain_text("3 вопроса")
 
     other = browser.new_context(base_url=live_server)
     page2 = other.new_page()
@@ -48,7 +48,7 @@ def test_two_teachers_share_a_bank_through_a_subject_group(
 
     page2.locator("#pubs").get_by_role("button", name="Показать").click()
     expect(page2.locator("#preview")).to_contain_text("Вопрос номер 0", timeout=SLOW)
-    expect(page2.locator("#preview")).to_contain_text("Код (макс. 5)")
+    expect(page2.locator("#preview")).to_contain_text("Код (максимум 5 баллов)")
 
     page2.locator("#pubs").get_by_role("button", name="Скопировать к себе").click()
     expect(page2.locator("#c-err")).to_contain_text("Создана работа", timeout=SLOW)

@@ -72,7 +72,8 @@
     summary { display:list-item; padding:10px 0; cursor:pointer; }
   }
 </style>
-<link rel="stylesheet" href="/theme.css">
+<link rel="stylesheet" href="/ui.css">
+<script src="/ui.js"></script>
 </head>
 <body>
 <main>
@@ -281,8 +282,8 @@ function describeValidation(errors) {
     const label = FIELD_LABELS[field] || field || "Поле";
     const ctx = e.ctx || {};
     if (e.type === "missing") return label + ": обязательное поле";
-    if (e.type === "string_too_short") return label + ": минимум " + ctx.min_length + " симв.";
-    if (e.type === "string_too_long") return label + ": максимум " + ctx.max_length + " симв.";
+    if (e.type === "string_too_short") return label + ": минимум " + ctx.min_length + " " + plural(ctx.min_length, "символ", "символа", "символов");
+    if (e.type === "string_too_long") return label + ": максимум " + ctx.max_length + " " + plural(ctx.max_length, "символ", "символа", "символов");
     if (e.type === "greater_than_equal") return label + ": не меньше " + ctx.ge;
     if (e.type === "less_than_equal") return label + ": не больше " + ctx.le;
     return label + ": недопустимое значение";
@@ -371,12 +372,13 @@ async function loadAssignments() {
   if (!assignments.length) box.append(el("div", { class: "muted" }, "Работ пока нет."));
   for (const a of assignments) {
     box.append(el("div", {},
-      el("div", { class: "txt" }, a.title,
-        el("span", { class: "badge" }, a.question_count + " вопр."),
-        el("span", { class: "badge" }, a.criteria_count + " крит."),
-        el("span", { class: "badge" }, a.submissions_count + " сдач"),
-        a.is_template ? el("span", { class: "badge" }, "шаблон") : "",
-        a.origin ? el("span", { class: "badge" }, "из группы: " + a.origin.space) : ""),
+      el("div", { class: "txt" }, el("div", { class: "title" }, a.title),
+        el("div", { class: "meta" },
+          el("span", { class: "badge" }, counted(a.question_count, "вопрос", "вопроса", "вопросов")),
+          el("span", { class: "badge" }, counted(a.criteria_count, "критерий", "критерия", "критериев")),
+          el("span", { class: "badge" }, counted(a.submissions_count, "сдача", "сдачи", "сдач")),
+          a.is_template ? el("span", { class: "badge" }, "шаблон") : "",
+          a.origin ? el("span", { class: "badge" }, "из группы: " + a.origin.space) : "")),
       el("button", { class: "ghost", onclick: () => openAssignment(a.id) }, "Открыть")));
   }
   const select = $("p-assignment");
@@ -427,7 +429,7 @@ async function openAssignment(id) {
         await request("/assignments/" + id + "/criteria/" + c.id + "/levels", { method: "PUT", body: JSON.stringify({ levels: parseLevels(area.value) }) });
         await openAssignment(id);
       }) }, "Сохранить уровни"));
-    const row = el("div", {}, el("div", { class: "txt" }, c.name, el("span", { class: "badge" }, "макс. " + c.max_points), view, editor));
+    const row = el("div", {}, el("div", { class: "txt" }, c.name, el("span", { class: "badge" }, "максимум " + pointsLabel(c.max_points)), view, editor));
     row.append(el("button", { class: "ghost", onclick: () => editor.classList.toggle("hidden") }, "Уровни"));
     if (!a.criteria_locked) row.append(el("button", { class: "ghost", onclick: () => guarded("c-err", async () => {
       await request("/assignments/" + id + "/criteria/" + c.id, { method: "DELETE" });
@@ -611,7 +613,7 @@ function showDraft(result) {
   const q = $("ai-questions");
   q.replaceChildren(...result.questions.map(draftRow));
   const short = $("ai-short");
-  short.textContent = result.below_recommended ? "Меньше рекомендуемого: модель вернула " + result.questions.length + " вопр. при рекомендуемом минимуме " + result.min_questions + ". Можно утвердить, добавить свои вопросы или запросить черновик заново." : "";
+  short.textContent = result.below_recommended ? "Меньше рекомендуемого: модель вернула " + counted(result.questions.length, "вопрос", "вопроса", "вопросов") + " при рекомендуемом минимуме " + result.min_questions + ". Можно утвердить, добавить свои вопросы или запросить черновик заново." : "";
   short.classList.toggle("hidden", !result.below_recommended);
   const c = $("ai-criteria");
   c.replaceChildren(...result.criteria.map(draftCriterion));
@@ -758,7 +760,7 @@ function scoreForm(submission, criteria, opts) {
     };
     input.addEventListener("input", paintLegend);
     paintLegend();
-    form.append(el("div", { class: "score" }, el("div", {}, c.name + " (макс. " + c.max_points + ")"), input, buttons, legend, why, dev));
+    form.append(el("div", { class: "score" }, el("div", {}, c.name + " (максимум " + pointsLabel(c.max_points) + ")"), input, buttons, legend, why, dev));
     react();
   }
   form.append(el("button", { type: "button", class: "ghost", onclick: () => {

@@ -43,7 +43,8 @@
     summary { display:list-item; padding:10px 0; cursor:pointer; }
   }
 </style>
-<link rel="stylesheet" href="/theme.css">
+<link rel="stylesheet" href="/ui.css">
+<script src="/ui.js"></script>
 </head>
 <body>
 <main>
@@ -179,10 +180,11 @@ async function loadSpaces() {
   if (!spaces.length) box.append(el("div", { class: "muted" }, "Вы пока не состоите ни в одной группе."));
   for (const s of spaces) {
     box.append(el("div", {},
-      el("div", { class: "txt" }, s.name,
-        el("span", { class: "badge" }, s.role === "owner" ? "владелец" : "участник"),
-        el("span", { class: "badge" }, s.members_count + " уч."),
-        el("span", { class: "badge" }, s.publications_count + " матер.")),
+      el("div", { class: "txt" }, el("div", { class: "title" }, s.name),
+        el("div", { class: "meta" },
+          el("span", { class: "badge" }, s.role === "owner" ? "владелец" : "участник"),
+          el("span", { class: "badge" }, counted(s.members_count, "участник", "участника", "участников")),
+          el("span", { class: "badge" }, counted(s.publications_count, "материал", "материала", "материалов")))),
       el("button", { class: "ghost", onclick: () => openSpace(s.id) }, "Открыть")));
   }
   return spaces;
@@ -245,10 +247,11 @@ async function loadPublications() {
       }) }, "Снять"));
     }
     box.append(el("div", {},
-      el("div", { class: "txt" }, p.title,
-        el("span", { class: "badge" }, "автор: " + p.author),
-        el("span", { class: "badge" }, p.criteria_count + " крит."),
-        el("span", { class: "badge" }, p.questions_count + " вопр.")),
+      el("div", { class: "txt" }, el("div", { class: "title" }, p.title),
+        el("div", { class: "meta" },
+          el("span", { class: "badge" }, "автор: " + p.author),
+          el("span", { class: "badge" }, counted(p.criteria_count, "критерий", "критерия", "критериев")),
+          el("span", { class: "badge" }, counted(p.questions_count, "вопрос", "вопроса", "вопросов")))),
       acts));
   }
 }
@@ -258,7 +261,7 @@ async function showPublication(id) {
   const box = $("preview");
   box.replaceChildren(el("strong", {}, p.title), el("div", { class: "muted" }, "Автор: " + p.author + " · группа «" + currentSpace.name + "»"));
   const criteria = el("ul");
-  for (const c of p.criteria) criteria.append(el("li", {}, c.name + " (макс. " + c.max_points + ")"));
+  for (const c of p.criteria) criteria.append(el("li", {}, c.name + " (максимум " + pointsLabel(c.max_points) + ")"));
   const questions = el("ol");
   for (const q of p.questions) questions.append(el("li", {}, q.text + " [" + (DIFFICULTY[q.difficulty] || q.difficulty) + (q.topic ? ", " + q.topic : "") + "]"));
   box.append(el("h3", {}, "Критерии"), p.criteria.length ? criteria : el("div", { class: "muted" }, "Нет критериев."),

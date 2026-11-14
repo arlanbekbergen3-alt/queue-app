@@ -109,7 +109,8 @@
     .settings-row { align-items:end; }
   }
 </style>
-<link rel="stylesheet" href="/theme.css">
+<link rel="stylesheet" href="/ui.css">
+<script src="/ui.js"></script>
 </head>
 <body>
 <main>
@@ -380,8 +381,8 @@ function describeValidation(errors) {
     const label = FIELD_LABELS[field] || field || "Поле";
     const ctx = e.ctx || {};
     if (e.type === "missing") return label + ": обязательное поле";
-    if (e.type === "string_too_short") return label + ": минимум " + ctx.min_length + " симв.";
-    if (e.type === "string_too_long") return label + ": максимум " + ctx.max_length + " симв.";
+    if (e.type === "string_too_short") return label + ": минимум " + ctx.min_length + " " + plural(ctx.min_length, "символ", "символа", "символов");
+    if (e.type === "string_too_long") return label + ": максимум " + ctx.max_length + " " + plural(ctx.max_length, "символ", "символа", "символов");
     if (e.type === "string_pattern_mismatch") return label + ": " + (PATTERN_HINTS[field] || "недопустимые символы");
     return label + ": недопустимое значение";
   });
@@ -616,7 +617,7 @@ function paintRoster() {
   const found = rosterGroups.find((g) => rosterKey(g.group) === rosterKey($("group").value));
   $("roster-hint").classList.toggle("hidden", !found);
   $("roster-only-row").classList.toggle("hidden", !found);
-  if (found) $("roster-hint").textContent = "Список группы: " + found.count + " чел. Студенты смогут выбрать себя из списка.";
+  if (found) $("roster-hint").textContent = "Список группы: " + counted(found.count, "человек", "человека", "человек") + ". Студенты смогут выбрать себя из списка.";
   else $("roster-only").checked = false;
 }
 async function loadRoster() {
@@ -904,10 +905,6 @@ const pad2 = (n) => String(n).padStart(2, "0");
 const clockTime = (iso) => { const d = new Date(iso); return pad2(d.getHours()) + ":" + pad2(d.getMinutes()); };
 const minutesText = (s) => { const m = Math.floor(s / 60); return m >= 60 ? Math.floor(m / 60) + " ч " + pad2(m % 60) + " мин" : m + " мин"; };
 const mmss = (s) => Math.floor(s / 60) + ":" + pad2(Math.round(s % 60));
-function plural(n, forms) {
-  const a = n % 10, b = n % 100;
-  return b >= 11 && b <= 14 ? forms[2] : a === 1 ? forms[0] : a >= 2 && a <= 4 ? forms[1] : forms[2];
-}
 const STATUS_TEXT = { ok: "Успеваем", tight: "В обрез", over: "Не успеваем", idle: "Очередь пуста" };
 let budgetAt = 0;
 let budgetOffer = null;
@@ -937,7 +934,7 @@ function renderBudget(b) {
   $("budget-offer").classList.toggle("hidden", !b.suggestion);
   if (b.suggestion) {
     const s = b.suggestion;
-    $("budget-offer-text").textContent = s.questions_from + " → " + s.questions_to + " " + plural(s.questions_to, ["вопрос", "вопроса", "вопросов"]) + ", закончим примерно в " + clockTime(s.forecast_end_at);
+    $("budget-offer-text").textContent = s.questions_from + " → " + s.questions_to + " " + plural(s.questions_to, "вопрос", "вопроса", "вопросов") + ", закончим примерно в " + clockTime(s.forecast_end_at);
   }
 }
 
@@ -1208,7 +1205,7 @@ async function updateWork(queue) {
   }
   for (const criterion of work.criteria) {
     parts.push(el("div", { class: "crit", id: "crit-" + criterion.id },
-      el("div", { class: "name" }, el("span", {}, criterion.name), el("span", { class: "muted" }, "макс. " + criterion.max_points)),
+      el("div", { class: "name" }, el("span", {}, criterion.name), el("span", { class: "muted" }, "максимум " + pointsLabel(criterion.max_points))),
       pointButtons(criterion), levelLegend(criterion), reasonField(criterion),
       el("div", { class: "dev hidden", role: "status" })));
   }

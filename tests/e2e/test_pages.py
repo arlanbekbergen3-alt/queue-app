@@ -99,7 +99,7 @@ def test_teacher_registration_validation_error_names_the_field_and_the_rule(page
 
     error = page.locator("#auth-err")
     expect(error).to_contain_text("Логин: только латинские буквы")
-    expect(error).to_contain_text("Пароль: минимум 8 симв.")
+    expect(error).to_contain_text("Пароль: минимум 8 символов")
     expect(error).not_to_have_text("Проверьте введённые данные")
     expect(page.locator("#app-view")).to_be_hidden()
 

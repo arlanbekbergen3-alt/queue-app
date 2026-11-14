@@ -99,7 +99,7 @@ def test_teacher_corrects_a_grade_with_a_reason_and_sees_the_journal(page: Page,
     page.locator("#done").get_by_role("button", name="Править").click()
     page.locator("#done input[type=number]").first.fill("5")
     page.get_by_role("button", name="Сохранить правку").click()
-    expect(page.locator("#done .err")).to_contain_text("Причина: минимум 3 симв.")
+    expect(page.locator("#done .err")).to_contain_text("Причина: минимум 3 символа")
 
     page.get_by_placeholder("Причина правки (обязательно)").fill("Пересмотр защиты")
     page.get_by_role("button", name="Сохранить правку").click()
@@ -119,10 +119,10 @@ def test_teacher_builds_an_assignment_in_the_browser(page: Page, teacher_api):
     expect(page.locator("#a-name")).to_have_text("Лабораторная из браузера", timeout=SLOW)
 
     page.click("#c-add")
-    expect(page.locator("#c-err")).to_contain_text("Название критерия: минимум 1 симв.")
+    expect(page.locator("#c-err")).to_contain_text("Название критерия: минимум 1 символ")
     page.fill("#c-name", "Код")
     page.click("#c-add")
-    expect(page.locator("#criteria")).to_contain_text("макс. 5")
+    expect(page.locator("#criteria")).to_contain_text("максимум 5")
 
     page.fill("#q-text", "Что такое индекс?")
     page.click("#q-add")

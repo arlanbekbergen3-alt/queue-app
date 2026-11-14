@@ -252,3 +252,71 @@ def test_presence_code_and_field_fit_a_phone(page: Page, browser, live_server, o
     expect(student.locator("#presence-box")).to_be_visible(timeout=SLOW)
     assert_fits(student)
     other.close()
+
+
+def test_roster_levels_and_reopen_fit_a_phone_screen(
+    page: Page, browser, live_server, api, open_session
+):
+    teacher, assignment = prepare(api, open_session, questions=3)
+    headers = teacher["headers"]
+    names = "\n".join(f"Очень длинная Фамилия-Двойная Имя {i}" for i in range(24))
+    api.put("/roster", headers=headers, json={"group": "ИС-22", "text": names})
+    first = api.get(f"/assignments/{assignment['id']}/criteria", headers=headers).json()[0]
+    api.put(
+        f"/assignments/{assignment['id']}/criteria/{first['id']}/levels",
+        headers=headers,
+        json={
+            "levels": [
+                {"points": 0, "text": "Нет ответа вообще, студент не смог начать решение"},
+                {"points": 3, "text": "Частично верно, но есть значительные неточности в расчётах"},
+                {"points": 5, "text": "Верно и полно, с пояснениями"},
+            ]
+        },
+    )
+    session = api.post(
+        "/sessions",
+        headers=headers,
+        json={"title": "Зачёт", "group": "ИС-22", "session_mode": "protocol", "roster_only": True},
+    ).json()
+    api.put(
+        f"/sessions/{session['code']}/assignment",
+        headers=headers,
+        json={"assignment_id": assignment["id"]},
+    )
+
+    context = browser.new_context(base_url=live_server, viewport=PHONE)
+    student = context.new_page()
+    student.goto(f"/?code={session['code']}")
+    expect(student.locator("#roster-list button").first).to_be_visible(timeout=SLOW)
+    assert_fits(student)
+    student.locator("#roster-list button").first.click()
+    student.click("#join-btn")
+    expect(student.locator("#status-badge")).to_have_text("В очереди", timeout=SLOW)
+    context.close()
+
+    page.set_viewport_size(PHONE)
+    login_as(page, teacher)
+    page.goto("/teacher")
+    page.fill("#group", "ИС-22")
+    expect(page.locator("#roster-only-row")).to_be_visible(timeout=SLOW)
+    assert_fits(page)
+    page.get_by_role("button", name=session["code"]).click()
+    page.click("#next-btn")
+    expect(page.locator("#work-body .lvl").first).to_be_visible(timeout=SLOW)
+    assert_fits(page)
+    page.once("dialog", lambda dialog: dialog.accept())
+    page.click("#close-btn")
+    expect(page.locator("#reopen-btn")).to_be_visible(timeout=SLOW)
+    assert_fits(page)
+
+    page.goto("/students")
+    expect(page.locator("#r-groups")).to_contain_text("ИС-22", timeout=SLOW)
+    page.locator("#r-groups").get_by_role("button", name="Показать").click()
+    expect(page.locator("#r-text")).not_to_have_value("")
+    assert_fits(page)
+
+    page.goto("/protocol")
+    page.locator("#assignments").get_by_role("button", name="Открыть").first.click()
+    page.locator("#criteria").get_by_role("button", name="Уровни").first.click()
+    expect(page.locator("#criteria textarea").first).to_be_visible(timeout=SLOW)
+    assert_fits(page)

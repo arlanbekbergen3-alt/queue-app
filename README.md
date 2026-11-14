@@ -102,6 +102,7 @@ stateDiagram-v2
 | `POST /sessions/{code}/next` | преподаватель | вызвать следующего |
 | `POST /sessions/{code}/entries/{id}/done\|skip\|requeue\|promote` | преподаватель | сдал, пропустить, вернуть в конец, вперёд |
 | `POST /sessions/{code}/close` | преподаватель | закрыть сессию |
+| `POST /sessions/{code}/reopen` | преподаватель | открыть закрытую сессию снова (в течение `SESSION_REOPEN_HOURS`, возвращает сдачи, отменённые закрытием) |
 | `POST/GET /assignments`, `GET/PATCH/DELETE /assignments/{id}` | преподаватель | работы (чужие дают 404) |
 | `.../assignments/{id}/questions`, `.../criteria`, `PUT .../criteria/{id}/levels` | преподаватель | банк вопросов, критерии (баллы блокируются после первой сдачи) и описания уровней баллов |
 | `GET/PUT/DELETE /roster`, `GET /roster/names`, `GET /sessions/{code}/roster` | преподаватель; последняя публичная | списки групп и выбор студента из списка (`roster_only` в настройках сессии) |

@@ -48,6 +48,7 @@
 <main>
   <h1>Очередь на сдачу</h1>
   <p class="sub" id="subtitle"></p>
+  <div class="alert warn hidden" id="retry-note" role="status"></div>
 
   <section class="card" id="join-view">
     <label for="code">Код сессии</label>
@@ -301,21 +302,59 @@ async function readEvents(url, headers, signal, onEvent, onActivity) {
   }
 }
 
-async function request(path, options = {}) {
-  let response;
-  try {
-    response = await fetch(API + path, options);
-  } catch {
-    const error = new Error("Нет связи с сервером. Проверьте подключение и повторите");
-    error.status = 0;
-    throw error;
+const RETRY_ATTEMPTS = 4;
+const RETRY_NOW_MAX_S = 15;
+const RETRY_LIMIT_MAX_S = 65;
+function retryDelaySeconds(response, code) {
+  if (code === "presence_locked") return null;
+  const header = Number(response.headers.get("Retry-After"));
+  const wait = Number.isFinite(header) && header > 0 ? header : 2;
+  const longest = response.status === 429 ? RETRY_LIMIT_MAX_S : RETRY_NOW_MAX_S;
+  return wait > longest ? null : wait + Math.random() * 1.5;
+}
+async function waitWithNote(seconds) {
+  const note = $("retry-note");
+  const until = Date.now() + seconds * 1000;
+  for (;;) {
+    const left = Math.ceil((until - Date.now()) / 1000);
+    if (left <= 0) break;
+    note.textContent = "Сервер занят, повторяем через " + left + " с…";
+    note.classList.remove("hidden");
+    await new Promise((resolve) => setTimeout(resolve, Math.min(1000, Math.max(50, until - Date.now()))));
   }
-  let body = null;
-  try { body = await response.json(); } catch {}
+  note.classList.add("hidden");
+}
+async function request(path, options = {}) {
+  const { idempotent, ...init } = options;
+  const method = (init.method || "GET").toUpperCase();
+  for (let attempt = 1; ; attempt++) {
+    let response;
+    try {
+      response = await fetch(API + path, init);
+    } catch {
+      const error = new Error("Нет связи с сервером. Проверьте подключение и повторите");
+      error.status = 0;
+      throw error;
+    }
+    let body = null;
+    try { body = await response.clone().json(); } catch {}
+    const code = body?.code;
+    const beforeHandler = code === "rate_limited" || code === "overloaded";
+    const safe = beforeHandler || method === "GET" || idempotent === true;
+    if (!response.ok && (response.status === 429 || response.status === 503) && safe && attempt < RETRY_ATTEMPTS) {
+      const seconds = retryDelaySeconds(response, code);
+      if (seconds !== null) { await waitWithNote(seconds); continue; }
+    }
+    return finish(response, body);
+  }
+}
+function finish(response, body) {
   if (!response.ok) {
     const detailed = body?.code === "validation_error" && Array.isArray(body.errors) && body.errors.length
       ? describeValidation(body.errors) : "";
-    const error = new Error(detailed || MESSAGES[body?.code] || "Ошибка " + response.status);
+    const wait = Number(response.headers.get("Retry-After"));
+    const hint = (response.status === 429 || response.status === 503) && wait > 0 ? " (через " + (wait > 90 ? Math.ceil(wait / 60) + " мин" : wait + " с") + ")" : "";
+    const error = new Error((detailed || MESSAGES[body?.code] || "Ошибка " + response.status) + hint);
     error.status = response.status;
     throw error;
   }
@@ -339,6 +378,7 @@ async function join() {
   const token = state && state.code === code ? state.token : randomToken();
   try {
     const entry = await request("/" + encodeURIComponent(code) + "/join", {
+      idempotent: true,
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, token, device_key: deviceKey(), ready_now: !$("ready-choice").classList.contains("hidden") && $("ready-now").checked, presence_code: $("presence-box").classList.contains("hidden") ? null : $("presence-code").value }),

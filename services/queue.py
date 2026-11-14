@@ -50,6 +50,7 @@ from services.protocol_calls import (
     cancel_open_submission,
     cancel_open_submissions,
     has_open_submission,
+    restore_closed_submissions,
     start_submission,
 )
 from services.quick import QuickAssignments
@@ -307,18 +308,19 @@ class QueueService:
             raise ForbiddenError("Неверный код, посмотрите на экран", code="presence_code_invalid")
 
     async def _join(self, code: str, data: JoinIn, client_ip: str = "-") -> MyEntryOut:
-        session = await self._get_session(code)
+        session = await self._lock(code)
         token_hash = hash_token(data.token)
         existing = await self.repo.get_entry_by_token(session.id, token_hash)
         if existing is not None:
-            return await self._view(existing.id)
+            entry_id = existing.id
+            await self.db.rollback()
+            return await self._view(entry_id)
         if session.status != SessionStatus.OPEN:
             raise ConflictError("Сессия закрыта", code="session_closed")
         if session.presence_check == "rotating_code":
             self._check_presence(session, data.presence_code, client_ip)
-        session = await self._lock(code)
         self._check_registration(session)
-        self._check_capacity(*await self.repo.queue_counts(session.id))
+        session_id, session_code = session.id, session.code
         name = data.name
         if session.roster_only:
             name = await self._roster_name(session, data.name)
@@ -342,15 +344,14 @@ class QueueService:
             )
             if inserted is None:
                 await self.db.rollback()
-                self._check_capacity(*await self.repo.queue_counts(session.id))
+                self._check_capacity(*await self.repo.queue_counts(session_id))
                 raise ConflictError("Queue is full", code="queue_full")
             entry_id = inserted
             await self.db.commit()
-            notify_changed(session.code)
+            notify_changed(session_code)
         except IntegrityError:
             await self.db.rollback()
-            session = await self._get_session(code)
-            existing = await self.repo.get_entry_by_token(session.id, token_hash)
+            existing = await self.repo.get_entry_by_token(session_id, token_hash)
             if existing is None:
                 raise
             entry_id = existing.id
@@ -505,9 +506,47 @@ class QueueService:
         session = await self._owned(code, teacher_id, lock=True)
         if session.status != SessionStatus.CLOSED:
             await self.repo.close_session(session, datetime.now(UTC))
-            await cancel_open_submissions(self.db, [session.id])
+            cancelled = await cancel_open_submissions(self.db, [session.id])
+            self.db.add(
+                SessionEventORM(
+                    session_id=session.id,
+                    actor_id=teacher_id,
+                    kind="close",
+                    details={"cancelled_submissions": cancelled},
+                )
+            )
             await self.db.commit()
             notify_changed(session.code)
+        return session
+
+    async def reopen_session(self, code: str, teacher_id: str) -> QueueSessionORM:
+        session = await self._owned(code, teacher_id, lock=True)
+        if session.status != SessionStatus.CLOSED:
+            return session
+        window = settings.SESSION_REOPEN_HOURS
+        closed_at = session.closed_at
+        if window <= 0 or (
+            closed_at is not None and datetime.now(UTC) - closed_at > timedelta(hours=window)
+        ):
+            raise ConflictError(
+                f"Сессию можно открыть снова только в течение {window} ч после закрытия"
+                if window > 0
+                else "Повторное открытие отключено",
+                code="reopen_expired",
+            )
+        session.status = SessionStatus.OPEN
+        session.closed_at = None
+        restored = await restore_closed_submissions(self.db, session.id)
+        self.db.add(
+            SessionEventORM(
+                session_id=session.id,
+                actor_id=teacher_id,
+                kind="reopen",
+                details={"restored_submissions": restored},
+            )
+        )
+        await self.db.commit()
+        notify_changed(session.code)
         return session
 
     async def call_next(self, code: str, teacher_id: str) -> TeacherEntryOut:

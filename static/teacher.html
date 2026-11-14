@@ -114,6 +114,7 @@
     <div class="actions"><a href="/protocol" id="protocol-link" style="align-self:center">Протокол сдачи</a><a href="/students" style="align-self:center">Студенты</a><a href="/spaces" style="align-self:center">Группы</a><button class="ghost hidden" id="logout-btn">Выйти</button></div>
   </div>
 
+  <div class="card hidden" id="retry-note" role="status" style="border-color:var(--warn);color:var(--warn);font-weight:600"></div>
   <section class="card" id="auth-view">
     <div class="tabs">
       <button id="tab-login" class="active">Вход</button>
@@ -220,6 +221,7 @@
           <button id="next-btn">Вызвать следующего</button>
           <button class="ghost" id="registration-btn">Закрыть запись</button>
           <button class="ghost" id="close-btn">Закрыть сессию</button>
+          <button class="hidden" id="reopen-btn">Открыть сессию снова</button>
         </div>
       </div>
       <div id="presence-panel" style="margin-top:12px">
@@ -344,10 +346,12 @@ const MESSAGES = {
   invalid_deadline: "Время окончания должно быть позже текущего и не дальше 12 часов",
   questions_not_reducible: "Число вопросов можно только уменьшить",
   session_not_found: "Сессия не найдена",
+  reopen_expired: "Эту сессию уже нельзя открыть снова: прошло слишком много времени после закрытия",
   entry_not_found: "Запись не найдена",
   not_authenticated: "Войдите заново",
   invalid_token: "Войдите заново",
   rate_limited: "Слишком много запросов, подождите минуту",
+  login_locked: "Слишком много неудачных попыток входа, подождите",
   overloaded: "Сервис перегружен, попробуйте через пару секунд",
   database_unavailable: "Сервис временно недоступен, попробуйте позже",
   validation_error: "Проверьте введённые данные",
@@ -432,24 +436,60 @@ async function readEvents(url, headers, signal, onEvent, onActivity) {
   }
 }
 
+const RETRY_ATTEMPTS = 4;
+const RETRY_NOW_MAX_S = 15;
+const RETRY_LIMIT_MAX_S = 65;
+function retryDelaySeconds(response) {
+  const header = Number(response.headers.get("Retry-After"));
+  const wait = Number.isFinite(header) && header > 0 ? header : 2;
+  const longest = response.status === 429 ? RETRY_LIMIT_MAX_S : RETRY_NOW_MAX_S;
+  return wait > longest ? null : wait + Math.random() * 1.5;
+}
+async function waitWithNote(seconds) {
+  const note = $("retry-note");
+  const until = Date.now() + seconds * 1000;
+  for (;;) {
+    const left = Math.ceil((until - Date.now()) / 1000);
+    if (left <= 0) break;
+    note.textContent = "Сервер занят, повторяем через " + left + " с…";
+    note.classList.remove("hidden");
+    await new Promise((resolve) => setTimeout(resolve, Math.min(1000, Math.max(50, until - Date.now()))));
+  }
+  note.classList.add("hidden");
+}
 async function request(path, options = {}) {
   const headers = { ...(options.headers || {}) };
   if (options.body) headers["Content-Type"] = "application/json";
   if (token) headers["Authorization"] = "Bearer " + token;
-  let response;
-  try {
-    response = await fetch(API + path, { ...options, headers });
-  } catch {
-    const error = new Error("Нет связи с сервером. Проверьте подключение и повторите");
-    error.status = 0;
-    throw error;
+  const method = (options.method || "GET").toUpperCase();
+  for (let attempt = 1; ; attempt++) {
+    let response;
+    try {
+      response = await fetch(API + path, { ...options, headers });
+    } catch {
+      const error = new Error("Нет связи с сервером. Проверьте подключение и повторите");
+      error.status = 0;
+      throw error;
+    }
+    let body = null;
+    try { body = await response.clone().json(); } catch {}
+    const code = body?.code;
+    const beforeHandler = code === "rate_limited" || code === "overloaded";
+    const safe = beforeHandler || method === "GET";
+    if (!response.ok && (response.status === 429 || response.status === 503) && safe && attempt < RETRY_ATTEMPTS && code !== "login_locked") {
+      const seconds = retryDelaySeconds(response);
+      if (seconds !== null) { await waitWithNote(seconds); continue; }
+    }
+    return finish(response, body);
   }
-  let body = null;
-  try { body = await response.json(); } catch {}
+}
+function finish(response, body) {
   if (!response.ok) {
     const detailed = body?.code === "validation_error" && Array.isArray(body.errors) && body.errors.length
       ? describeValidation(body.errors) : "";
-    const error = new Error(detailed || MESSAGES[body?.code] || "Ошибка " + response.status);
+    const wait = Number(response.headers.get("Retry-After"));
+    const hint = (response.status === 429 || response.status === 503) && wait > 0 ? " (через " + (wait > 90 ? Math.ceil(wait / 60) + " мин" : wait + " с") + ")" : "";
+    const error = new Error((detailed || MESSAGES[body?.code] || "Ошибка " + response.status) + hint);
     error.code = body?.code;
     error.status = response.status;
     throw error;
@@ -817,6 +857,7 @@ function renderQueue(queue) {
     "Ждут: " + queue.waiting_count + " · среднее время сдачи: " + Math.round(queue.avg_service_seconds / 60 * 10) / 10 + " мин";
   const closed = queue.status === "closed";
   $("close-btn").classList.toggle("hidden", closed);
+  $("reopen-btn").classList.toggle("hidden", !closed);
   const registration = $("registration-btn");
   registration.classList.toggle("hidden", closed);
   registration.textContent = queue.join_open ? "Закрыть запись" : "Открыть запись";
@@ -1235,9 +1276,20 @@ async function toggleRegistration() {
 }
 
 async function closeSession() {
-  if (!confirm("Закрыть сессию? Новые студенты не смогут встать в очередь.")) return;
+  const grading = work.submission ? " Идёт сдача: она будет отменена, но при повторном открытии вернётся." : "";
+  if (!confirm("Закрыть сессию? Новые студенты не смогут встать в очередь." + grading + " Сессию можно открыть снова в течение суток.")) return;
   try {
     await request("/sessions/" + current + "/close", { method: "POST" });
+    await loadSessions();
+  } catch (error) {
+    showActionError(error.message);
+  }
+  await refresh();
+}
+
+async function reopenSession() {
+  try {
+    await request("/sessions/" + current + "/reopen", { method: "POST" });
     await loadSessions();
   } catch (error) {
     showActionError(error.message);
@@ -1251,6 +1303,7 @@ $("auth-btn").addEventListener("click", authenticate);
 $("create-btn").addEventListener("click", createSession);
 $("next-btn").addEventListener("click", callNext);
 $("close-btn").addEventListener("click", closeSession);
+$("reopen-btn").addEventListener("click", reopenSession);
 $("registration-btn").addEventListener("click", toggleRegistration);
 $("presence-toggle").addEventListener("click", togglePresence);
 $("mode").addEventListener("change", syncMode);

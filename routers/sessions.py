@@ -116,6 +116,11 @@ async def teacher_queue(code: str, teacher: CurrentTeacher, service: QueueServic
     return await service.teacher_queue(code, teacher.id)
 
 
+@router.post("/{code}/reopen", response_model=SessionOut)
+async def reopen_session(code: str, teacher: CurrentTeacher, service: QueueServiceDep):
+    return await service.reopen_session(code, teacher.id)
+
+
 @router.post("/{code}/close", response_model=SessionOut)
 async def close_session(code: str, teacher: CurrentTeacher, service: QueueServiceDep):
     return await service.close_session(code, teacher.id)

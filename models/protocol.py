@@ -129,6 +129,7 @@ class SubmissionORM(Base):
         DateTime(timezone=True), default=_now, nullable=False
     )
     ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    cancel_reason: Mapped[str | None] = mapped_column(String(16), nullable=True)
     duration_seconds: Mapped[int | None] = mapped_column(Integer, nullable=True)
     total_points: Mapped[int | None] = mapped_column(Integer, nullable=True)
     max_points: Mapped[int | None] = mapped_column(Integer, nullable=True)

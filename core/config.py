@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     MAX_QUEUE_SIZE: int = Field(default=300, ge=1)
     MAX_ENTRIES_PER_SESSION: int = Field(default=1000, ge=1)
     NAME_MAX_LENGTH: int = Field(default=60, ge=1, le=60)
+    SESSION_REOPEN_HOURS: int = Field(default=24, ge=0)
     SESSION_AUTO_CLOSE_HOURS: float = Field(default=6.0, ge=0)
     SESSION_REAPER_INTERVAL_SECONDS: int = Field(default=60, ge=1)
     NOT_READY_MAX_PER_SESSION: int = Field(default=2, ge=0, le=10)

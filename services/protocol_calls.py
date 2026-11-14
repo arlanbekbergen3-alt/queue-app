@@ -38,6 +38,7 @@ async def start_submission(db: AsyncSession, session: QueueSessionORM, entry: En
     if existing is not None:
         if existing.status == SubmissionStatus.CANCELLED:
             existing.status = SubmissionStatus.IN_PROGRESS
+            existing.cancel_reason = None
             existing.started_at = datetime.now(UTC)
             existing.ended_at = None
             repo.add_audit(
@@ -115,18 +116,38 @@ async def has_open_submission(db: AsyncSession, session: QueueSessionORM, entry:
     return submission is not None and submission.status == SubmissionStatus.IN_PROGRESS
 
 
-async def cancel_open_submissions(db: AsyncSession, session_ids: list[str]) -> None:
+SESSION_CLOSED_REASON = "session_closed"
+
+
+async def cancel_open_submissions(db: AsyncSession, session_ids: list[str]) -> int:
     if not session_ids:
-        return
-    await db.execute(
+        return 0
+    result = await db.execute(
         update(SubmissionORM)
         .where(
             SubmissionORM.session_id.in_(session_ids),
             SubmissionORM.status == SubmissionStatus.IN_PROGRESS,
         )
-        .values(status=SubmissionStatus.CANCELLED)
+        .values(status=SubmissionStatus.CANCELLED, cancel_reason=SESSION_CLOSED_REASON)
+        .returning(SubmissionORM.id)
         .execution_options(synchronize_session=False)
     )
+    return len(result.all())
+
+
+async def restore_closed_submissions(db: AsyncSession, session_id: str) -> int:
+    result = await db.execute(
+        update(SubmissionORM)
+        .where(
+            SubmissionORM.session_id == session_id,
+            SubmissionORM.status == SubmissionStatus.CANCELLED,
+            SubmissionORM.cancel_reason == SESSION_CLOSED_REASON,
+        )
+        .values(status=SubmissionStatus.IN_PROGRESS, cancel_reason=None)
+        .returning(SubmissionORM.id)
+        .execution_options(synchronize_session=False)
+    )
+    return len(result.all())
 
 
 async def session_ids_by_code(db: AsyncSession, codes: list[str]) -> list[str]:

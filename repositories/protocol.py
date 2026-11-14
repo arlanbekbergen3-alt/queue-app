@@ -324,3 +324,18 @@ class ProtocolRepository:
             .order_by(AuditLogORM.seq)
         )
         return list((await self.db.execute(stmt)).scalars())
+
+    async def criterion_points(
+        self, assignment_id: str, criterion_id: str, *, exclude_submission_id: str
+    ) -> list[int]:
+        stmt = (
+            select(ScoreORM.points)
+            .join(SubmissionORM, SubmissionORM.id == ScoreORM.submission_id)
+            .where(
+                SubmissionORM.assignment_id == assignment_id,
+                SubmissionORM.status == SubmissionStatus.COMPLETED,
+                SubmissionORM.id != exclude_submission_id,
+                ScoreORM.criterion_id == criterion_id,
+            )
+        )
+        return list((await self.db.execute(stmt)).scalars())

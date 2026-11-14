@@ -65,6 +65,8 @@ class Settings(BaseSettings):
 
     ANALYTICS_MIN_SUBMISSIONS: int = Field(default=5, ge=2)
     ANALYTICS_OUTLIER_FACTOR: float = Field(default=2.0, gt=1)
+    DEVIATION_MIN_SAMPLES: int = Field(default=5, ge=2)
+    EXTREME_REASON_MIN_LENGTH: int = Field(default=5, ge=1)
 
     AI_ENABLED: bool = False
     OLLAMA_URL: str = "http://host.docker.internal:11434"

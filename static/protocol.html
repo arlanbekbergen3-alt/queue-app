@@ -49,6 +49,10 @@
   .bulk-row .txt { flex:1; overflow-wrap:anywhere; }
   .timer.bad { color:var(--bad); }
   .score { display:grid; grid-template-columns:1fr 90px; gap:8px; align-items:center; margin-top:8px; }
+  .score .why, .score .dev { grid-column:1 / -1; }
+  .score .dev { padding:8px 10px; border:1px solid var(--warn); border-radius:10px; color:var(--warn); font-size:.9rem; }
+  .score .hidden { display:none; }
+  .rules { display:grid; gap:6px; margin-top:10px; }
   .draft { border:1px dashed var(--warn); border-radius:12px; padding:12px; margin-top:12px; }
   .scroll { overflow-x:auto; }
   table.weak { width:100%; border-collapse:collapse; font-size:14px; }
@@ -108,6 +112,12 @@
         <label class="row" style="margin:0"><input id="s-template" type="checkbox" style="width:auto"> Использовать как шаблон</label>
         <button id="s-save">Сохранить</button>
         <button class="bad" id="a-delete">Удалить работу</button>
+      </div>
+      <div class="rules">
+        <label class="row" style="margin:0"><input id="s-reason" type="checkbox" style="width:auto"> Требовать пояснение для крайних оценок (0 или максимум)</label>
+        <label class="row" style="margin:0"><input id="s-deviation" type="checkbox" style="width:auto"> Предупреждать, если балл заметно отличается от ваших обычных</label>
+        <label class="row" style="margin:0">Порог, стандартных отклонений <input id="s-sigma" type="number" min="0.5" max="5" step="0.5" style="width:90px"></label>
+        <div class="muted">Пояснение видно студенту рядом с оценкой. Предупреждение мягкое: оно ничего не запрещает и работает при накопленных не менее 5 сдач по критерию.</div>
       </div>
       <div class="row" style="margin-top:8px">
         <input class="grow" id="copy-title" maxlength="120" placeholder="Название копии (необязательно)">
@@ -231,6 +241,7 @@ const MESSAGES = {
   submission_not_found: "Сдача не найдена",
   grades_incomplete: "Поставьте баллы по всем критериям",
   points_out_of_range: "Баллы вне допустимого диапазона",
+  reason_required: "Нужно пояснение (от 5 символов) к крайней оценке: 0 или максимуму",
   already_completed: "Сдача уже завершена",
   submission_cancelled: "Сдача отменена (студента пропустили)",
   submission_not_editable: "Эту сдачу уже нельзя править как черновик",
@@ -382,6 +393,9 @@ async function openAssignment(id) {
   $("a-name").textContent = a.title;
   $("s-count").value = a.questions_per_submission;
   $("s-practice").checked = a.practice_enabled;
+  $("s-reason").checked = a.require_extreme_reason;
+  $("s-deviation").checked = a.deviation_warning;
+  $("s-sigma").value = a.deviation_sigma;
   $("s-template").checked = a.is_template;
   $("a-origin").classList.toggle("hidden", !a.origin);
   $("a-origin").textContent = a.origin
@@ -443,7 +457,8 @@ $("a-create").addEventListener("click", () => guarded("a-err", async () => {
 $("s-save").addEventListener("click", () => guarded("s-err", async () => {
   await request("/assignments/" + current.id, { method: "PATCH", body: JSON.stringify({
     questions_per_submission: Number($("s-count").value), practice_enabled: $("s-practice").checked,
-    is_template: $("s-template").checked }) });
+    is_template: $("s-template").checked, require_extreme_reason: $("s-reason").checked,
+    deviation_warning: $("s-deviation").checked, deviation_sigma: Number($("s-sigma").value) || 2 }) });
   show("s-err", "Сохранено", true);
   await loadAssignments();
 }));
@@ -683,16 +698,48 @@ $("p-attach").addEventListener("click", () => guarded("p-err", async () => {
   await refreshSubmissions();
 }));
 
+async function gradingRules() {
+  const id = $("p-assignment").value;
+  try {
+    const a = await request("/assignments/" + id);
+    return { reason: a.require_extreme_reason, deviation: a.deviation_warning };
+  } catch { return { reason: false, deviation: false }; }
+}
+
 function scoreForm(submission, criteria, opts) {
   const form = el("div", {});
   const inputs = {};
+  const whys = {};
+  const rules = opts.rules || { reason: false, deviation: false };
+  const isExtreme = (c) => inputs[c.criterion_id].value !== "" && (Number(inputs[c.criterion_id].value) === 0 || Number(inputs[c.criterion_id].value) === c.max_points);
   for (const c of criteria) {
     const input = el("input", { type: "number", min: "0", max: String(c.max_points), value: c.points ?? "" });
     inputs[c.criterion_id] = input;
+    const why = el("input", { type: "text", maxlength: "300", class: "why hidden", placeholder: "Пояснение к крайней оценке (от 5 символов)", value: c.comment || "" });
+    whys[c.criterion_id] = why;
+    const dev = el("div", { class: "dev hidden", role: "status" });
+    let checked = c.points ?? null;
+    let timer = null;
+    const react = () => {
+      why.classList.toggle("hidden", !(rules.reason && isExtreme(c)));
+      if (!rules.deviation || !opts.submissionId || input.value === "" || Number(input.value) === checked) return;
+      checked = Number(input.value);
+      const sent = checked;
+      clearTimeout(timer);
+      timer = setTimeout(async () => {
+        try {
+          const answer = await request("/submissions/" + opts.submissionId + "/deviation-check", { method: "POST", body: JSON.stringify({ criterion_id: c.criterion_id, points: sent }) });
+          if (Number(input.value) !== sent) return;
+          dev.textContent = answer.warn ? answer.text : "";
+          dev.classList.toggle("hidden", !answer.warn);
+        } catch {}
+      }, 500);
+    };
+    input.addEventListener("input", react);
     const marks = c.max_points <= 12 ? Array.from({ length: c.max_points + 1 }, (_, i) => i) : [0, Math.round(c.max_points / 2), c.max_points];
     const buttons = el("div", { class: "pts" }, ...marks.map((value) => el("button", { type: "button", onclick: () => {
       input.value = String(value);
-      paintPts();
+      input.dispatchEvent(new Event("input"));
     } }, String(value))));
     const paintPts = () => {
       for (const button of buttons.children) button.classList.toggle("on", button.textContent === input.value);
@@ -705,7 +752,8 @@ function scoreForm(submission, criteria, opts) {
     };
     input.addEventListener("input", paintLegend);
     paintLegend();
-    form.append(el("div", { class: "score" }, el("div", {}, c.name + " (макс. " + c.max_points + ")"), input, buttons, legend));
+    form.append(el("div", { class: "score" }, el("div", {}, c.name + " (макс. " + c.max_points + ")"), input, buttons, legend, why, dev));
+    react();
   }
   form.append(el("button", { type: "button", class: "ghost", onclick: () => {
     for (const c of criteria) {
@@ -723,7 +771,8 @@ function scoreForm(submission, criteria, opts) {
   }
   form.collect = () => ({
     scores: criteria.filter((c) => inputs[c.criterion_id].value !== "").map((c) => ({
-      criterion_id: c.criterion_id, points: Number(inputs[c.criterion_id].value) })),
+      criterion_id: c.criterion_id, points: Number(inputs[c.criterion_id].value),
+      comment: rules.reason && isExtreme(c) ? whys[c.criterion_id].value.trim() : "" })),
     comment: comment.value,
     reason: reason ? reason.value : undefined,
   });
@@ -734,7 +783,7 @@ async function sessionCriteria(submission) {
   const sessionAssignment = $("p-assignment").value;
   const list = await request("/assignments/" + sessionAssignment + "/criteria");
   const byId = Object.fromEntries(submission.scores.map((s) => [s.criterion_id, s]));
-  return list.map((c) => ({ criterion_id: c.id, name: c.name, max_points: c.max_points, levels: c.levels, points: byId[c.id]?.points }));
+  return list.map((c) => ({ criterion_id: c.id, name: c.name, max_points: c.max_points, levels: c.levels, points: byId[c.id]?.points, comment: byId[c.id]?.comment }));
 }
 
 async function renderCurrent(submission) {
@@ -747,7 +796,7 @@ async function renderCurrent(submission) {
   }
   box.className = "";
   const criteria = await sessionCriteria(submission);
-  const form = scoreForm(submission, criteria, {});
+  const form = scoreForm(submission, criteria, { rules: await gradingRules(), submissionId: submission.id });
   const timer = el("div", { class: "timer" });
   const started = new Date(submission.started_at).getTime();
   let budgetSeconds = null;
@@ -814,8 +863,8 @@ async function refreshSubmissions() {
 }
 
 async function correct(submission, row) {
-  const criteria = submission.scores.map((x) => ({ criterion_id: x.criterion_id, name: x.name, max_points: x.max_points, levels: x.levels, points: x.points }));
-  const form = scoreForm(submission, criteria, { reason: true });
+  const criteria = submission.scores.map((x) => ({ criterion_id: x.criterion_id, name: x.name, max_points: x.max_points, levels: x.levels, points: x.points, comment: x.comment }));
+  const form = scoreForm(submission, criteria, { reason: true, rules: await gradingRules(), submissionId: submission.id });
   const err = el("div", { class: "err" });
   const holder = el("div", { style: "width:100%" }, form, err,
     el("button", { onclick: async () => {

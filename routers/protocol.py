@@ -12,6 +12,8 @@ from schemas.protocol import (
     CriterionCreate,
     CriterionOut,
     CriterionUpdate,
+    DeviationIn,
+    DeviationOut,
     GradesIn,
     LevelsIn,
     MySubmissionOut,
@@ -224,6 +226,13 @@ async def save_grades(
     submission_id: str, data: GradesIn, teacher: CurrentTeacher, service: ProtocolServiceDep
 ):
     return await service.save_grades(teacher.id, submission_id, data)
+
+
+@router.post("/submissions/{submission_id}/deviation-check", response_model=DeviationOut)
+async def deviation_check(
+    submission_id: str, data: DeviationIn, teacher: CurrentTeacher, service: ProtocolServiceDep
+):
+    return await service.deviation_check(teacher.id, submission_id, data)
 
 
 @router.post("/submissions/{submission_id}/complete", response_model=SubmissionOut)

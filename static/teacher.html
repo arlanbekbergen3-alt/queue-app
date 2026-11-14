@@ -75,6 +75,9 @@
   .crit.active { background:color-mix(in srgb, var(--accent) 10%, transparent); border-radius:10px; padding:10px; }
   .lvl { display:flex; flex-wrap:wrap; gap:2px 14px; margin-top:6px; font-size:.85rem; color:var(--muted); }
   .lvl .on { color:var(--text); font-weight:700; }
+  .why { margin-top:8px; }
+  .why input { padding:8px 10px; }
+  .dev { margin-top:8px; padding:8px 10px; border:1px solid var(--warn); border-radius:10px; color:var(--warn); font-size:.9rem; }
   .crit .name { font-weight:600; margin-bottom:6px; display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; }
   .pts { display:flex; flex-wrap:wrap; gap:6px; }
   .pts button { min-width:44px; min-height:44px; padding:6px 10px; background:var(--bg); color:var(--text); border:1px solid var(--border); }
@@ -346,6 +349,7 @@ const MESSAGES = {
   invalid_deadline: "Время окончания должно быть позже текущего и не дальше 12 часов",
   questions_not_reducible: "Число вопросов можно только уменьшить",
   session_not_found: "Сессия не найдена",
+  reason_required: "Нужно пояснение (от 5 символов) к крайней оценке: 0 или максимуму",
   reopen_expired: "Эту сессию уже нельзя открыть снова: прошло слишком много времени после закрытия",
   entry_not_found: "Запись не найдена",
   not_authenticated: "Войдите заново",
@@ -946,7 +950,7 @@ async function decideBudget(accept) {
 }
 
 const TAGS = ["Отлично", "Хорошо", "Есть ошибки", "Не знает теорию", "Не может объяснить", "Код не запускается", "Нужна пересдача"];
-const work = { key: "", seq: 0, submission: null, criteria: [], values: {}, active: 0, comment: null, timer: null, buffer: "", bufferAt: 0, advance: null, entry: null, budget: null };
+const work = { key: "", seq: 0, submission: null, criteria: [], values: {}, active: 0, comment: null, timer: null, buffer: "", bufferAt: 0, advance: null, entry: null, budget: null, rules: { reason: false, deviation: false, minReason: 5 }, reasons: {}, checked: {}, checks: {} };
 const workState = work;
 
 function workError(message) { $("work-err").textContent = message || ""; }
@@ -985,15 +989,52 @@ function pointButtons(criterion) {
   return box;
 }
 
+function reasonField(criterion) {
+  const input = el("input", { type: "text", maxlength: "300", placeholder: "Пояснение к крайней оценке (от " + work.rules.minReason + " символов)" });
+  input.value = work.reasons[criterion.id] || "";
+  input.addEventListener("input", () => { work.reasons[criterion.id] = input.value; });
+  return el("div", { class: "why hidden" }, input);
+}
+
 function levelLegend(criterion) {
   if (!criterion.levels.length) return "";
   return el("div", { class: "lvl" }, ...criterion.levels.map((l) => el("span", { "data-lv": String(l.points) }, l.points + " — " + l.text)));
+}
+
+function isExtreme(criterion) {
+  const value = work.values[criterion.id];
+  return value !== undefined && (value === 0 || value === criterion.max_points);
+}
+
+function showDeviation(id, text) {
+  const box = document.querySelector("#crit-" + id + " .dev");
+  if (!box) return;
+  box.textContent = text;
+  box.classList.toggle("hidden", !text);
+}
+
+function scheduleCheck(criterion) {
+  const value = work.values[criterion.id];
+  if (!work.rules.deviation || !work.submission || value === undefined || work.checked[criterion.id] === value) return;
+  work.checked[criterion.id] = value;
+  clearTimeout(work.checks[criterion.id]);
+  const mine = work.seq;
+  const submissionId = work.submission.id;
+  work.checks[criterion.id] = setTimeout(async () => {
+    try {
+      const answer = await request("/submissions/" + submissionId + "/deviation-check", { method: "POST", body: JSON.stringify({ criterion_id: criterion.id, points: value }) });
+      if (mine === work.seq && work.values[criterion.id] === value) showDeviation(criterion.id, answer.warn ? answer.text : "");
+    } catch {}
+  }, 500);
 }
 
 function paintWork() {
   work.criteria.forEach((criterion, index) => {
     const row = $("crit-" + criterion.id);
     if (!row) return;
+    const why = row.querySelector(".why");
+    if (why) why.classList.toggle("hidden", !(work.rules.reason && isExtreme(criterion)));
+    scheduleCheck(criterion);
     row.classList.toggle("active", index === work.active);
     for (const span of row.querySelectorAll(".lvl span")) span.classList.toggle("on", work.values[criterion.id] === Number(span.dataset.lv));
     for (const button of row.querySelectorAll("button[data-points]")) {
@@ -1061,8 +1102,15 @@ async function finishWork() {
     if (!work.submission) {
       await request("/sessions/" + current + "/entries/" + work.entry.id + "/done", { method: "POST" });
     } else {
-      const scores = work.criteria.filter((c) => work.values[c.id] !== undefined).map((c) => ({ criterion_id: c.id, points: work.values[c.id] }));
+      const scores = work.criteria.filter((c) => work.values[c.id] !== undefined).map((c) => ({ criterion_id: c.id, points: work.values[c.id], comment: work.rules.reason && isExtreme(c) ? (work.reasons[c.id] || "").trim() : "" }));
       if (scores.length < work.criteria.length) { workError("Выставьте баллы по всем критериям"); return; }
+      const lacking = work.criteria.filter((c) => work.rules.reason && isExtreme(c) && (work.reasons[c.id] || "").trim().length < work.rules.minReason);
+      if (lacking.length) {
+        workError("Добавьте пояснение (от " + work.rules.minReason + " символов) к крайней оценке: " + lacking.map((c) => c.name).join(", "));
+        const field = document.querySelector("#crit-" + lacking[0].id + " .why input");
+        if (field) field.focus();
+        return;
+      }
       await request("/submissions/" + work.submission.id + "/complete", { method: "POST", body: JSON.stringify({ scores, comment: work.comment ? work.comment.value.trim() : "" }) });
     }
     work.key = "";
@@ -1109,6 +1157,11 @@ async function updateWork(queue) {
   work.active = 0;
   work.comment = null;
   work.buffer = "";
+  work.reasons = {};
+  work.checked = {};
+  for (const timer of Object.values(work.checks)) clearTimeout(timer);
+  work.checks = {};
+  work.rules = { reason: false, deviation: false, minReason: 5 };
   $("work-who").textContent = "Сейчас отвечает: №" + called.ticket + " " + called.name;
   const body = $("work-body");
   body.replaceChildren(el("div", { class: "muted" }, "Загрузка…"));
@@ -1117,10 +1170,13 @@ async function updateWork(queue) {
   work.budget = null;
   if (graded) {
     try {
-      [submission, criteria] = await Promise.all([
+      let settings = null;
+      [submission, criteria, settings] = await Promise.all([
         request("/sessions/" + current + "/submissions/current"),
         request("/assignments/" + queue.assignment_id + "/criteria"),
+        request("/assignments/" + queue.assignment_id).catch(() => null),
       ]);
+      if (settings) work.rules = { reason: settings.require_extreme_reason, deviation: settings.deviation_warning, minReason: 5 };
     } catch { submission = null; }
     try {
       const budget = await request("/sessions/" + current + "/budget");
@@ -1139,7 +1195,11 @@ async function updateWork(queue) {
   }
   work.submission = submission;
   work.criteria = criteria.map((c) => ({ id: c.id, name: c.name, max_points: c.max_points, levels: c.levels || [] }));
-  for (const score of submission.scores) work.values[score.criterion_id] = score.points;
+  for (const score of submission.scores) {
+    work.values[score.criterion_id] = score.points;
+    work.checked[score.criterion_id] = score.points;
+    work.reasons[score.criterion_id] = score.comment || "";
+  }
   const parts = [];
   if (submission.questions.length) {
     parts.push(el("div", { class: "muted" }, "Вопросы"));
@@ -1148,7 +1208,8 @@ async function updateWork(queue) {
   for (const criterion of work.criteria) {
     parts.push(el("div", { class: "crit", id: "crit-" + criterion.id },
       el("div", { class: "name" }, el("span", {}, criterion.name), el("span", { class: "muted" }, "макс. " + criterion.max_points)),
-      pointButtons(criterion), levelLegend(criterion)));
+      pointButtons(criterion), levelLegend(criterion), reasonField(criterion),
+      el("div", { class: "dev hidden", role: "status" })));
   }
   const comment = el("textarea", { maxlength: "1000", placeholder: queue.session_mode === "quick" ? "Заметка (необязательно)" : "Комментарий к сдаче" });
   comment.value = submission.comment || "";

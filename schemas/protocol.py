@@ -29,6 +29,9 @@ class AssignmentCreate(BaseModel):
     questions_per_submission: int = Field(default=3, ge=1, le=10)
     practice_enabled: bool = False
     is_template: bool = False
+    require_extreme_reason: bool = False
+    deviation_warning: bool = False
+    deviation_sigma: float = Field(default=2.0, ge=0.5, le=5)
 
 
 class AssignmentUpdate(BaseModel):
@@ -37,6 +40,9 @@ class AssignmentUpdate(BaseModel):
     questions_per_submission: int | None = Field(default=None, ge=1, le=10)
     practice_enabled: bool | None = None
     is_template: bool | None = None
+    require_extreme_reason: bool | None = None
+    deviation_warning: bool | None = None
+    deviation_sigma: float | None = Field(default=None, ge=0.5, le=5)
 
 
 class OriginOut(BaseModel):
@@ -52,6 +58,9 @@ class AssignmentOut(BaseModel):
     questions_per_submission: int
     practice_enabled: bool
     is_template: bool = False
+    require_extreme_reason: bool = False
+    deviation_warning: bool = False
+    deviation_sigma: float = 2.0
     created_at: datetime
     question_count: int = 0
     criteria_count: int = 0
@@ -178,6 +187,22 @@ class CorrectionIn(BaseModel):
         if len(ids) != len(set(ids)):
             raise ValueError("each criterion may be scored once")
         return self
+
+
+class DeviationIn(BaseModel):
+    criterion_id: str = Field(min_length=1, max_length=36)
+    points: int = Field(ge=0, le=100)
+
+
+class DeviationOut(BaseModel):
+    enabled: bool
+    warn: bool = False
+    samples: int = 0
+    min_samples: int = 0
+    mean: float | None = None
+    points: int
+    sigma: float
+    text: str = ""
 
 
 class SubmissionQuestionOut(BaseModel):

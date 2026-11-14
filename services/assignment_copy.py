@@ -52,6 +52,9 @@ class AssignmentCopyService:
             description=source.description,
             questions_per_submission=source.questions_per_submission,
             practice_enabled=source.practice_enabled,
+            require_extreme_reason=source.require_extreme_reason,
+            deviation_warning=source.deviation_warning,
+            deviation_sigma=source.deviation_sigma,
             is_template=False,
         )
         self.db.add(clone)

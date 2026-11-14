@@ -9,6 +9,7 @@ from sqlalchemy import (
     Boolean,
     CheckConstraint,
     DateTime,
+    Float,
     ForeignKey,
     Identity,
     Index,
@@ -42,6 +43,7 @@ class AssignmentORM(Base):
         CheckConstraint(
             "questions_per_submission BETWEEN 1 AND 10", name="ck_assignments_questions_count"
         ),
+        CheckConstraint("deviation_sigma BETWEEN 0.5 AND 5", name="ck_assignments_deviation_sigma"),
     )
 
     teacher_id: Mapped[str] = mapped_column(
@@ -56,6 +58,15 @@ class AssignmentORM(Base):
     )
     is_system: Mapped[bool] = mapped_column(
         Boolean, default=False, server_default=text("false"), nullable=False
+    )
+    require_extreme_reason: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false"), nullable=False
+    )
+    deviation_warning: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false"), nullable=False
+    )
+    deviation_sigma: Mapped[float] = mapped_column(
+        Float, default=2.0, server_default=text("2.0"), nullable=False
     )
     origin_author: Mapped[str | None] = mapped_column(String(50), nullable=True)
     origin_space: Mapped[str | None] = mapped_column(String(80), nullable=True)

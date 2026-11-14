@@ -175,6 +175,7 @@ def test_the_teacher_can_reopen_a_closed_session_and_the_grading_comes_back(
     expect(row(page, "Ирина Котова")).to_be_visible(timeout=SLOW)
     page.click("#next-btn")
     expect(page.locator("#work-who")).to_contain_text("Ирина Котова", timeout=SLOW)
+    expect(page.locator("#work-body .crit")).to_have_count(1, timeout=SLOW)
 
     messages = []
     page.once("dialog", lambda dialog: (messages.append(dialog.message), dialog.accept()))

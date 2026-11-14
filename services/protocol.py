@@ -13,6 +13,7 @@ from models.protocol import (
     CriterionORM,
     QuestionORM,
     ScoreORM,
+    SessionEventORM,
     SubmissionORM,
     SubmissionStatus,
 )
@@ -29,6 +30,8 @@ from schemas.protocol import (
     CriterionCreate,
     CriterionOut,
     CriterionUpdate,
+    DeviationIn,
+    DeviationOut,
     GradesIn,
     ImportLineOut,
     LevelIn,
@@ -49,6 +52,12 @@ from schemas.protocol import (
     SubmissionQuestionOut,
 )
 from services.criteria_presets import PRESETS, find_preset
+from services.grading_checks import (
+    check_deviation,
+    deviation_text,
+    is_extreme,
+    reason_given,
+)
 from services.protocol_calls import start_submission
 from services.question_import import parse
 from services.queue import normalize_code
@@ -466,6 +475,66 @@ class ProtocolService:
                     code="points_out_of_range",
                 )
 
+    async def _reasons_required(self, assignment_id: str) -> bool:
+        assignment = await self.db.get(AssignmentORM, assignment_id)
+        return bool(assignment and assignment.require_extreme_reason)
+
+    @staticmethod
+    def _reason_error(names: list[str]) -> UnprocessableError:
+        return UnprocessableError(
+            f"Нужно короткое пояснение (от {settings.EXTREME_REASON_MIN_LENGTH} символов) "
+            f"к крайней оценке: {', '.join(names)}",
+            code="reason_required",
+        )
+
+    async def deviation_check(
+        self, teacher_id: str, submission_id: str, data: DeviationIn
+    ) -> DeviationOut:
+        found = await self.repo.owned_submission(submission_id, teacher_id)
+        if found is None:
+            raise NotFoundError("Submission not found", code="submission_not_found")
+        submission, _ = found
+        assignment = await self._assignment(submission.assignment_id, teacher_id)
+        quiet = DeviationOut(
+            enabled=assignment.deviation_warning,
+            points=data.points,
+            sigma=assignment.deviation_sigma,
+            min_samples=settings.DEVIATION_MIN_SAMPLES,
+        )
+        if not assignment.deviation_warning:
+            return quiet
+        criterion = await self.repo.get_criterion(assignment.id, data.criterion_id)
+        if criterion is None:
+            raise NotFoundError("Criterion not found", code="criterion_not_found")
+        if data.points > criterion.max_points:
+            raise UnprocessableError(
+                f"Points for '{criterion.name}' must be between 0 and {criterion.max_points}",
+                code="points_out_of_range",
+            )
+        history = await self.repo.criterion_points(
+            assignment.id, criterion.id, exclude_submission_id=submission.id
+        )
+        result = check_deviation(data.points, history, assignment.deviation_sigma)
+        if result is None:
+            quiet.samples = len(history)
+            return quiet
+        quiet.samples = result.samples
+        quiet.mean = round(result.mean, 2)
+        if not result.warn:
+            return quiet
+        self.db.add(
+            SessionEventORM(
+                session_id=submission.session_id,
+                actor_id=teacher_id,
+                kind="deviation_shown",
+                details={"criterion_id": criterion.id},
+            )
+        )
+        await self.db.commit()
+        quiet.warn = True
+        quiet.text = deviation_text(result.mean, data.points)
+        return quiet
+
     async def save_grades(
         self, teacher_id: str, submission_id: str, data: GradesIn
     ) -> SubmissionOut:
@@ -524,6 +593,17 @@ class ProtocolService:
             raise ConflictError(
                 "Score every criterion first: " + ", ".join(missing), code="grades_incomplete"
             )
+        if await self._reasons_required(submission.assignment_id):
+            lacking = [
+                criteria[cid].name
+                for cid, s in scored.items()
+                if cid in criteria
+                and is_extreme(s.points, criteria[cid].max_points)
+                and not reason_given(s.comment)
+            ]
+            if lacking:
+                await self.db.rollback()
+                raise self._reason_error(lacking)
         now = datetime.now(UTC)
         submission.status = SubmissionStatus.COMPLETED
         submission.ended_at = now
@@ -583,6 +663,18 @@ class ProtocolService:
         criteria = await self._criteria_map(submission.assignment_id)
         self._validate_points(data, criteria)
         current = {s.criterion_id: s for s, _ in await self.repo.scores(submission.id)}
+        if await self._reasons_required(submission.assignment_id):
+            lacking = [
+                criteria[item.criterion_id].name
+                for item in data.scores
+                if item.criterion_id in current
+                and current[item.criterion_id].points != item.points
+                and is_extreme(item.points, criteria[item.criterion_id].max_points)
+                and not reason_given(item.comment or current[item.criterion_id].comment)
+            ]
+            if lacking:
+                await self.db.rollback()
+                raise self._reason_error(lacking)
         changes: list[tuple[str, str | None, str | None]] = []
         for item in data.scores:
             existing = current.get(item.criterion_id)

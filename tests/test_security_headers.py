@@ -271,3 +271,13 @@ def test_clearing_one_address_leaves_the_others_counting():
 
     assert guard.retry_after("u", "1.1.1.1") == 0
     assert guard.retry_after("u", "2.2.2.2") > 0
+
+
+@pytest.mark.asyncio
+async def test_the_shared_stylesheet_is_served_and_linked_from_every_page(client):
+    sheet = await client.get("/theme.css")
+    assert sheet.status_code == 200
+    assert sheet.headers["content-type"].startswith("text/css")
+    for path in PAGES:
+        page = await client.get(path)
+        assert '<link rel="stylesheet" href="/theme.css">' in page.text

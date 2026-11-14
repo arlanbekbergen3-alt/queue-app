@@ -209,6 +209,11 @@ async def metrics_endpoint(authorization: str | None = Header(default=None)):
     return PlainTextResponse(metrics.render(), media_type="text/plain; version=0.0.4")
 
 
+@app.get("/theme.css", include_in_schema=False)
+async def theme_css():
+    return FileResponse(STATIC_DIR / "theme.css", media_type="text/css")
+
+
 @app.get("/", include_in_schema=False)
 async def student_page():
     return FileResponse(STATIC_DIR / "index.html")
